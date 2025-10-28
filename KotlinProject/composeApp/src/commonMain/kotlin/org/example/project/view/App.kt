@@ -35,6 +35,8 @@ val trip = Trip(
     ),
     events = listOf(
         Event(title = "Niagara Falls Stop", date = LocalDate(2025, 7, 2)),
+        Event(title = "Niagara Boat Tour", date = LocalDate(2025, 7, 2)),
+        Event(title = "Table Rock Lunch", date = LocalDate(2025, 7, 2)),
         Event(title = "Ottawa Parliament Tour", date = LocalDate(2025, 7, 8))
     )
 )

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,16 +34,21 @@ import org.example.project.model.Trip
 import org.example.project.model.Event
 import org.example.project.model.User
 import org.example.project.utils.rangeUntil
+import androidx.compose.foundation.layout.aspectRatio
 
 @Composable
 fun TripView(modifier: Modifier = Modifier, trip: Trip) {
     Box(
         modifier = modifier
     ) {
-        Column () {
-            Header(trip.title, trip.startDate, trip.endDate)
-            ListMembersSection(trip.users)
-            TripSummarySection(trip.description)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item { Header(trip.title, trip.startDate, trip.endDate) }
+            item { ListMembersSection(trip.users) }
+            item { TripSummarySection(trip.description) }
+            item { EventsSection(trip.startDate, trip.endDate, trip.events) }
         }
     }
 }
@@ -52,7 +58,7 @@ fun Header(tripTitle: String, startDate: LocalDate, endDate: LocalDate) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.3f),
+            .aspectRatio(16f / 9f),
         contentAlignment = Alignment.BottomStart,
     ){
         Image(
@@ -174,9 +180,8 @@ fun TripSummarySection(tripSummary: String) {
 fun EventsSection(startDate: LocalDate, endDate: LocalDate, events: List<Event>) {
     val dates = startDate.rangeUntil(endDate)
     val eventsByDate = events.groupBy { it.date }
-    LazyColumn {
-        items(count = dates.size) { index ->
-            val date = dates[index]
+    Column {
+        dates.forEachIndexed { index, date ->
             val list = eventsByDate[date].orEmpty()
             EventsGroup(date, index, list)
         }
@@ -186,41 +191,43 @@ fun EventsSection(startDate: LocalDate, endDate: LocalDate, events: List<Event>)
 @Composable 
 // TODO: Find a way to get rid of the counter/index, I don't like it
 fun EventsGroup(date: LocalDate, index: Int, eventsForDate: List<Event>) {
-    Column() {
+    Column(Modifier.padding(start = 16.dp, top = 16.dp)) {
         Text(
             text = "Day ${index + 1}",
         )
         Spacer(modifier = Modifier.height(8.dp))
-        LazyRow {
+        LazyRow(
+            modifier = Modifier.padding(start = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             items(eventsForDate) { event ->
-                EventCard(event)
+                EventCard(event, modifier = Modifier.width(280.dp))
             }
         }
     }
-    
 }
 
 @Composable
-fun EventCard(event: Event) {
+fun EventCard(event: Event, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.3f),
-        contentAlignment = Alignment.BottomStart,
-    ){
+        modifier = modifier
+            .width(280.dp)
+            .aspectRatio(16f / 9f)   // fixed width + aspect ratio gives a stable size in a LazyRow
+            .clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp)),
+        contentAlignment = Alignment.BottomStart
+    ) {
         Image(
-            // TODO: Allow User to change the image
-            // TODO: Have a default image instead of solid color
             painter = ColorPainter(Color(0xFF3F51B5)),
-            contentDescription = null,
+            contentDescription = event.title,   // use title for accessibility
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    brush = Brush.verticalGradient(
+                    Brush.verticalGradient(
                         colors = listOf(
                             Color.Transparent,
                             Color(0x99000000)
@@ -228,13 +235,12 @@ fun EventCard(event: Event) {
                     )
                 )
         )
-        Column (Modifier.padding(16.dp)) {
+
+        Column(Modifier.padding(16.dp)) {
             Text(
                 text = event.title,
                 color = Color.White,
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    fontWeight = FontWeight.Bold
-                )
+                style = MaterialTheme.typography.titleLarge
             )
         }
     }
