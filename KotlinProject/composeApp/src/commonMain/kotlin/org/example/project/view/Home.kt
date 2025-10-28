@@ -1,14 +1,17 @@
 package org.example.project.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.Scaffold
 
 @Composable
 fun Home() {
@@ -18,7 +21,14 @@ fun Home() {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Empty mobile-size layout container — add UI here
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(360.dp)
+                    .background(mainGreen)
+            ) {
+                
+            }
         }
     }
 }
