@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,22 +28,27 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.CircleShape
+import kotlinx.datetime.LocalDate
+import org.example.project.model.Trip
+import org.example.project.model.Event
+import org.example.project.model.User
+import org.example.project.utils.rangeUntil
 
 @Composable
-fun TripView(modifier: Modifier = Modifier) {
+fun TripView(modifier: Modifier = Modifier, trip: Trip) {
     Box(
         modifier = modifier
     ) {
         Column () {
-            Header("Trip title", "May 12–20, 2026")
-            ListMembersSection()
-            TripSummarySection("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+            Header(trip.title, trip.startDate, trip.endDate)
+            ListMembersSection(trip.users)
+            TripSummarySection(trip.description)
         }
     }
 }
 
 @Composable
-fun Header(tripTitle: String, dateRange: String) {
+fun Header(tripTitle: String, startDate: LocalDate, endDate: LocalDate) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,6 +56,8 @@ fun Header(tripTitle: String, dateRange: String) {
         contentAlignment = Alignment.BottomStart,
     ){
         Image(
+            // TODO: This should be adjustable by the user.
+            // TODO: This should have a default image instead of a plain color.
             painter = ColorPainter(Color(0xFF3F51B5)),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
@@ -76,7 +84,7 @@ fun Header(tripTitle: String, dateRange: String) {
                 )
             )
             Text(
-                text = dateRange,
+                text = "${startDate.dayOfMonth}/${startDate.monthNumber}/${startDate.year} - ${endDate.dayOfMonth}/${endDate.monthNumber}/${endDate.year}",
                 color = Color.White,
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.SemiBold
@@ -87,10 +95,10 @@ fun Header(tripTitle: String, dateRange: String) {
 }
 
 @Composable
-fun ListMembersSection(members: List<String> = listOf("Alice", "Bob", "Charlie", "Delia", "Eric", "Heather", "Irwin", "Jackie", "Kim")) {
+fun ListMembersSection(members: List<User>) {
     Column (Modifier.padding(start = 16.dp, top = 16.dp)) {
         Text(
-            text = "Who's Going",
+            text = "Who's Going", //TODO: Move into Resources
             color = Color.Black,
             style = MaterialTheme.typography.titleMedium
         )
@@ -99,15 +107,15 @@ fun ListMembersSection(members: List<String> = listOf("Alice", "Bob", "Charlie",
             modifier = Modifier.padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(members) { name ->
-                MemberCard(name)
+            items(members) {user ->
+                MemberCard(user)
             }
         }
     }
 }
 
 @Composable
-fun MemberCard(name: String) {
+fun MemberCard(user: User) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(start = 8.dp)
@@ -116,10 +124,26 @@ fun MemberCard(name: String) {
             modifier = Modifier
                 .size(56.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF3F51B5))
-        )
+        ) {
+            if (user.pfpUrl == null) {
+                // Use colored background when there's no profile picture
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFF3F51B5))
+                )
+            } else {
+                // For now this uses a placeholder painter; swap for your image loader (Coil/Glide/etc).
+                Image(
+                    painter = ColorPainter(Color.LightGray),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = name, color = Color.Black, style = MaterialTheme.typography.bodySmall)
+        Text(text = user.name, color = Color.Black, style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -146,59 +170,72 @@ fun TripSummarySection(tripSummary: String) {
     }
 }
 
-// @Composable
-// fun EventsSection () {
-//     LazyColumn () {
-//         for (day in days) {
-//             EventsGroup(day)
-//         }
-//     }
+@Composable
+fun EventsSection(startDate: LocalDate, endDate: LocalDate, events: List<Event>) {
+    val dates = startDate.rangeUntil(endDate)
+    val eventsByDate = events.groupBy { it.date }
+    LazyColumn {
+        items(count = dates.size) { index ->
+            val date = dates[index]
+            val list = eventsByDate[date].orEmpty()
+            EventsGroup(date, index, list)
+        }
+    }
+}
 
-// }
+@Composable 
+// TODO: Find a way to get rid of the counter/index, I don't like it
+fun EventsGroup(date: LocalDate, index: Int, eventsForDate: List<Event>) {
+    Column() {
+        Text(
+            text = "Day ${index + 1}",
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        LazyRow {
+            items(eventsForDate) { event ->
+                EventCard(event)
+            }
+        }
+    }
+    
+}
 
-// @Composable 
-// fun EventsGroup () {
-//     LazyRow () {
-//         for (event in day) {
-//             EventCard()
-//         }
-//     }
-// }
-
-// @Composable
-// fun EventCard () {
-//     Box(
-//         modifier = Modifier
-//             .fillMaxWidth()
-//             .fillMaxHeight(0.3f),
-//         contentAlignment = Alignment.BottomStart,
-//     ){
-//         Image(
-//             painter = ColorPainter(Color(0xFF3F51B5)),
-//             contentDescription = null,
-//             modifier = Modifier.fillMaxSize(),
-//             contentScale = ContentScale.Crop
-//         )
-//         Box(
-//             modifier = Modifier
-//                 .fillMaxSize()
-//                 .background(
-//                     brush = Brush.verticalGradient(
-//                         colors = listOf(
-//                             Color.Transparent,
-//                             Color(0x99000000)
-//                         )
-//                     )
-//                 )
-//         )
-//         Column (Modifier.padding(16.dp)) {
-//             Text(
-//                 text = eventTitle,
-//                 color = Color.White,
-//                 style = MaterialTheme.typography.headlineLarge.copy(
-//                     fontWeight = FontWeight.Bold
-//                 )
-//             )
-//         }
-//     }
-// }
+@Composable
+fun EventCard(event: Event) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.3f),
+        contentAlignment = Alignment.BottomStart,
+    ){
+        Image(
+            // TODO: Allow User to change the image
+            // TODO: Have a default image instead of solid color
+            painter = ColorPainter(Color(0xFF3F51B5)),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color(0x99000000)
+                        )
+                    )
+                )
+        )
+        Column (Modifier.padding(16.dp)) {
+            Text(
+                text = event.title,
+                color = Color.White,
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+    }
+}
