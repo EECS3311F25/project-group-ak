@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,7 +17,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,6 +42,7 @@ import org.example.project.model.Event
 import org.example.project.model.User
 import org.example.project.utils.rangeUntil
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 
 @Composable
 fun TripView(modifier: Modifier = Modifier, trip: Trip) {
@@ -90,13 +98,21 @@ fun Header(tripTitle: String, startDate: LocalDate, endDate: LocalDate) {
                     fontWeight = FontWeight.Bold
                 )
             )
-            Text(
-                text = "${startDate.dayOfMonth}/${startDate.monthNumber}/${startDate.year} - ${endDate.dayOfMonth}/${endDate.monthNumber}/${endDate.year}",
-                color = Color.White,
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.SemiBold
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.CalendarToday,
+                    contentDescription = null,
+                    tint = Color.White
                 )
-            )
+                Spacer(modifier = Modifier.height(0.dp).then(Modifier.padding(start = 8.dp)))
+                Text(
+                    text = "${startDate.dayOfMonth}/${startDate.monthNumber}/${startDate.year} - ${endDate.dayOfMonth}/${endDate.monthNumber}/${endDate.year}",
+                    color = Color.White,
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+            }
         }
     }
 }
@@ -104,11 +120,19 @@ fun Header(tripTitle: String, startDate: LocalDate, endDate: LocalDate) {
 @Composable
 fun ListMembersSection(members: List<User>) {
     Column (Modifier.padding(start = 16.dp, top = 16.dp)) {
-        Text(
-            text = "Who's Going", //TODO: Move into Resources
-            color = Color.Black,
-            style = MaterialTheme.typography.titleMedium
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Filled.Group,
+                contentDescription = null,
+                tint = Color.Black
+            )
+            Spacer(modifier = Modifier.height(0.dp).then(Modifier.padding(start = 8.dp)))
+            Text(
+                text = "Who's Going", //TODO: Move into Resources
+                color = Color.Black,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow(
             modifier = Modifier.padding(vertical = 8.dp),
@@ -133,16 +157,17 @@ fun MemberCard(user: User) {
                 .clip(CircleShape)
         ) {
             if (user.pfpUrl == null) {
-                // Use colored background when there's no profile picture
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color(0xFF3F51B5))
+                // Default vector avatar when there's no profile picture
+                Image(
+                    painter = rememberVectorPainter(image = Icons.Filled.Person),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Fit
                 )
             } else {
                 // For now this uses a placeholder painter; swap for your image loader (Coil/Glide/etc).
-                Image(
-                    painter = ColorPainter(Color.LightGray),
+                Image(                    
+                    painter = rememberVectorPainter(image = Icons.Filled.Person),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -163,11 +188,19 @@ fun TripSummarySection(tripSummary: String) {
             .background(Color(0xFF212121))
             .padding(16.dp)
     ) {
-        Text(
-            text = "Trip Summary",
-            color = Color.White,
-            style = MaterialTheme.typography.titleMedium
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Filled.Info,
+                contentDescription = null,
+                tint = Color.White
+            )
+            Spacer(modifier = Modifier.height(0.dp).then(Modifier.padding(start = 8.dp)))
+            Text(
+                text = "Trip Summary",
+                color = Color.White,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = tripSummary,
@@ -246,4 +279,3 @@ fun EventCard(event: Event, modifier: Modifier = Modifier) {
         }
     }
 }
-

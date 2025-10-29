@@ -13,6 +13,8 @@ import org.example.project.model.Event
 import org.example.project.model.Trip
 import org.example.project.model.User
 
+
+// TODO: Fetch from API
 val trip = Trip(
     title = "Summer Getaway",
     description = "Road trip across Ontario",
