@@ -1,4 +1,13 @@
 package org.example.project.view
+// TODO: Split into multiple files, shorter files are easier to work with.
+
+/**
+ * Trip screen UI components rendered in commonMain.
+ *
+ * Contains the TripView entry and section composables (header, members,
+ * summary, and events). 
+ */
+
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,7 +53,16 @@ import org.example.project.utils.rangeUntil
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 
+
 @Composable
+/**
+ * Renders the Trip screen.
+ *
+ * Uses a `LazyColumn` to vertically stack sections and provide scrolling.
+ *
+ * @param modifier Optional modifier applied to the root container.
+ * @param trip Data model providing content for the screen.
+ */
 fun TripView(modifier: Modifier = Modifier, trip: Trip) {
     Box(
         modifier = modifier
@@ -62,6 +80,16 @@ fun TripView(modifier: Modifier = Modifier, trip: Trip) {
 }
 
 @Composable
+/**
+ * Header hero with background image, title, and date range.
+ *
+ * A vertical gradient overlay improves text contrast over the background.
+ * Uses a 16:9 aspect ratio.
+ *
+ * @param tripTitle The title shown prominently.
+ * @param startDate Trip start date.
+ * @param endDate Trip end date.
+ */
 // TODO: This pattern is used multiple times, abstract it
 fun Header(tripTitle: String, startDate: LocalDate, endDate: LocalDate) {
     Box(
@@ -117,6 +145,11 @@ fun Header(tripTitle: String, startDate: LocalDate, endDate: LocalDate) {
     }
 }
 
+/**
+ * Section listing trip members in a horizontal row.
+ *
+ * @param members Users participating in the trip.
+ */
 @Composable
 fun ListMembersSection(members: List<User>) {
     Column (Modifier.padding(start = 16.dp, top = 16.dp)) {
@@ -145,6 +178,12 @@ fun ListMembersSection(members: List<User>) {
     }
 }
 
+/**
+ * Small avatar + name for an individual member.
+ * Shows a default vector avatar when no profile picture is available.
+ *
+ * @param user The member to render.
+ */
 @Composable
 fun MemberCard(user: User) {
     Column(
@@ -165,13 +204,7 @@ fun MemberCard(user: User) {
                     contentScale = ContentScale.Fit
                 )
             } else {
-                // For now this uses a placeholder painter; swap for your image loader (Coil/Glide/etc).
-                Image(                    
-                    painter = rememberVectorPainter(image = Icons.Filled.Person),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+                continue // TODO: Add pfp fetch and display
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -179,6 +212,11 @@ fun MemberCard(user: User) {
     }
 }
 
+/**
+ * Summary card describing the trip.
+ *
+ * @param tripSummary Descriptive text shown inside the card.
+ */
 @Composable
 fun TripSummarySection(tripSummary: String) {
     Column(
@@ -210,6 +248,15 @@ fun TripSummarySection(tripSummary: String) {
     }
 }
 
+/**
+ * Events grouped by day across the inclusive date range.
+ *
+ * Groups the flat events list by `Event.date` for quick lookups per day.
+ *
+ * @param startDate Start of the date range (inclusive).
+ * @param endDate End of the date range (inclusive).
+ * @param events Flat list of events to render.
+ */
 @Composable
 fun EventsSection(startDate: LocalDate, endDate: LocalDate, events: List<Event>) {
     val dates = startDate.rangeUntil(endDate)
@@ -223,6 +270,13 @@ fun EventsSection(startDate: LocalDate, endDate: LocalDate, events: List<Event>)
 }
 
 @Composable 
+/**
+ * One day's event row with a label and horizontally scrolling items.
+ *
+ * @param date The represented date.
+ * @param index Zero‑based index used for the day label.
+ * @param eventsForDate Events scheduled on this date.
+ */
 // TODO: Find a way to get rid of the counter/index, I don't like it
 fun EventsGroup(date: LocalDate, index: Int, eventsForDate: List<Event>) {
     Column(Modifier.padding(start = 16.dp, top = 16.dp)) {
@@ -242,6 +296,14 @@ fun EventsGroup(date: LocalDate, index: Int, eventsForDate: List<Event>) {
 }
 
 @Composable
+/**
+ * Compact card representation of a single event.
+ *
+ * Displays a background image placeholder, gradient overlay, and title.
+ *
+ * @param event Event data rendered by the card.
+ * @param modifier Optional modifier for sizing within a row.
+ */
 fun EventCard(event: Event, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
