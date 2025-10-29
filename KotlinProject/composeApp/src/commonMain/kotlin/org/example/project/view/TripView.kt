@@ -54,6 +54,7 @@ fun TripView(modifier: Modifier = Modifier, trip: Trip) {
 }
 
 @Composable
+// TODO: This pattern is used multiple times, abstract it
 fun Header(tripTitle: String, startDate: LocalDate, endDate: LocalDate) {
     Box(
         modifier = Modifier
@@ -245,3 +246,4 @@ fun EventCard(event: Event, modifier: Modifier = Modifier) {
         }
     }
 }
+

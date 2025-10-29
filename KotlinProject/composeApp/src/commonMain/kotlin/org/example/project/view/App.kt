@@ -52,6 +52,7 @@ fun App() {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
+                // TODO: Add Routing
                TripView(modifier = Modifier.fillMaxSize(), trip)
             }
         }
