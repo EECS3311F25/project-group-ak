@@ -12,6 +12,7 @@ import kotlinx.datetime.LocalDate
 import org.example.project.model.Event
 import org.example.project.model.Trip
 import org.example.project.model.User
+import org.example.project.model.Duration
 
 
 // TODO: Fetch from API
@@ -19,27 +20,52 @@ val trip = Trip(
     title = "Summer Getaway",
     description = "Road trip across Ontario",
     location = "Toronto to Ottawa",
-    startDate = LocalDate(2025, 7, 1),
-    endDate = LocalDate(2025, 7, 10),
+    duration = Duration(
+        startDate = LocalDate(2025, 7, 1),
+        startTime = kotlinx.datetime.LocalTime(9, 0),
+        endDate = LocalDate(2025, 7, 10),
+        endTime = kotlinx.datetime.LocalTime(17, 0)
+    ),
     users = listOf(
-        User(name = "Klodiana", email = "klodiana@example.com"),
-        User(name = "Alex", email = "alex@example.com"),
-        User(name = "Sam", email = "sam@example.com"),
-        User(name = "Priya", email = "priya@example.com"),
-        User(name = "Diego", email = "diego@example.com"),
-        User(name = "Mei", email = "mei@example.com"),
-        User(name = "Fatima", email = "fatima@example.com"),
-        User(name = "John", email = "john@example.com"),
-        User(name = "Maria", email = "maria@example.com"),
-        User(name = "Chen", email = "chen@example.com"),
-        User(name = "Liam", email = "liam@example.com"),
-        User(name = "Zoe", email = "zoe@example.com")
+        User(name = "Klodiana"),
+        User(name = "Alex"),
+        User(name = "Sam"),
+        User(name = "Priya"),
+        User(name = "Diego"),
+        User(name = "Mei"),
+        User(name = "Fatima"),
+        User(name = "John"),
+        User(name = "Maria"),
+        User(name = "Chen"),
+        User(name = "Liam"),
+        User(name = "Zoe")
     ),
     events = listOf(
-        Event(title = "Niagara Falls Stop", date = LocalDate(2025, 7, 2)),
-        Event(title = "Niagara Boat Tour", date = LocalDate(2025, 7, 2)),
-        Event(title = "Table Rock Lunch", date = LocalDate(2025, 7, 2)),
-        Event(title = "Ottawa Parliament Tour", date = LocalDate(2025, 7, 8))
+        // TODO: add duration
+        Event(title = "Niagara Falls Stop", Duration(
+        startDate = LocalDate(2025, 7, 1),
+        startTime = kotlinx.datetime.LocalTime(9, 0),
+        endDate = LocalDate(2025, 7, 1),
+        endTime = kotlinx.datetime.LocalTime(17, 0)
+    )),
+        Event(title = "Niagara Boat Tour", Duration(
+        startDate = LocalDate(2025, 7, 1),
+        startTime = kotlinx.datetime.LocalTime(9, 0),
+        endDate = LocalDate(2025, 7, 1),
+        endTime = kotlinx.datetime.LocalTime(17, 0)
+    )),
+        Event(title = "Table Rock Lunch", Duration(
+        startDate = LocalDate(2025, 7, 1),
+        startTime = kotlinx.datetime.LocalTime(9, 0),
+        endDate = LocalDate(2025, 7, 1),
+        endTime = kotlinx.datetime.LocalTime(17, 0)
+    )),
+        Event(title = "Ottawa Parliament Tour", Duration(
+        startDate = LocalDate(2025, 7, 1),
+        startTime = kotlinx.datetime.LocalTime(9, 0),
+        endDate = LocalDate(2025, 7, 1),
+        endTime = kotlinx.datetime.LocalTime(17, 0)
+    ))
     )
 )
 

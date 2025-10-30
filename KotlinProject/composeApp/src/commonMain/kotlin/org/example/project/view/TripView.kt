@@ -49,6 +49,7 @@ import kotlinx.datetime.LocalDate
 import org.example.project.model.Trip
 import org.example.project.model.Event
 import org.example.project.model.User
+import org.example.project.model.Duration
 import org.example.project.utils.rangeUntil
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -71,10 +72,10 @@ fun TripView(modifier: Modifier = Modifier, trip: Trip) {
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { Header(trip.title, trip.startDate, trip.endDate) }
+            item { Header(trip.title, trip.duration) }
             item { ListMembersSection(trip.users) }
             item { TripSummarySection(trip.description) }
-            item { EventsSection(trip.startDate, trip.endDate, trip.events) }
+            item { EventsSection(trip.duration, trip.events) }
         }
     }
 }
@@ -91,7 +92,7 @@ fun TripView(modifier: Modifier = Modifier, trip: Trip) {
  * @param endDate Trip end date.
  */
 // TODO: This pattern is used multiple times, abstract it
-fun Header(tripTitle: String, startDate: LocalDate, endDate: LocalDate) {
+fun Header(tripTitle: String, duration: Duration) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -134,7 +135,7 @@ fun Header(tripTitle: String, startDate: LocalDate, endDate: LocalDate) {
                 )
                 Spacer(modifier = Modifier.height(0.dp).then(Modifier.padding(start = 8.dp)))
                 Text(
-                    text = "${startDate.dayOfMonth}/${startDate.monthNumber}/${startDate.year} - ${endDate.dayOfMonth}/${endDate.monthNumber}/${endDate.year}",
+                    text = "${duration.startDate.dayOfMonth}/${duration.startDate.monthNumber}/${duration.startDate.year} - ${duration.endDate.dayOfMonth}/${duration.endDate.monthNumber}/${duration.endDate.year}",
                     color = Color.White,
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.SemiBold
@@ -204,7 +205,7 @@ fun MemberCard(user: User) {
                     contentScale = ContentScale.Fit
                 )
             } else {
-                continue // TODO: Add pfp fetch and display
+                // TODO: Add pfp fetch and display
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -258,9 +259,10 @@ fun TripSummarySection(tripSummary: String) {
  * @param events Flat list of events to render.
  */
 @Composable
-fun EventsSection(startDate: LocalDate, endDate: LocalDate, events: List<Event>) {
-    val dates = startDate.rangeUntil(endDate)
-    val eventsByDate = events.groupBy { it.date }
+// TODO: add duration
+fun EventsSection(duration: Duration, events: List<Event>) {
+    val dates = duration.startDate.rangeUntil(duration.endDate)
+    val eventsByDate = events.groupBy { it.duration.startDate }
     Column {
         dates.forEachIndexed { index, date ->
             val list = eventsByDate[date].orEmpty()
@@ -299,7 +301,7 @@ fun EventsGroup(date: LocalDate, index: Int, eventsForDate: List<Event>) {
 /**
  * Compact card representation of a single event.
  *
- * Displays a background image placeholder, gradient overlay, and title.
+ * Displays a background image placeholder (currently a solid colour), gradient overlay, and title.
  *
  * @param event Event data rendered by the card.
  * @param modifier Optional modifier for sizing within a row.
