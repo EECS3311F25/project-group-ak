@@ -51,11 +51,15 @@ fun App() {
         Scaffold { innerPadding ->
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
+                    .fillMaxSize(),
+                //  delete this pls
+                contentAlignent = Alignment.center
+                    //.padding(innerPadding)
             ) {
+               //   delete this
+               Text(text = "Hello World!")
                 // TODO: Add Routing
-               TripView(modifier = Modifier.fillMaxSize(), trip)
+               //TripView(modifier = Modifier.fillMaxSize(), trip)
             }
         }
     }
