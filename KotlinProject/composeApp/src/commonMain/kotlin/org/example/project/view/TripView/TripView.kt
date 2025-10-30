@@ -9,6 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.example.project.model.Trip
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import com.plcoding.bookpedia.core.presentation.DarkBlue
+import com.plcoding.bookpedia.core.presentation.SandYellow
+
 
 @Composable
 /**
@@ -18,8 +27,12 @@ import org.example.project.model.Trip
  *
  * @param modifier Optional modifier applied to the root container.
  * @param trip Data model providing content for the screen.
+ * @param onAddTripClick Callback fired by the FAB.
  */
-fun TripView(modifier: Modifier = Modifier, trip: Trip) {
+fun TripView(
+    modifier: Modifier = Modifier,
+    trip: Trip
+) {
     Box(
         modifier = modifier
     ) {
@@ -31,6 +44,21 @@ fun TripView(modifier: Modifier = Modifier, trip: Trip) {
             item { ListMembersSection(trip.users) }
             item { TripSummarySection(trip.description) }
             item { EventsSection(trip.duration, trip.events) }
+        }
+    }
+    Box(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        FloatingActionButton(
+            onClick = {},
+            containerColor = SandYellow,
+            contentColor = DarkBlue
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = null
+            )
         }
     }
 }

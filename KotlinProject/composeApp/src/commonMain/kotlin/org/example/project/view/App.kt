@@ -73,6 +73,7 @@ val trip = Trip(
 @Composable
 @Preview 
 fun App() {
+
     MaterialTheme {
         Scaffold { innerPadding ->
             Box(
