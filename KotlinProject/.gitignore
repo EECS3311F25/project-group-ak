@@ -16,4 +16,64 @@ captures
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
+
+# Ignore all Gradle-related files and directories everywhere
+.gradle/
+**/.gradle/
+**/gradle/
+gradle/
+.gradle-local/
+.gradle-cache/
+
+# Ignore wrapper and other gradle-generated artifacts (also ignored by the patterns above)
+gradlew
+gradlew.bat
+gradle-wrapper.jar
+gradle-wrapper.properties
+
+# General build outputs (module build dirs)
+**/build/
+build/
+
+# Kotlin Multiplatform / Kotlin Native
+.konan/
+*.klib
+*.kexe
+*.kclass
+**/cinterop/
+**/generated/
+
+# Android / Java artifacts
+*.iml
+.idea/
+local.properties
+.externalNativeBuild/
+captures/
+*.class
+*.jar
+
+# Node/JS (if present)
 node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+.pnp.cjs
+.pnpm-debug.log
+
+# Xcode / Apple targets (if present)
+*.xcworkspace
+*.xcodeproj
+xcuserdata/
+DerivedData/
+
+# Editors / OS files
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs / temp
+*.log
+tmp/
+temp/
