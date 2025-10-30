@@ -25,6 +25,11 @@ gradle/
 .gradle-local/
 .gradle-cache/
 
+# Allow tracking of Gradle version catalog files (the "libs" catalog)
+# (this ensures gradle/libs.versions.toml and any libs.versions.toml are NOT ignored)
+!gradle/libs.versions.toml
+!**/libs.versions.toml
+
 # Note: gradlew and gradle wrapper files are NOT ignored here so they can be tracked in the repo.
 
 # General build outputs (module build dirs)
