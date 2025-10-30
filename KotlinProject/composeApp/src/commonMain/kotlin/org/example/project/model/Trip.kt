@@ -9,6 +9,9 @@ data class Trip(
     val duration: Duration,
     val description: String = "",
     val location: String = "", // TODO: Create Location data class
+
     val users: List<User>,
     val events: List<Event> = emptyList(),
+
+    val imageHeaderUrl: String? = null // TODO: Refactor into its own dataclass
 )
