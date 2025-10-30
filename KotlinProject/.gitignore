@@ -25,11 +25,7 @@ gradle/
 .gradle-local/
 .gradle-cache/
 
-# Ignore wrapper and other gradle-generated artifacts (also ignored by the patterns above)
-gradlew
-gradlew.bat
-gradle-wrapper.jar
-gradle-wrapper.properties
+# Note: gradlew and gradle wrapper files are NOT ignored here so they can be tracked in the repo.
 
 # General build outputs (module build dirs)
 **/build/
