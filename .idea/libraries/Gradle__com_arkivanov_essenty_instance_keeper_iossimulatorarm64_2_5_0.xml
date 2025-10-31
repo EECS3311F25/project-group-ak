@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.essenty:instance-keeper-iossimulatorarm64:2.5.0" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.essenty" artifactId="instance-keeper-iossimulatorarm64" version="2.5.0" baseVersion="2.5.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/instance-keeper-iossimulatorarm64/2.5.0/5d55a2ae2d8f1789fb1657ede10f803f4549b5e/instance-keeper-iosSimulatorArm64Main-2.5.0.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/instance-keeper-iossimulatorarm64/2.5.0/dd03b4592b9be441cd14fa5cf1a4ac036bc47865/instance-keeper-iossimulatorarm64-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

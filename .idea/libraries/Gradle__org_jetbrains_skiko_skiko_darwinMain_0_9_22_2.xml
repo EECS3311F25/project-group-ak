@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.skiko:skiko:darwinMain:0.9.22.2" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.skiko" artifactId="skiko" version="0.9.22.2" baseVersion="0.9.22.2" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/org.jetbrains.skiko-skiko-0.9.22.2-darwinMain-SvRtdQ.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko/0.9.22.2/52bc8b1b82eea57ac24991473b240cd8601267bf/skiko-0.9.22.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

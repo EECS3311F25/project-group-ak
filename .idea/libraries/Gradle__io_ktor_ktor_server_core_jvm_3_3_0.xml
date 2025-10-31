@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: io.ktor:ktor-server-core-jvm:3.3.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.ktor" artifactId="ktor-server-core-jvm" version="3.3.0" baseVersion="3.3.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-server-core-jvm/3.3.0/a75887ca2a0b32ddec0351f889517f74fee2143d/ktor-server-core-jvm-3.3.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-server-core-jvm/3.3.0/f03341ea105468a0895dde4dcc2fc5da98ee687d/ktor-server-core-jvm-3.3.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

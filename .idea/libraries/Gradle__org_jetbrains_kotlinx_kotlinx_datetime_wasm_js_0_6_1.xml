@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.kotlinx:kotlinx-datetime-wasm-js:0.6.1" type="kotlin.wasm.js" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.kotlinx" artifactId="kotlinx-datetime-wasm-js" version="0.6.1" baseVersion="0.6.1" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-datetime-wasm-js/0.6.1/2fa2d7d0c8029462b82dc396b71e9927ea24298c/kotlinx-datetime-wasm-js-0.6.1.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-datetime-wasm-js/0.6.1/1ed8dc998647ba0617f5d3c8fc792e8aa0af3de4/kotlinx-datetime-wasm-js-0.6.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.decompose:decompose-js:3.4.0" type="kotlin.js" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.decompose" artifactId="decompose-js" version="3.4.0" baseVersion="3.4.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.decompose/decompose-js/3.4.0/add78c66f4fb7222b6934e4af9c33bbfe4ced336/decompose-js-3.4.0.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.decompose/decompose-js/3.4.0/2ef2feaeab5abce0f82c9a9977af503f3486c990/decompose-js-3.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

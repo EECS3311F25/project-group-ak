@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.components:components-resources:nativeMain:1.9.0" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.components" artifactId="components-resources" version="1.9.0" baseVersion="1.9.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/org.jetbrains.compose.components-components-resources-1.9.0-nativeMain-AIWK1A.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.components/components-resources/1.9.0/560a007d6d1397d1aa45ecd8771113928e808e5e/components-resources-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

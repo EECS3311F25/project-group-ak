@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.essenty:back-handler:commonMain:2.5.0" type="kotlin.common" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.essenty" artifactId="back-handler" version="2.5.0" baseVersion="2.5.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/com.arkivanov.essenty-back-handler-2.5.0-commonMain-cGvH0g.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/back-handler/2.5.0/25ff51e43c26541df6a55fcd577d59aace45ccbb/back-handler-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

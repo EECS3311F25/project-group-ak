@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: io.ktor:ktor-test-dispatcher-jvm:3.3.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.ktor" artifactId="ktor-test-dispatcher-jvm" version="3.3.0" baseVersion="3.3.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-test-dispatcher-jvm/3.3.0/11ec756d377fcfb833cd90a497cb891886f65012/ktor-test-dispatcher-jvm-3.3.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-test-dispatcher-jvm/3.3.0/11e8dcbf301e195787ffb532cbeedc6c79449aef/ktor-test-dispatcher-jvm-3.3.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

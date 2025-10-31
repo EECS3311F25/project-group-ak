@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.typesafe:config:1.4.4" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.typesafe" artifactId="config" version="1.4.4" baseVersion="1.4.4" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.typesafe/config/1.4.4/f19816be89ef80f9106535828ba32fd4cd8e6b77/config-1.4.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.typesafe/config/1.4.4/4784461959b679dd2963ed25d4c8ec70b2a5b55/config-1.4.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

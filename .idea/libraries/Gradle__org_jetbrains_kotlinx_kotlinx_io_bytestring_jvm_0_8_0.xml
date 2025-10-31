@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.kotlinx:kotlinx-io-bytestring-jvm:0.8.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.kotlinx" artifactId="kotlinx-io-bytestring-jvm" version="0.8.0" baseVersion="0.8.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-io-bytestring-jvm/0.8.0/89c5399596250e71f2bba6d2415972a078a525c7/kotlinx-io-bytestring-jvm-0.8.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-io-bytestring-jvm/0.8.0/a61016bb916407c216755a32797d2eda229a7654/kotlinx-io-bytestring-jvm-0.8.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

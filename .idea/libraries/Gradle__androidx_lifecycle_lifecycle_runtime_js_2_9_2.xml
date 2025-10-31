@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.lifecycle:lifecycle-runtime-js:2.9.2" type="kotlin.js" external-system-id="GRADLE">
+    <properties groupId="androidx.lifecycle" artifactId="lifecycle-runtime-js" version="2.9.2" baseVersion="2.9.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-js/2.9.2/bbfbe48ae74be49891c8a4d11cf144ae504532ef/lifecycle-runtime-js-2.9.2.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-runtime-js/2.9.2/30a1a1d62b8af44636fb1eb6cb6a081a89429b11/lifecycle-runtime-js-2.9.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

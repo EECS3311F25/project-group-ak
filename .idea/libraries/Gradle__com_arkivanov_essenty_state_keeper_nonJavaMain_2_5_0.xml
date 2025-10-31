@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.essenty:state-keeper:nonJavaMain:2.5.0" type="kotlin.common" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.essenty" artifactId="state-keeper" version="2.5.0" baseVersion="2.5.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/com.arkivanov.essenty-state-keeper-2.5.0-nonJavaMain-FvVBKg.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/state-keeper/2.5.0/5ecb85b2df6869325d9e79d5c9377cd8eaf3456b/state-keeper-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

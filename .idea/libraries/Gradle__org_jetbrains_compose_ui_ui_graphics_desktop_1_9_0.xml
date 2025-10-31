@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.ui:ui-graphics-desktop:1.9.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.ui" artifactId="ui-graphics-desktop" version="1.9.0" baseVersion="1.9.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-desktop/1.9.0/94e03ee7a8da852f08141b07241de12161a50e37/ui-graphics-desktop-1.9.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-desktop/1.9.0/e6c6ccbbad9a5ef3d85ded482d53cf2b8f33f165/ui-graphics-desktop-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

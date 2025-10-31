@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.essenty:state-keeper-iosarm64:2.5.0" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.essenty" artifactId="state-keeper-iosarm64" version="2.5.0" baseVersion="2.5.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/state-keeper-iosarm64/2.5.0/b48fa4492f764fa60dff913c1f440b277be6a51b/state-keeper-iosArm64Main-2.5.0.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/state-keeper-iosarm64/2.5.0/797f3c851602395337ee5306a050b4fca565ea5b/state-keeper-iosarm64-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.compose.runtime:runtime:unixMain:1.9.0" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="androidx.compose.runtime" artifactId="runtime" version="1.9.0" baseVersion="1.9.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/androidx.compose.runtime-runtime-1.9.0-unixMain-_TGNUg.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime/1.9.0/1cd1f64f89105f173f6951f338babede29aee8b0/runtime-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

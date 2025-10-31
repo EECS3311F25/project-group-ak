@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.essenty:instance-keeper-wasm-js:2.5.0" type="kotlin.wasm.js" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.essenty" artifactId="instance-keeper-wasm-js" version="2.5.0" baseVersion="2.5.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/instance-keeper-wasm-js/2.5.0/83b51eda4ec9078b05d6e6fd811c2fceb81ad2de/instance-keeper-wasm-js-2.5.0.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/instance-keeper-wasm-js/2.5.0/dd03b4592b9be441cd14fa5cf1a4ac036bc47865/instance-keeper-wasm-js-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.essenty:lifecycle:itvosMain:2.5.0" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.essenty" artifactId="lifecycle" version="2.5.0" baseVersion="2.5.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/com.arkivanov.essenty-lifecycle-2.5.0-itvosMain-wiSulQ.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/lifecycle/2.5.0/2db6a2fbce72e7da08b5f0f96d7218abd9b235a1/lifecycle-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

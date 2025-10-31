@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="KotlinProject.composeApp" target="21" />
+      <module name="KotlinProject.composeApp.commonMain" target="21" />
+      <module name="KotlinProject.composeApp.commonTest" target="21" />
+      <module name="KotlinProject.composeApp.jvmDev" target="21" />
+      <module name="KotlinProject.composeApp.jvmMain" target="21" />
+      <module name="KotlinProject.composeApp.jvmTest" target="21" />
+      <module name="KotlinProject.server" target="21" />
+      <module name="KotlinProject.server.main" target="21" />
+      <module name="KotlinProject.server.test" target="21" />
+      <module name="KotlinProject.shared" target="21" />
+      <module name="KotlinProject.shared.commonMain" target="21" />
+      <module name="KotlinProject.shared.commonTest" target="21" />
+      <module name="KotlinProject.shared.jvmMain" target="21" />
+      <module name="KotlinProject.shared.jvmTest" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

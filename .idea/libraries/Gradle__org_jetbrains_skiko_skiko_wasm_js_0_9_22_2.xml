@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.skiko:skiko-wasm-js:0.9.22.2" type="kotlin.wasm.js" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.skiko" artifactId="skiko-wasm-js" version="0.9.22.2" baseVersion="0.9.22.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-wasm-js/0.9.22.2/643ed71053ddb806012892ed1f812f01eae84a57/skiko-wasm-js-0.9.22.2.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.skiko/skiko-wasm-js/0.9.22.2/bb33db8d2b957986c8d3eb30c690d32c1f7b47db/skiko-wasm-js-0.9.22.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

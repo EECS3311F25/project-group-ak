@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.hot-reload:hot-reload-annotations-jvm:1.0.0-beta07" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.hot-reload" artifactId="hot-reload-annotations-jvm" version="1.0.0-beta07" baseVersion="1.0.0-beta07" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.hot-reload/hot-reload-annotations-jvm/1.0.0-beta07/c2333c37629336694842db1b42ed71df4908fcb3/hot-reload-annotations-jvm-1.0.0-beta07.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.hot-reload/hot-reload-annotations-jvm/1.0.0-beta07/fded34e50cb411b2a7193b8892b0e761a71990df/hot-reload-annotations-jvm-1.0.0-beta07-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.lifecycle:lifecycle-viewmodel-savedstate:nativeMain:2.9.2" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="androidx.lifecycle" artifactId="lifecycle-viewmodel-savedstate" version="2.9.2" baseVersion="2.9.2" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/androidx.lifecycle-lifecycle-viewmodel-savedstate-2.9.2-nativeMain-KTe1Gw.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-savedstate/2.9.2/dfa7d82918ad00a6858c8762aa7f366245352058/lifecycle-viewmodel-savedstate-2.9.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

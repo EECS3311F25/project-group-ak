@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.ui:ui-text-js:1.9.0" type="kotlin.js" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.ui" artifactId="ui-text-js" version="1.9.0" baseVersion="1.9.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-text-js/1.9.0/38e0e73e7edc5f992ce3580e48ecfa8d14cabd01/ui-text-js-1.9.0.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-text-js/1.9.0/22d682abb04b53fa5ee2b0306286e67a3cb9b79e/ui-text-js-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

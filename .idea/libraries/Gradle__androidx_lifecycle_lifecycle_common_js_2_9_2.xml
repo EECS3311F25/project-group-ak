@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.lifecycle:lifecycle-common-js:2.9.2" type="kotlin.js" external-system-id="GRADLE">
+    <properties groupId="androidx.lifecycle" artifactId="lifecycle-common-js" version="2.9.2" baseVersion="2.9.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-common-js/2.9.2/2239ba84893dfb33a44f21a10218c50f34ed24b4/lifecycle-common-js-2.9.2.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-common-js/2.9.2/60a381d746128fe48c71fa7c633c5a89fec1bc33/lifecycle-common-js-2.9.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

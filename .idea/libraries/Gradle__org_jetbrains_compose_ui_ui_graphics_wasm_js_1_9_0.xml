@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.ui:ui-graphics-wasm-js:1.9.0" type="kotlin.wasm.js" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.ui" artifactId="ui-graphics-wasm-js" version="1.9.0" baseVersion="1.9.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-wasm-js/1.9.0/2fdce620f6c0bcf3c953b0be7ef6bc58292ef9b5/ui-graphics-wasm-js-1.9.0.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-graphics-wasm-js/1.9.0/7f29113b6b748d6b8962b38ea2ac2606a834a280/ui-graphics-wasm-js-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":composeApp:jvmMain" external.linked.project.path="$MODULE_DIR$/../../../KotlinProject/composeApp" external.root.project.path="$MODULE_DIR$/../../../KotlinProject" external.system.id="GRADLE" external.system.module.group="KotlinProject" external.system.module.type="sourceSet" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet external-system-id="GRADLE" type="kotlin-language" name="Kotlin">
+      <configuration version="5" platform="JVM 21" allPlatforms="JVM [21]" useProjectSettings="false" isTestModule="false" externalProjectId=":composeApp" isHmppProject="true">
+        <dependsOnModuleNames>:composeApp:commonMain</dependsOnModuleNames>
+        <sourceSets>
+          <sourceSet>KotlinProject.composeApp.commonMain</sourceSet>
+        </sourceSets>
+        <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
+        <compilerSettings />
+        <compilerArguments>
+          <flagArguments>
+            <flagArg name="allowNoSourceFiles" arg="true" />
+            <flagArg name="noReflect" arg="true" />
+            <flagArg name="noStdlib" arg="true" />
+            <flagArg name="multiPlatform" arg="true" />
+          </flagArguments>
+          <stringArguments>
+            <stringArg name="destination" arg="$MODULE_DIR$/../../../KotlinProject/composeApp/build/classes/kotlin/jvm/main" />
+            <stringArg name="jvmTarget" arg="21" />
+            <stringArg name="moduleName" arg="composeApp" />
+            <stringArg name="apiVersion" arg="2.2" />
+            <stringArg name="languageVersion" arg="2.2" />
+          </stringArguments>
+          <arrayArguments>
+            <arrayArg name="fragmentRefines">
+              <args>jvmMain:commonMain</args>
+            </arrayArg>
+            <arrayArg name="fragments">
+              <args>
+                <arg>jvmMain</arg>
+                <arg>commonMain</arg>
+              </args>
+            </arrayArg>
+            <arrayArg name="pluginClasspaths">
+              <args>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.2.20/f5b07e89472c5b23e5041934ba72d2043dc41713/kotlin-compose-compiler-plugin-embeddable-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-scripting-jvm/2.2.20/785d5ffea49d9dc289b200d0ff3e0ce6e9ba2395/kotlin-scripting-jvm-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-scripting-common/2.2.20/79e0c2cc15b84711ac1de87e6a257acd151cb999/kotlin-scripting-common-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.2.20/5380b19fa1924399b62ce3a1faffebb2b4f82272/kotlin-stdlib-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-script-runtime/2.2.20/4c679cbeac0bb583b75c3a080013da8eaf240807/kotlin-script-runtime-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar</arg>
+                <arg>$USER_HOME$/Library/Caches/JetBrains/IntelliJIdea2024.3/kotlin-dist-for-ide/2.2.20/lib/kotlinx-serialization-compiler-plugin.jar</arg>
+              </args>
+            </arrayArg>
+            <arrayArg name="pluginOptions">
+              <args>
+                <arg>plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=true</arg>
+                <arg>plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=true</arg>
+              </args>
+            </arrayArg>
+          </arrayArguments>
+        </compilerArguments>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_21">
+    <output url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/build/classes/kotlin/jvm/main" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/build/generated/compose/resourceGenerator/assembledResources/jvmMain">
+      <sourceFolder url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/build/generated/compose/resourceGenerator/assembledResources/jvmMain" type="java-resource" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/build/generated/compose/resourceGenerator/kotlin/jvmMainResourceAccessors" />
+    <content url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/build/generated/compose/resourceGenerator/kotlin/jvmMainResourceCollectors">
+      <sourceFolder url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/build/generated/compose/resourceGenerator/kotlin/jvmMainResourceCollectors" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/src/jvmMain">
+      <sourceFolder url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/src/jvmMain/kotlin" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="23" jdkType="JavaSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="KotlinProject.composeApp.commonMain" />
+    <orderEntry type="module" module-name="KotlinProject.shared.commonMain" />
+    <orderEntry type="module" module-name="KotlinProject.shared.jvmMain" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.material3:material3-desktop:1.8.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.desktop:desktop-jvm:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.material:material-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.material:material-ripple-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.foundation:foundation-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose-desktop:2.9.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose-desktop:2.9.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.animation:animation-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.material:material-icons-extended-desktop:1.7.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.material:material-icons-core-desktop:1.7.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.foundation:foundation-layout-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.ui:ui-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.runtime:runtime-saveable-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.ui:ui-tooling-preview-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.androidx.savedstate:savedstate-compose-desktop:1.3.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.runtime:runtime-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.compose.runtime:runtime-annotation-jvm:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.compose.runtime:runtime-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-runtime-desktop:2.9.2" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-viewmodel-savedstate-desktop:2.9.2" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-viewmodel-desktop:2.9.2" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-common-jvm:2.9.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.animation:animation-core-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.savedstate:savedstate-desktop:1.3.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.components:components-resources-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.components:components-ui-tooling-preview-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.6.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.arkivanov.decompose:decompose-jvm:3.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.arkivanov.essenty:state-keeper-jvm:2.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.arch.core:core-common:2.2.0" level="project" />
+    <orderEntry type="library" name="Gradle: androidx.annotation:annotation-jvm:1.9.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:2.2.20" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains:annotations:23.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.ui:ui-text-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.ui:ui-graphics-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.ui:ui-unit-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.skiko:skiko-awt:0.9.22.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.ui:ui-geometry-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.compose.ui:ui-util-desktop:1.9.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.arkivanov.essenty:lifecycle-jvm:2.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.arkivanov.essenty:instance-keeper-jvm:2.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.arkivanov.essenty:back-handler-jvm:2.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jspecify:jspecify:1.0.0" level="project" />
+  </component>
+</module>

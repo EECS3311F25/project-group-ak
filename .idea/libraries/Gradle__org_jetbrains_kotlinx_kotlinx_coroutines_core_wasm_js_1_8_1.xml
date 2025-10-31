@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core-wasm-js:1.8.1" type="kotlin.wasm.js" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.kotlinx" artifactId="kotlinx-coroutines-core-wasm-js" version="1.8.1" baseVersion="1.8.1" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-wasm-js/1.8.1/6379adf2812bea0a894ee866456b02337c5cf944/kotlinx-coroutines-core-wasm-js-1.8.1.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-wasm-js/1.8.1/b86569c36a243248ebdf4785532f3fd1bc68141d/kotlinx-coroutines-core-wasm-js-1.8.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

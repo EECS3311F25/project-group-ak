@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.compose.runtime:runtime-annotation:commonMain:1.9.0" type="kotlin.common" external-system-id="GRADLE">
+    <properties groupId="androidx.compose.runtime" artifactId="runtime-annotation" version="1.9.0" baseVersion="1.9.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/androidx.compose.runtime-runtime-annotation-1.9.0-commonMain-k_1cjw.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-annotation/1.9.0/47ebad0cc0b59c4817c74a1ed4af6196a1eca64b/runtime-annotation-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

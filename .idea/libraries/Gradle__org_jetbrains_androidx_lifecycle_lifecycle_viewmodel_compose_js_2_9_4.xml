@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose-js:2.9.4" type="kotlin.js" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.androidx.lifecycle" artifactId="lifecycle-viewmodel-compose-js" version="2.9.4" baseVersion="2.9.4" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.lifecycle/lifecycle-viewmodel-compose-js/2.9.4/9a970c3e7907bed242d1f017a0a58ff542b1088d/lifecycle-viewmodel-compose-js-2.9.4.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.lifecycle/lifecycle-viewmodel-compose-js/2.9.4/4422db9f95d9cd4c0dd3043136daa815b84a5bb7/lifecycle-viewmodel-compose-js-2.9.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.ui:ui-geometry-wasm-js:1.9.0" type="kotlin.wasm.js" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.ui" artifactId="ui-geometry-wasm-js" version="1.9.0" baseVersion="1.9.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-geometry-wasm-js/1.9.0/d37db3d1341253de2d553890793a723d8fa79ad8/ui-geometry-wasm-js-1.9.0.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.ui/ui-geometry-wasm-js/1.9.0/d899607f8e22d9157de20bbea84b2a25956ddeb2/ui-geometry-wasm-js-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
