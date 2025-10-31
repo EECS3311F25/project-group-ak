@@ -12,6 +12,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import org.example.project.controller.RootComponent
 import org.example.project.view.TripView.TripView
+import org.example.project.view.HomeView.HomeView
 import org.example.project.view.AddTripView.AddTripView
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlinx.datetime.LocalDate
@@ -85,6 +86,7 @@ fun App(root: RootComponent) {
             when (val instance = child.instance) {
                 is RootComponent.Child.TripView -> TripView(instance.component, trip)
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)
+                is RootComponent.Child.HomeView -> HomeView(instance.component)
             }
         }
     }

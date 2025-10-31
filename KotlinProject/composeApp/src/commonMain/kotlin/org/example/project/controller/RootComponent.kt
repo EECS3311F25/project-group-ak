@@ -15,7 +15,7 @@ class RootComponent(
     val childStack = childStack(
         source = navigation,
         serializer = Configuration.serializer(),
-        initialConfiguration = Configuration.TripView,
+        initialConfiguration = Configuration.HomeView,
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -37,20 +37,28 @@ class RootComponent(
                     onGoBack = { navigation.pop() }
                 )
             )
+            is Configuration.HomeView -> Child.HomeView(
+                HomeViewComponent(
+                    componentContext = context,
+                    onNavigateToTripView = { navigation.pushNew(Configuration.TripView) }
+                )
+            )
         }
     }
 
     sealed class Child {
         data class TripView(val component: TripViewComponent) : Child()
         data class AddTripView(val component: AddTripViewComponent) : Child()
+        data class HomeView(val component: HomeViewComponent) : Child()
     }
 
     @Serializable
     sealed class Configuration {
-
         @Serializable
         data object TripView: Configuration()
         @Serializable
         data object AddTripView : Configuration()
+        @Serializable
+        data object HomeView : Configuration()
     }
 }
