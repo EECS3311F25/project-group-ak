@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.components:components-ui-tooling-preview-iosArm64:1.9.0" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.components" artifactId="components-ui-tooling-preview-iosArm64" version="1.9.0" baseVersion="1.9.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.components/components-ui-tooling-preview-iosArm64/1.9.0/67f103445d6fe50eec8bf347e2cfc03060496bb7/library-iosArm64Main-1.9.0.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.components/components-ui-tooling-preview-iosArm64/1.9.0/a205e8b894ab150d6c9516418eb70ec8aef2cb75/library-iosarm64-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

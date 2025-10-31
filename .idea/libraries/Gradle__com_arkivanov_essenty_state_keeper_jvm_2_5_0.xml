@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.essenty:state-keeper-jvm:2.5.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.essenty" artifactId="state-keeper-jvm" version="2.5.0" baseVersion="2.5.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/state-keeper-jvm/2.5.0/eaf9f3f6332a4e18c789048404cf835b16acd053/state-keeper-jvm-2.5.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/state-keeper-jvm/2.5.0/f65e28ef27960487bf793b211567d8751dbd2a73/state-keeper-jvm-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

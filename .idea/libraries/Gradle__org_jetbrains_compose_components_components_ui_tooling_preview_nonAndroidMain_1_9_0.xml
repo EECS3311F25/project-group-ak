@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.components:components-ui-tooling-preview:nonAndroidMain:1.9.0" type="kotlin.common" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.components" artifactId="components-ui-tooling-preview" version="1.9.0" baseVersion="1.9.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/org.jetbrains.compose.components-components-ui-tooling-preview-1.9.0-nonAndroidMain-YpxcCA.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.components/components-ui-tooling-preview/1.9.0/a205e8b894ab150d6c9516418eb70ec8aef2cb75/components-ui-tooling-preview-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

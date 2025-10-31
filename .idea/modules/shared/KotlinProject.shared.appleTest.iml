@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":shared:appleTest" external.linked.project.path="$MODULE_DIR$/../../../KotlinProject/shared" external.root.project.path="$MODULE_DIR$/../../../KotlinProject" external.system.id="GRADLE" external.system.module.group="KotlinProject" external.system.module.type="sourceSet" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet external-system-id="GRADLE" type="kotlin-language" name="Kotlin">
+      <configuration version="5" platform="Common (experimental) " allPlatforms="Native []/Native [ios_arm64]/Native [ios_simulator_arm64]" useProjectSettings="false" isTestModule="true" externalProjectId=":shared" isHmppProject="true">
+        <dependsOnModuleNames>
+          <dependsOn>:shared:nativeTest</dependsOn>
+          <dependsOn>:shared:commonTest</dependsOn>
+        </dependsOnModuleNames>
+        <additionalVisibleModuleNames>
+          <friend>:shared:iosMain</friend>
+          <friend>:shared:appleMain</friend>
+          <friend>:shared:nativeMain</friend>
+          <friend>:shared:commonMain</friend>
+        </additionalVisibleModuleNames>
+        <newMppModelJpsModuleKind>SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
+        <externalSystemTestTasks>
+          <externalSystemTestTask>iosSimulatorArm64Test|:shared|iosSimulatorArm64|native</externalSystemTestTask>
+        </externalSystemTestTasks>
+        <compilerSettings />
+        <compilerArguments>
+          <flagArguments>
+            <flagArg name="multiPlatform" arg="true" />
+          </flagArguments>
+          <stringArguments>
+            <stringArg name="apiVersion" arg="2.2" />
+            <stringArg name="languageVersion" arg="2.2" />
+          </stringArguments>
+          <arrayArguments>
+            <arrayArg name="pluginClasspaths">
+              <args>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-scripting-jvm/2.2.20/785d5ffea49d9dc289b200d0ff3e0ce6e9ba2395/kotlin-scripting-jvm-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-scripting-common/2.2.20/79e0c2cc15b84711ac1de87e6a257acd151cb999/kotlin-scripting-common-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.2.20/5380b19fa1924399b62ce3a1faffebb2b4f82272/kotlin-stdlib-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-script-runtime/2.2.20/4c679cbeac0bb583b75c3a080013da8eaf240807/kotlin-script-runtime-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar</arg>
+              </args>
+            </arrayArg>
+            <arrayArg name="pluginOptions" />
+          </arrayArguments>
+        </compilerArguments>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../KotlinProject/shared/src/appleTest" />
+    <orderEntry type="jdk" jdkName="Kotlin SDK" jdkType="KotlinSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="KotlinProject.shared.nativeTest" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.shared.commonTest" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.shared.iosMain" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.shared.appleMain" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.shared.nativeMain" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.shared.commonMain" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: stdlib" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreFoundation | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Network | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: QuartzCore | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MLCompute | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SafetyKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Security | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CloudKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: VideoSubscriberAccount | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: LockedCameraCapture | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: OpenGLES3 | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Accessibility | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: GameKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AVFoundation | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CFNetwork | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: WebKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Metal | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreMotion | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: iconv | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Messages | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: LocalAuthenticationEmbeddedUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: OpenGLES2 | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MediaToolbox | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ThreadNetwork | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SensitiveContentAnalysis | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: posix | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreHaptics | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ExtensionFoundation | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: UniformTypeIdentifiers | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AppTrackingTransparency | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: EventKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: PHASE | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreAudio | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: StoreKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ContactsUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MultipeerConnectivity | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SafariServices | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MetricKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AddressBook | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: _CoreData_CloudKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SpriteKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreAudioKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreText | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Twitter | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: LocalAuthentication | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AutomaticAssessmentConfiguration | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreGraphics | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreData | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SceneKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: OpenGLESCommon | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ShazamKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ReplayKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: DataDetection | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SoundAnalysis | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Cinematic | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: QuickLookThumbnailing | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreMedia | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: BackgroundAssets | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: iAd | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: GameController | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ClockKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreSpotlight | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: zlib | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CFCGTypes | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: PDFKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: UIKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: FileProviderUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MetalPerformanceShaders | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CarPlay | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Matter | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AppClip | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Contacts | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: OpenAL | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: GameplayKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CommonCrypto | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: PassKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AudioToolbox | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: GLKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MediaAccessibility | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Vision | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MetalPerformanceShadersGraph | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: HomeKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreServices | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Speech | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ExposureNotification | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: BackgroundTasks | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreAudioTypes | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SharedWithYou | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CallKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MediaSetup | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreML | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AVRouting | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AdSupport | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AVKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: BrowserEngineCore | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ModelIO | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Social | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: HealthKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: NaturalLanguage | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CryptoTokenKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MapKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreLocationUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Intents | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: IOSurface | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MessageUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AssetsLibrary | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: EventKitUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: NetworkExtension | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AuthenticationServices | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ARKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: UserNotificationsUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: UserNotifications | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ClassKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Accounts | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: BusinessChat | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AddressBookUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: VideoToolbox | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: PushKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AccessorySetupKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Accelerate | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ImageCaptureCore | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: EAGL | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: DeviceCheck | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: builtin | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreMIDI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AVFAudio | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreVideo | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: IntentsUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: WatchConnectivity | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: DeviceDiscoveryExtension | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: darwin | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: PencilKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MobileCoreServices | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreLocation | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: objc | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: IdentityLookupUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreTelephony | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: NotificationCenter | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: FileProvider | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: PushToTalk | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ExtensionKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ImageIO | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: GSS | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: LinkPresentation | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ExternalAccessory | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: AdServices | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SensorKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Foundation | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: IdentityLookup | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SystemConfiguration | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Photos | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreImage | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: OpenGLES | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: NearbyInteraction | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreFoundationBase | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ColorSync | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: JavaScriptCore | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreBluetooth | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: Symbols | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MetalFX | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: HealthKitUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: PhotosUI | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: QuickLook | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: SharedWithYouCore | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: CoreNFC | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MediaPlayer | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: BrowserEngineKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: MetalKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: ScreenTime | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Kotlin/Native: VisionKit | [(ios_arm64, ios_simulator_arm64)]" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlin:kotlin-test:annotationsCommonMain:2.2.20" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlin:kotlin-test:assertionsCommonMain:2.2.20" level="project" />
+  </component>
+  <component name="TestModuleProperties" production-module="KotlinProject.shared.appleMain" />
+</module>

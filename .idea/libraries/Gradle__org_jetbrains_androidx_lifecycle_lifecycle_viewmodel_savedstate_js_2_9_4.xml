@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate-js:2.9.4" type="kotlin.js" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.androidx.lifecycle" artifactId="lifecycle-viewmodel-savedstate-js" version="2.9.4" baseVersion="2.9.4" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.lifecycle/lifecycle-viewmodel-savedstate-js/2.9.4/a147d430b2c51b8fbfc38a1828ebbfb15a68b544/lifecycle-viewmodel-savedstate-js-2.9.4.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.androidx.lifecycle/lifecycle-viewmodel-savedstate-js/2.9.4/b557946ae7e4f6be395dca186f61b64f4766ce6a/lifecycle-viewmodel-savedstate-js-2.9.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

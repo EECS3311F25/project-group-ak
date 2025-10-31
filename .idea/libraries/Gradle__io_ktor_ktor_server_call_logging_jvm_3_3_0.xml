@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: io.ktor:ktor-server-call-logging-jvm:3.3.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="io.ktor" artifactId="ktor-server-call-logging-jvm" version="3.3.0" baseVersion="3.3.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-server-call-logging-jvm/3.3.0/8e0dbe304cd6b3368cd0d9f8fc0093bfff395e9c/ktor-server-call-logging-jvm-3.3.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-server-call-logging-jvm/3.3.0/4aaa2eac96dc2b1fc0406e62fa544fb9d63960d8/ktor-server-call-logging-jvm-3.3.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

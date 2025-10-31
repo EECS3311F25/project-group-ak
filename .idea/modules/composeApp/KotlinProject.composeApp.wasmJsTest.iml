@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":composeApp:wasmJsTest" external.linked.project.path="$MODULE_DIR$/../../../KotlinProject/composeApp" external.root.project.path="$MODULE_DIR$/../../../KotlinProject" external.system.id="GRADLE" external.system.module.group="KotlinProject" external.system.module.type="sourceSet" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet external-system-id="GRADLE" type="kotlin-language" name="Kotlin">
+      <configuration version="5" platform="Wasm" allPlatforms="wasm-js [JS]" useProjectSettings="false" isTestModule="true" externalProjectId=":composeApp" isHmppProject="true">
+        <dependsOnModuleNames>
+          <dependsOn>:composeApp:webTest</dependsOn>
+          <dependsOn>:composeApp:commonTest</dependsOn>
+        </dependsOnModuleNames>
+        <additionalVisibleModuleNames>
+          <friend>:composeApp:wasmJsMain</friend>
+          <friend>:composeApp:webMain</friend>
+          <friend>:composeApp:commonMain</friend>
+        </additionalVisibleModuleNames>
+        <sourceSets>
+          <sourceSet>KotlinProject.composeApp.webTest</sourceSet>
+          <sourceSet>KotlinProject.composeApp.commonTest</sourceSet>
+        </sourceSets>
+        <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
+        <externalSystemTestTasks>
+          <externalSystemTestTask>wasmJsBrowserTest|:composeApp|wasmJs|wasm</externalSystemTestTask>
+        </externalSystemTestTasks>
+        <compilerSettings>
+          <option name="additionalArguments" value="-Xir-module-name=KotlinProject:composeApp_test -Xir-per-module-output-name=KotlinProject-composeApp-test -Xir-produce-klib-dir -main call -Xwasm -Xwasm-target=wasm-js" />
+        </compilerSettings>
+        <compilerArguments>
+          <flagArguments>
+            <flagArg name="sourceMap" arg="true" />
+            <flagArg name="multiPlatform" arg="true" />
+          </flagArguments>
+          <stringArguments>
+            <stringArg name="moduleName" arg="composeApp_test" />
+            <stringArg name="outputDir" arg="$MODULE_DIR$/../../../KotlinProject/composeApp/build/classes/kotlin/wasmJs/test" />
+            <stringArg name="sourceMapEmbedSources" arg="never" />
+            <stringArg name="target" arg="es5" />
+            <stringArg name="apiVersion" arg="2.2" />
+            <stringArg name="languageVersion" arg="2.2" />
+          </stringArguments>
+          <arrayArguments>
+            <arrayArg name="fragmentRefines">
+              <args>
+                <arg>wasmJsTest:webTest</arg>
+                <arg>webTest:commonTest</arg>
+              </args>
+            </arrayArg>
+            <arrayArg name="fragments">
+              <args>
+                <arg>wasmJsTest</arg>
+                <arg>webTest</arg>
+                <arg>commonTest</arg>
+              </args>
+            </arrayArg>
+            <arrayArg name="pluginClasspaths">
+              <args>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compose-compiler-plugin-embeddable/2.2.20/f5b07e89472c5b23e5041934ba72d2043dc41713/kotlin-compose-compiler-plugin-embeddable-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-scripting-jvm/2.2.20/785d5ffea49d9dc289b200d0ff3e0ce6e9ba2395/kotlin-scripting-jvm-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-scripting-common/2.2.20/79e0c2cc15b84711ac1de87e6a257acd151cb999/kotlin-scripting-common-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.2.20/5380b19fa1924399b62ce3a1faffebb2b4f82272/kotlin-stdlib-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-script-runtime/2.2.20/4c679cbeac0bb583b75c3a080013da8eaf240807/kotlin-script-runtime-2.2.20.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar</arg>
+                <arg>$USER_HOME$/Library/Caches/JetBrains/IntelliJIdea2024.3/kotlin-dist-for-ide/2.2.20/lib/kotlinx-serialization-compiler-plugin.jar</arg>
+              </args>
+            </arrayArg>
+            <arrayArg name="pluginOptions">
+              <args>
+                <arg>plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=true</arg>
+                <arg>plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=true</arg>
+              </args>
+            </arrayArg>
+          </arrayArguments>
+        </compilerArguments>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager">
+    <output-test url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/build/classes/kotlin/wasmJs/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/build/generated/compose/resourceGenerator/assembledResources/wasmJsTest" />
+    <content url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/build/generated/compose/resourceGenerator/kotlin/wasmJsTestResourceAccessors" />
+    <content url="file://$MODULE_DIR$/../../../KotlinProject/composeApp/src/wasmJsTest" />
+    <orderEntry type="jdk" jdkName="Kotlin SDK" jdkType="KotlinSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="KotlinProject.composeApp.webTest" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.composeApp.commonTest" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.composeApp.wasmJsMain" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.composeApp.webMain" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.composeApp.commonMain" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.shared.webMain" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.shared.commonMain" scope="TEST" />
+    <orderEntry type="module" module-name="KotlinProject.shared.wasmJsMain" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.components:components-resources-wasmJs:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.components:components-ui-tooling-preview-wasmJs:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlinx:kotlinx-datetime-wasm-js:0.6.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-json-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlin:kotlin-test-wasm-js:2.2.20" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.material3:material3-wasm-js:1.8.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.material:material-ripple-wasm-js:1.8.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.foundation:foundation-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose-wasm-js:2.9.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.animation:animation-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.material:material-icons-extended-wasm-js:1.7.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.material:material-icons-core-wasm-js:1.7.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.foundation:foundation-layout-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.ui:ui-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlinx:kotlinx-browser-wasm-js:0.3.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose-wasm-js:2.9.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.annotation-internal:annotation-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-common-wasm-js:2.9.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-wasm-js:2.9.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate-wasm-js:2.9.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.androidx.lifecycle:lifecycle-runtime-wasm-js:2.9.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.lifecycle:lifecycle-runtime-wasm-js:2.9.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.lifecycle:lifecycle-viewmodel-savedstate-wasm-js:2.9.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.lifecycle:lifecycle-viewmodel-wasm-js:2.9.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.lifecycle:lifecycle-common-wasm-js:2.9.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.runtime:runtime-saveable-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.androidx.savedstate:savedstate-compose-wasm-js:1.3.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.androidx.savedstate:savedstate-wasm-js:1.3.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.savedstate:savedstate-wasm-js:1.3.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.annotation:annotation-wasm-js:1.9.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.arkivanov.decompose:decompose-wasm-js:3.4.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.arkivanov.essenty:state-keeper-wasm-js:2.5.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-core-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.runtime:runtime-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.compose.runtime:runtime-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: androidx.compose.runtime:runtime-annotation-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.animation:animation-core-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core-wasm-js:1.8.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlinx:atomicfu-wasm-js:0.23.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-wasm-js:2.2.20" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.ui:ui-text-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.ui:ui-graphics-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.ui:ui-unit-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.skiko:skiko-wasm-js:0.9.22.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.ui:ui-geometry-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.jetbrains.compose.ui:ui-util-wasm-js:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.arkivanov.essenty:lifecycle-wasm-js:2.5.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.arkivanov.essenty:instance-keeper-wasm-js:2.5.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.arkivanov.essenty:back-handler-wasm-js:2.5.0" level="project" />
+  </component>
+  <component name="TestModuleProperties" production-module="KotlinProject.composeApp.wasmJsMain" />
+</module>

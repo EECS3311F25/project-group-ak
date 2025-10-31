@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.essenty:utils-internal:commonMain:2.5.0" type="kotlin.common" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.essenty" artifactId="utils-internal" version="2.5.0" baseVersion="2.5.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/com.arkivanov.essenty-utils-internal-2.5.0-commonMain-HfdeKQ.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/utils-internal/2.5.0/a59efecddc7a52d6502e5de629a4a97d0b4fb799/utils-internal-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

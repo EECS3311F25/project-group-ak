@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.decompose:decompose-wasm-js:3.4.0" type="kotlin.wasm.js" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.decompose" artifactId="decompose-wasm-js" version="3.4.0" baseVersion="3.4.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.decompose/decompose-wasm-js/3.4.0/ccf3f34770b9360b52e3f1a9bb5e16f4bd833da8/decompose-wasm-js-3.4.0.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.decompose/decompose-wasm-js/3.4.0/2c44d546810b58d46cdc0f7611a90b4a540229ea/decompose-wasm-js-3.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

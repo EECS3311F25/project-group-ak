@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.decompose:decompose-jvm:3.4.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.decompose" artifactId="decompose-jvm" version="3.4.0" baseVersion="3.4.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.decompose/decompose-jvm/3.4.0/5402473c0bb8b5f43db7c1650f92e76d8f7ccb1a/decompose-jvm-3.4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.decompose/decompose-jvm/3.4.0/d2da5ed2bf82d9dd03b4f8be515d6f698d6c4a65/decompose-jvm-3.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

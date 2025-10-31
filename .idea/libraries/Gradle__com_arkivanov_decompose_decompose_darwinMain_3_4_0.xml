@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.decompose:decompose:darwinMain:3.4.0" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.decompose" artifactId="decompose" version="3.4.0" baseVersion="3.4.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/com.arkivanov.decompose-decompose-3.4.0-darwinMain-1Lz1zA.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.decompose/decompose/3.4.0/86616571d8e7f51ba65a866b23ad1f9cdbf55660/decompose-3.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

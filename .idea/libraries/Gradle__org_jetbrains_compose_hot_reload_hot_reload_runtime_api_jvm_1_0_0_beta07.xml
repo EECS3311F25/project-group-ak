@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.hot-reload:hot-reload-runtime-api-jvm:1.0.0-beta07" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.hot-reload" artifactId="hot-reload-runtime-api-jvm" version="1.0.0-beta07" baseVersion="1.0.0-beta07" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.hot-reload/hot-reload-runtime-api-jvm/1.0.0-beta07/b4c35542b0fe4f3743939f0e7a19739df369fa2e/hot-reload-runtime-api-jvm-1.0.0-beta07.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.hot-reload/hot-reload-runtime-api-jvm/1.0.0-beta07/df69d8b61936a45ea40961bb9d043fc7eb9dc60b/hot-reload-runtime-api-jvm-1.0.0-beta07-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

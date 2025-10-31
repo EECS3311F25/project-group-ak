@@ -46,6 +46,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.decompose)
+            implementation(libs.decompose.extensions.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -60,7 +61,7 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(projects.shared)
             implementation(libs.decompose)
-//            implementation(libs.decompose.jetbrains)
+            implementation(libs.decompose.extensions.compose)
             implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.arkivanov.essenty:lifecycle-jvm:2.5.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.arkivanov.essenty" artifactId="lifecycle-jvm" version="2.5.0" baseVersion="2.5.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/lifecycle-jvm/2.5.0/e7f8d447d815a68dd18d4f2b3b046e1bae52fd84/lifecycle-jvm-2.5.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.arkivanov.essenty/lifecycle-jvm/2.5.0/ffdb3af1a0884861e97eff70658663cb0bb798bd/lifecycle-jvm-2.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

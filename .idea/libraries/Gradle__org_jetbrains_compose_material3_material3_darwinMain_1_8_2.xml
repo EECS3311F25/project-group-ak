@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jetbrains.compose.material3:material3:darwinMain:1.8.2" type="kotlin.native" external-system-id="GRADLE">
+    <properties groupId="org.jetbrains.compose.material3" artifactId="material3" version="1.8.2" baseVersion="1.8.2" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/KotlinProject/.kotlin/metadata/kotlinTransformedMetadataLibraries/org.jetbrains.compose.material3-material3-1.8.2-darwinMain-CDhqMA.klib!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.compose.material3/material3/1.8.2/5c01e72d0781c7d42bc24a23e227701f324b0b22/material3-1.8.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
