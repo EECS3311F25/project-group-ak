@@ -16,4 +16,65 @@ captures
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
+
+# Ignore all Gradle-related files and directories everywhere
+.gradle/
+**/.gradle/
+**/gradle/
+gradle/
+.gradle-local/
+.gradle-cache/
+
+# Allow tracking of Gradle version catalog files (the "libs" catalog)
+# (this ensures gradle/libs.versions.toml and any libs.versions.toml are NOT ignored)
+!gradle/libs.versions.toml
+!**/libs.versions.toml
+
+# Note: gradlew and gradle wrapper files are NOT ignored here so they can be tracked in the repo.
+
+# General build outputs (module build dirs)
+**/build/
+build/
+
+# Kotlin Multiplatform / Kotlin Native
+.konan/
+*.klib
+*.kexe
+*.kclass
+**/cinterop/
+**/generated/
+
+# Android / Java artifacts
+*.iml
+.idea/
+local.properties
+.externalNativeBuild/
+captures/
+*.class
+*.jar
+
+# Node/JS (if present)
 node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+.pnp.cjs
+.pnpm-debug.log
+
+# Xcode / Apple targets (if present)
+*.xcworkspace
+*.xcodeproj
+xcuserdata/
+DerivedData/
+
+# Editors / OS files
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs / temp
+*.log
+tmp/
+temp/
