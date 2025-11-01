@@ -63,6 +63,11 @@ kotlin {
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
             implementation(libs.kotlinx.serialization.json)
+
+            //  KMPAuth dependencies
+            implementation("io.github.mirzemehdi:kmpauth-google:<version>")     //  Google One Tap Sign-In
+            implementation("io.github.mirzemehdi:kmpauth-firebase:<version>")   //  Integrated Authentications with Firebase
+            implementation("io.github.mirzemehdi:kmpauth-uihelper:<version>")   //  UiHelper SignIn buttons (AppleSignIn, GoogleSignInButton)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
