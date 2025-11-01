@@ -1,14 +1,23 @@
 package org.example.project.view.HomeView
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.example.project.controller.HomeViewComponent
 import org.example.project.controller.HomeViewEvent
@@ -17,6 +26,9 @@ import org.example.project.model.Duration
 import org.example.project.model.Event
 import org.example.project.model.User
 import kotlinx.datetime.LocalDate
+import org.example.project.model.SECONDARY
+import org.example.project.model.BACKGROUND
+import org.example.project.model.PRIMARY
 
 // TODO: Fetch from API
 val trip = Trip(
@@ -79,13 +91,34 @@ fun HomeView(component: HomeViewComponent) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
         ) {
-            Button(onClick = { component.onEvent(HomeViewEvent.ClickButtonHomeView(trip)) }) {
-                Text("Go to Trip")
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .background(PRIMARY)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(160.dp)
+                        .align(Alignment.Center)
+                        .clip(CircleShape)
+                        .background(BACKGROUND)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = "Profile icon",
+                        tint = SECONDARY,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(32.dp)
+                    )
+                }
             }
+        }
+        Button(onClick = { component.onEvent(HomeViewEvent.ClickButtonHomeView(trip)) }) {
+            Text("Go to Trip")
+            
         }
     }
 }
-
