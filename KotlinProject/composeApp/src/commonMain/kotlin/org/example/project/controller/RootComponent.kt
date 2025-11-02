@@ -16,7 +16,7 @@ class RootComponent(
     val childStack = childStack(
         source = navigation,
         serializer = Configuration.serializer(),
-        initialConfiguration = Configuration.HomeView,
+        initialConfiguration = Configuration.LoginView, // changed the configuration from TripView to LoginView
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -26,6 +26,22 @@ class RootComponent(
         context: ComponentContext
     ) : Child {
         return when(config) {
+            is Configuration.LoginView -> Child.LoginView(
+                LoginViewComponent(
+                    componentContext = context,
+                    onNavigateToTripView = {navigation.pushNew(Configuration.HomeView)},
+                    onNavigateToSignup = {navigation.pushNew(Configuration.SignupView)}
+                )
+            )
+
+            is Configuration.SignupView -> Child.SignupView(
+                SignupViewComponent(
+                    componentContext = context,
+                    onNavigateToTripView = {navigation.pushNew(Configuration.HomeView)},
+                    onNavigateToLogin = {navigation.pop()}
+
+                )
+            )
             is Configuration.TripView -> Child.TripView(
                 TripViewComponent(
                     componentContext = context,
@@ -52,6 +68,8 @@ class RootComponent(
         data class TripView(val component: TripViewComponent, val trip: Trip) : Child()
         data class AddTripView(val component: AddTripViewComponent) : Child()
         data class HomeView(val component: HomeViewComponent) : Child()
+        data class LoginView(val component : LoginViewComponent) : Child()
+        data class SignupView(val component : SignupViewComponent) : Child()
     }
 
     @Serializable
@@ -60,6 +78,10 @@ class RootComponent(
         data class TripView(val trip: Trip): Configuration()
         @Serializable
         data object AddTripView : Configuration()
+        @Serializable
+        data object LoginView : Configuration()
+        @Serializable
+        data object SignupView : Configuration()
         @Serializable
         data object HomeView : Configuration()
     }
