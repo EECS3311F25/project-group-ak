@@ -51,7 +51,9 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
+            implementation(compose.material)
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.ui)
             implementation(compose.materialIconsExtended)
             implementation(compose.components.resources)
@@ -63,11 +65,6 @@ kotlin {
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
             implementation(libs.kotlinx.serialization.json)
-
-            //  KMPAuth dependencies
-            implementation("io.github.mirzemehdi:kmpauth-google:<version>")     //  Google One Tap Sign-In
-            implementation("io.github.mirzemehdi:kmpauth-firebase:<version>")   //  Integrated Authentications with Firebase
-            implementation("io.github.mirzemehdi:kmpauth-uihelper:<version>")   //  UiHelper SignIn buttons (AppleSignIn, GoogleSignInButton)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

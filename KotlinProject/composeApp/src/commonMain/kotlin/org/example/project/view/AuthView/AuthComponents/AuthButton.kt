@@ -8,8 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.plcoding.bookpedia.core.presentation.DarkBlue
-import com.plcoding.bookpedia.core.presentation.SandYellow
+import org.example.project.model.SECONDARY
+import org.example.project.model.PRIMARY
 
 @Composable
 fun AuthButton(
@@ -25,8 +25,8 @@ fun AuthButton(
             .height(50.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = SandYellow,
-            contentColor = DarkBlue
+            containerColor = SECONDARY,
+            contentColor = PRIMARY
         )
     ) {
         Text(text)

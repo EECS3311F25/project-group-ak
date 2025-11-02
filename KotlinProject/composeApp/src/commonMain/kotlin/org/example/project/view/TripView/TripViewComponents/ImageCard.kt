@@ -12,10 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import com.plcoding.bookpedia.core.presentation.DarkBlue
+import org.example.project.model.PRIMARY
 
 @Composable
-fun ImageCard(painter: Painter = ColorPainter(DarkBlue), modifier: Modifier, content: @Composable () -> Unit = {}) {
+fun ImageCard(painter: Painter = ColorPainter(PRIMARY), modifier: Modifier, content: @Composable () -> Unit = {}) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.BottomStart,

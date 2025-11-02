@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import org.example.project.controller.TripViewComponent
 import org.example.project.controller.TripViewEvent
 import org.example.project.model.Trip
-import com.plcoding.bookpedia.core.presentation.DarkBlue
-import com.plcoding.bookpedia.core.presentation.SandYellow
+import org.example.project.model.PRIMARY
+import org.example.project.model.SECONDARY
 import org.example.project.view.EventsSection
 import org.example.project.view.Header
 import org.example.project.view.ListMembersSection
@@ -58,8 +58,8 @@ fun TripView(
     ) {
         FloatingActionButton(
             onClick = {component.onEvent(TripViewEvent.ClickButtonTripView)},
-            containerColor = SandYellow,
-            contentColor = DarkBlue
+            containerColor = SECONDARY,
+            contentColor = PRIMARY
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,

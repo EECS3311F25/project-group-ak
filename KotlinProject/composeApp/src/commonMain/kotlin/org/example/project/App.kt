@@ -11,21 +11,18 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import org.example.project.controller.RootComponent
-// Trip View
 import org.example.project.view.TripView.TripView
+import org.example.project.view.HomeView.HomeView
 import org.example.project.view.AddTripView.AddTripView
-
-// authentication
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
-
-
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlinx.datetime.LocalDate
 import org.example.project.model.Event
 import org.example.project.model.Trip
 import org.example.project.model.User
 import org.example.project.model.Duration
+
 
 // TODO: Fetch from API
 val trip = Trip(
@@ -81,6 +78,7 @@ val trip = Trip(
     )
 )
 
+
 @Composable
 fun App(root: RootComponent) {
     MaterialTheme {
@@ -94,6 +92,7 @@ fun App(root: RootComponent) {
                 is RootComponent.Child.SignupView -> SignupView(instance.component)
                 is RootComponent.Child.TripView -> TripView(instance.component, trip)
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)
+                is RootComponent.Child.HomeView -> HomeView(instance.component)
             }
         }
     }
