@@ -2,6 +2,11 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+repositories {
+    google()
+    mavenCentral()
+}
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -57,6 +62,13 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
+<<<<<<< Updated upstream
+=======
+            implementation(libs.decompose)
+            implementation(libs.decompose.extensions.compose)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.cio)
+>>>>>>> Stashed changes
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -64,6 +76,9 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.kamel.image)
+            implementation(libs.ktor.client.cio)
+            implementation("ch.qos.logback:logback-classic:1.5.18")  //SLF4J provider error for networkImage
         }
     }
 }
