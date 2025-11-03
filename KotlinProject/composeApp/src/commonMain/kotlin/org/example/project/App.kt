@@ -24,63 +24,6 @@ import org.example.project.model.User
 import org.example.project.model.Duration
 import androidx.compose.runtime.LaunchedEffect //for DEV
 
-
-
-// // TODO: Fetch from API
-// val trip = Trip(
-//     title = "Summer Getaway",
-//     description = "Road trip across Ontario",
-//     location = "Toronto to Ottawa",
-//     duration = Duration(
-//         startDate = LocalDate(2025, 7, 1),
-//         startTime = kotlinx.datetime.LocalTime(9, 0),
-//         endDate = LocalDate(2025, 7, 10),
-//         endTime = kotlinx.datetime.LocalTime(17, 0)
-//     ),
-//     users = listOf(
-//         User(name = "Klodiana"),
-//         User(name = "Alex"),
-//         User(name = "Sam"),
-//         User(name = "Priya"),
-//         User(name = "Diego"),
-//         User(name = "Mei"),
-//         User(name = "Fatima"),
-//         User(name = "John"),
-//         User(name = "Maria"),
-//         User(name = "Chen"),
-//         User(name = "Liam"),
-//         User(name = "Zoe")
-//     ),
-//     events = listOf(
-//         // TODO: add duration
-//         Event(title = "Niagara Falls Stop", Duration(
-//             startDate = LocalDate(2025, 7, 1),
-//             startTime = kotlinx.datetime.LocalTime(9, 0),
-//             endDate = LocalDate(2025, 7, 1),
-//             endTime = kotlinx.datetime.LocalTime(17, 0)
-//         )),
-//         Event(title = "Niagara Boat Tour", Duration(
-//             startDate = LocalDate(2025, 7, 1),
-//             startTime = kotlinx.datetime.LocalTime(9, 0),
-//             endDate = LocalDate(2025, 7, 1),
-//             endTime = kotlinx.datetime.LocalTime(17, 0)
-//         )),
-//         Event(title = "Table Rock Lunch", Duration(
-//             startDate = LocalDate(2025, 7, 1),
-//             startTime = kotlinx.datetime.LocalTime(9, 0),
-//             endDate = LocalDate(2025, 7, 1),
-//             endTime = kotlinx.datetime.LocalTime(17, 0)
-//         )),
-//         Event(title = "Ottawa Parliament Tour", Duration(
-//             startDate = LocalDate(2025, 7, 1),
-//             startTime = kotlinx.datetime.LocalTime(9, 0),
-//             endDate = LocalDate(2025, 7, 1),
-//             endTime = kotlinx.datetime.LocalTime(17, 0)
-//         ))
-//     )
-// )
-
-
 @Composable
 fun App(root: RootComponent) {
     MaterialTheme {
@@ -105,11 +48,12 @@ fun App(root: RootComponent) {
 fun App() {
     val root = remember { RootComponent(DefaultComponentContext(LifecycleRegistry())) }
 
-    // Temporary: start the app on HomeView for development.
-    // Remove this block when you want normal startup behavior.
+    // DEV USE Temporary: ================================================
+    // start the app on HomeView for development.
     LaunchedEffect(root) {
         root.navigateToHome()
     }
+    //====================================================================
 
     App(root)
 }
