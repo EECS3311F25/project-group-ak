@@ -1,6 +1,7 @@
 [SR1.md](http://SR1.md)
 
 **New Stories:**
+---
 
 **As any traveller, if I have many Trips I want an easy way to sort them. \[SCRUM-52\]**
 
@@ -19,22 +20,22 @@
 1. Given I am in Trip View, I should be able to alter the trip’s duration.  
 2. I should be able to alter the header image for a trip.
 
-As any traveller, I want to be able to make new trips so that I can start planning. \[SCRUM-55\]
+**As a traveler, I want to create and delete trips so I can plan effectively. \[SCRUM-25\]**
+1. Given I am in the Home View, I can see the add trip button.
+2. Given I tapped the add trip button, I will be prompted to fill out basic information about the trip.
+3. Given I put in valid data, I can create the trip and start adding events.
+   
+1. Given I am in the Home View, I can see the delete trip button.
+2. Given I confirm I wish to delete the trip, it is deleted.
 
-1. Given I am in Home View, I can see the add trip button.  
-2. Given I clicked the add trip button, I will be redirected into a trip creation view.
-
-As any traveller, I want to initialize basic information about my trip when I create them, so I can start planning with some initial information. \[SCRUM-56\]
-
-1. Given I am in the Trip Creation view, I can see fields of information I can fill out.  
-2. Given I tap on those fields, I can type text or add data into them.  
-3. Given I have filled them out, I can save the changes and go to the trip view.
 
 These will be moved to the next sprint:
 
-* Account Creation and Login with Email \[SCRUM\_22\]   
-  * Account Creation and Login with Oauth \[SCRUM\_23\]  
-  * Session Persistence \[SCRUM\_24\]
+**Account Creation and Login with Email \[SCRUM\_22\]   
+Account Creation and Login with Oauth \[SCRUM\_23\]  
+Session Persistence \[SCRUM\_24\]**
+
+---
 
 ● What are practices that you should continue during next sprint
 
