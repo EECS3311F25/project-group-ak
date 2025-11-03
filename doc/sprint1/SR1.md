@@ -38,30 +38,23 @@ Session Persistence \[SCRUM\_24\]**
 ---
 
 ● What are practices that you should continue during next sprint
-
 - Following GitFlow.  
 - Organizing meetings/weekly standups.  
 - Helping each other with their tasks.
 
 ● What are some new practices that you might want to use during next sprint
-
 - More frequent standups  
 - Learning new workflows  
 - Integration of backend to frontend  
 - Use git more effectively
 
 ● What are (if any) harmful practices you should stop using during next sprint
-
 - Waiting too long to start tasks  
 - Messing up commits to GitHub.  
-  
-
 
 ● What was your best/worst experience during sprint 1  
-	\- We felt a sense of achievement after completing all our tasks. Along the way, we learnt   
+- We felt a sense of achievement after completing all our tasks. Along the way, we learnt   
 	about new libraries and their functionalities.  
-	
-
 - Our worst experience was feeling overwhelmed with everything we had to learn.
 
 **Participants**  
