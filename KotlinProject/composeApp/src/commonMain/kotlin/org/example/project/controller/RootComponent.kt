@@ -21,6 +21,12 @@ class RootComponent(
         childFactory = ::createChild
     )
 
+    // Temporary dev helper to navigate to a page =====
+    fun navigateToHome() {
+        navigation.pushNew(Configuration.HomeView)
+    }
+    //===================================================
+
     private fun createChild(
         config: Configuration,
         context: ComponentContext
