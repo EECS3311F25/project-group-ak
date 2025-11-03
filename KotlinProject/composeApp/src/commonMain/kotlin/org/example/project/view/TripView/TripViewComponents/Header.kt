@@ -3,12 +3,16 @@ package org.example.project.view
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,8 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.model.Duration
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.aspectRatio
+import org.example.project.model.PRIMARY
+import org.example.project.model.SECONDARY
 
 @Composable
 /**
@@ -31,11 +35,22 @@ import androidx.compose.foundation.layout.aspectRatio
  * @param startDate Trip start date.
  * @param endDate Trip end date.
  */
-fun Header(tripTitle: String, duration: Duration) {
+fun Header(tripTitle: String, duration: Duration, onShareClick: () -> Unit = {}) {
     // TODO: Fetch image from backend via url then pass it in here as painter param.
     ImageCard(
         modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f),
         content = {
+        SmallFloatingActionButton(
+            onClick = onShareClick,
+            containerColor = SECONDARY,
+            contentColor = PRIMARY,
+            modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Share,
+                contentDescription = "Share trip"
+            )
+        }
         Column(Modifier.padding(16.dp)) {
             Text(
                 text = tripTitle,
@@ -60,6 +75,6 @@ fun Header(tripTitle: String, duration: Duration) {
                 )
             }
         }
-    }
+        }
     )
 }

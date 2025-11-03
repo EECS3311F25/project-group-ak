@@ -3,6 +3,7 @@ package org.example.project.view
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,7 +16,11 @@ import androidx.compose.ui.layout.ContentScale
 import org.example.project.model.PRIMARY
 
 @Composable
-fun ImageCard(painter: Painter = ColorPainter(PRIMARY), modifier: Modifier, content: @Composable () -> Unit = {}) {
+fun ImageCard(
+    painter: Painter = ColorPainter(PRIMARY),
+    modifier: Modifier,
+    content: @Composable BoxScope.() -> Unit = {}
+) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.BottomStart,
