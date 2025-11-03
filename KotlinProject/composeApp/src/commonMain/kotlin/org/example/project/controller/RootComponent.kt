@@ -21,6 +21,12 @@ class RootComponent(
         childFactory = ::createChild
     )
 
+    // Temporary dev helper to navigate to a page =====
+    fun navigateToHome() {
+        navigation.pushNew(Configuration.HomeView)
+    }
+    //===================================================
+
     private fun createChild(
         config: Configuration,
         context: ComponentContext
@@ -45,7 +51,8 @@ class RootComponent(
             is Configuration.TripView -> Child.TripView(
                 TripViewComponent(
                     componentContext = context,
-                    onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView) }
+                    onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView) },
+                    onGoBack = { navigation.pop() }
                 ),
                 config.trip
             )
