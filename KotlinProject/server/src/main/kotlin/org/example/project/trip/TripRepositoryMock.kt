@@ -2,84 +2,39 @@ package org.example.project.trip
 
 object TripRepositoryMock {
 
-
-    private val tripsForKai = listOf(
+    private val trips = listOf(
         Trip(
             id = "1",
-            title = "Summer Getaway",
-            duration = TripDuration(
-                startDate = "2025-07-01",
-                startTime = "09:00",
-                endDate = "2025-07-10",
-                endTime = "17:00"
-            ),
-            description = "Road trip across Ontario",
-            location = "Toronto to Ottawa",
-            users = listOf(
-                TripUser("Klodiana", null),
-                TripUser("Alex", null),
-                TripUser("Sam", null)
-            ),
+            name = "Toronto Fall Trip",
+            owner = "kai",
+            users = listOf("kai", "andrew", "toni"),
             events = listOf(
-                TripEvent(
-                    title = "Niagara Falls Stop",
-                    duration = TripDuration(
-                        startDate = "2025-07-01",
-                        startTime = "09:00",
-                        endDate = "2025-07-01",
-                        endTime = "17:00"
-                    ),
-                    description = "",
-                    location = ""
-                ),
-                TripEvent(
-                    title = "Ottawa Parliament Tour",
-                    duration = TripDuration(
-                        startDate = "2025-07-03",
-                        startTime = "10:00",
-                        endDate = "2025-07-03",
-                        endTime = "12:00"
-                    ),
-                    description = "",
-                    location = ""
+                Event(
+                    id = "e1",
+                    title = "CN Tower",
+                    description = "View deck",
+                    location = Location(43.6426, -79.3871),
+                    duration = Duration("2025-11-03T10:00:00", "2025-11-03T12:00:00")
                 )
             ),
-            imageHeaderUrl = null
-        )
-    )
-
-
-    private val invitedForKai = listOf(
+            duration = Duration("2025-11-03T09:00:00", "2025-11-05T18:00:00")
+        ),
         Trip(
             id = "2",
-            title = "Weekend in Montreal",
-            duration = TripDuration(
-                startDate = "2025-08-02",
-                startTime = "08:00",
-                endDate = "2025-08-04",
-                endTime = "18:00"
-            ),
-            description = "Short trip with friends",
-            location = "Montreal",
-            users = listOf(
-                TripUser("Andrew", null),
-                TripUser("Kai", null)
-            ),
+            name = "Niagara Day",
+            owner = "andrew",
+            users = listOf("kai", "andrew"),
             events = emptyList(),
-            imageHeaderUrl = null
+            duration = Duration("2025-11-10T08:00:00", "2025-11-10T22:00:00")
         )
     )
 
-    fun getAllForUser(userId: String): List<Trip> {
+    fun getAllForUser(user: String): List<Trip> =
+        trips.filter { it.owner == user || user in it.users }
 
-        return tripsForKai
-    }
+    fun getInvited(user: String): List<Trip> =
+        trips.filter { it.owner != user && user in it.users }
 
-    fun getInvited(userId: String): List<Trip> {
-        return invitedForKai
-    }
-
-    fun getById(id: String): Trip? {
-        return (tripsForKai + invitedForKai).firstOrNull { it.id == id }
-    }
+    fun getById(id: String): Trip? =
+        trips.find { it.id == id }
 }

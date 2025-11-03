@@ -19,7 +19,7 @@ fun main() {
 
 fun Application.module() {
     routing {
-        // endpoint test cũ
+
         get("/") {
             call.respondText("Ktor: ${Greeting().greet()}")
         }
