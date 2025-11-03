@@ -17,10 +17,16 @@ class RootComponent(
     val childStack = childStack(
         source = navigation,
         serializer = Configuration.serializer(),
-        initialConfiguration = Configuration.HomeView, // changed the configuration from TripView to LoginView
+        initialConfiguration = Configuration.LoginView, // changed the configuration from TripView to LoginView
         handleBackButton = true,
         childFactory = ::createChild
     )
+
+    // Temporary dev helper to navigate to a page =====
+    fun navigateToHome() {
+        navigation.pushNew(Configuration.HomeView)
+    }
+    //===================================================
 
     private fun createChild(
         config: Configuration,
@@ -47,7 +53,8 @@ class RootComponent(
                 TripViewComponent(
                     componentContext = context,
                     onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView) },
-                    onNavigateToAddMember = { navigation.pushNew(Configuration.AddMember(config.trip)) }
+                    onNavigateToAddMember = { navigation.pushNew(Configuration.AddMember(config.trip)) },
+                    onGoBack = { navigation.pop() }
                 ),
                 config.trip
             )
