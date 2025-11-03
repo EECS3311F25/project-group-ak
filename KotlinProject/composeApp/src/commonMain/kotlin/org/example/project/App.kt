@@ -91,7 +91,7 @@ fun App(root: RootComponent) {
             when (val instance = child.instance) {
                 is RootComponent.Child.LoginView -> LoginView(instance.component)
                 is RootComponent.Child.SignupView -> SignupView(instance.component)
-                is RootComponent.Child.TripView -> TripView(instance.component, trip)
+                is RootComponent.Child.TripView -> TripView(instance.component, instance.trip)
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)
                 is RootComponent.Child.HomeView -> HomeView(instance.component)
                 is RootComponent.Child.AddMember -> AddMember(instance.component)
