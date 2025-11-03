@@ -73,13 +73,14 @@ fun NavBar(
                     .fillMaxHeight(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Box with back icon and small label
+                // Box with back icon and home text
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .width(100.dp)
                         .fillMaxHeight()
                         .background(color = MaterialTheme.colors.surface)
+                        .clickable(onClick = onBack) // make the whole box clickable
                 ) {
         
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -88,7 +89,6 @@ fun NavBar(
                             contentDescription = "Back",
                             modifier = Modifier
                                 .size(18.dp)
-                                .clickable(onClick = onBack)
                         )
                         Text(
                             text = "Home",
