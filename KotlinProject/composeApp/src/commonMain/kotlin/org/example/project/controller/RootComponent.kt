@@ -45,7 +45,8 @@ class RootComponent(
             is Configuration.TripView -> Child.TripView(
                 TripViewComponent(
                     componentContext = context,
-                    onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView) }
+                    onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView) },
+                    onNavigateToAddMember = { navigation.pushNew(Configuration.AddMember) }
                 ),
                 config.trip
             )
@@ -61,6 +62,12 @@ class RootComponent(
                     onNavigateToTripView = { trip -> navigation.pushNew(Configuration.TripView(trip)) }
                 )
             )
+            is Configuration.AddMember -> Child.AddMember(
+                AddMemberComponent(
+                    componentContext = context,
+                    onGoBack = { navigation.pop() }
+                )
+            )
         }
     }
 
@@ -70,6 +77,7 @@ class RootComponent(
         data class HomeView(val component: HomeViewComponent) : Child()
         data class LoginView(val component : LoginViewComponent) : Child()
         data class SignupView(val component : SignupViewComponent) : Child()
+        data class AddMember(val component : AddMemberComponent) : Child()
     }
 
     @Serializable
@@ -79,10 +87,13 @@ class RootComponent(
         @Serializable
         data object AddTripView : Configuration()
         @Serializable
+        data object HomeView : Configuration()
+        @Serializable
         data object LoginView : Configuration()
         @Serializable
         data object SignupView : Configuration()
         @Serializable
-        data object HomeView : Configuration()
+        data object AddMember : Configuration()
+        
     }
 }

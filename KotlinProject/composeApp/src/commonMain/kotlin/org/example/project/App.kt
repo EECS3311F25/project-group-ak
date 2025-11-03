@@ -13,7 +13,8 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import org.example.project.controller.RootComponent
 import org.example.project.view.TripView.TripView
 import org.example.project.view.HomeView.HomeView
-import org.example.project.view.AddTripView.AddTripView
+import org.example.project.view.TripViewSubPages.AddTripView
+import org.example.project.view.TripViewSubPages.AddMember
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -93,6 +94,7 @@ fun App(root: RootComponent) {
                 is RootComponent.Child.TripView -> TripView(instance.component, trip)
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)
                 is RootComponent.Child.HomeView -> HomeView(instance.component)
+                is RootComponent.Child.AddMember -> AddMember(instance.component)
             }
         }
     }

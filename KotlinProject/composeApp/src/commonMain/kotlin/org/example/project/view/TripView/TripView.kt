@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import org.example.project.model.SECONDARY
 import org.example.project.view.EventsSection
 import org.example.project.view.Header
 import org.example.project.view.ListMembersSection
+import org.example.project.view.TripSummarySection
 import org.example.project.view.TripSummarySection
 
 
@@ -46,7 +49,13 @@ fun TripView(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { Header(trip.title, trip.duration) }
+            item {
+                Header(
+                    tripTitle = trip.title,
+                    duration = trip.duration,
+                    onShareClick = { component.onEvent(TripViewEvent.ClickShare) }
+                )
+            }
             item { ListMembersSection(trip.users) }
             item { TripSummarySection(trip.description) }
             item { EventsSection(trip.duration, trip.events) }
@@ -56,14 +65,16 @@ fun TripView(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         contentAlignment = Alignment.BottomEnd
     ) {
+
         FloatingActionButton(
-            onClick = {component.onEvent(TripViewEvent.ClickButtonTripView)},
+            onClick = { component.onEvent(TripViewEvent.ClickButtonTripView) },
             containerColor = SECONDARY,
-            contentColor = PRIMARY
+            contentColor = PRIMARY,
+            modifier = Modifier.align(Alignment.BottomEnd)
         ) {
             Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = null
+            imageVector = Icons.Filled.Add,
+            contentDescription = null
             )
         }
     }
