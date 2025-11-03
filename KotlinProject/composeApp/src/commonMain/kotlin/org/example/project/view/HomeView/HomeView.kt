@@ -189,7 +189,7 @@ fun HomeView(component: HomeViewComponent) {
                     LazyColumn(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        items(trips) { trip ->
+                        items(trips, key = { it.title }) { trip ->
                             TripCard(
                                 trip = trip,
                                 modifier = Modifier

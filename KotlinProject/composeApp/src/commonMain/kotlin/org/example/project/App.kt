@@ -22,61 +22,63 @@ import org.example.project.model.Event
 import org.example.project.model.Trip
 import org.example.project.model.User
 import org.example.project.model.Duration
+import androidx.compose.runtime.LaunchedEffect //for DEV
 
 
-// TODO: Fetch from API
-val trip = Trip(
-    title = "Summer Getaway",
-    description = "Road trip across Ontario",
-    location = "Toronto to Ottawa",
-    duration = Duration(
-        startDate = LocalDate(2025, 7, 1),
-        startTime = kotlinx.datetime.LocalTime(9, 0),
-        endDate = LocalDate(2025, 7, 10),
-        endTime = kotlinx.datetime.LocalTime(17, 0)
-    ),
-    users = listOf(
-        User(name = "Klodiana"),
-        User(name = "Alex"),
-        User(name = "Sam"),
-        User(name = "Priya"),
-        User(name = "Diego"),
-        User(name = "Mei"),
-        User(name = "Fatima"),
-        User(name = "John"),
-        User(name = "Maria"),
-        User(name = "Chen"),
-        User(name = "Liam"),
-        User(name = "Zoe")
-    ),
-    events = listOf(
-        // TODO: add duration
-        Event(title = "Niagara Falls Stop", Duration(
-            startDate = LocalDate(2025, 7, 1),
-            startTime = kotlinx.datetime.LocalTime(9, 0),
-            endDate = LocalDate(2025, 7, 1),
-            endTime = kotlinx.datetime.LocalTime(17, 0)
-        )),
-        Event(title = "Niagara Boat Tour", Duration(
-            startDate = LocalDate(2025, 7, 1),
-            startTime = kotlinx.datetime.LocalTime(9, 0),
-            endDate = LocalDate(2025, 7, 1),
-            endTime = kotlinx.datetime.LocalTime(17, 0)
-        )),
-        Event(title = "Table Rock Lunch", Duration(
-            startDate = LocalDate(2025, 7, 1),
-            startTime = kotlinx.datetime.LocalTime(9, 0),
-            endDate = LocalDate(2025, 7, 1),
-            endTime = kotlinx.datetime.LocalTime(17, 0)
-        )),
-        Event(title = "Ottawa Parliament Tour", Duration(
-            startDate = LocalDate(2025, 7, 1),
-            startTime = kotlinx.datetime.LocalTime(9, 0),
-            endDate = LocalDate(2025, 7, 1),
-            endTime = kotlinx.datetime.LocalTime(17, 0)
-        ))
-    )
-)
+
+// // TODO: Fetch from API
+// val trip = Trip(
+//     title = "Summer Getaway",
+//     description = "Road trip across Ontario",
+//     location = "Toronto to Ottawa",
+//     duration = Duration(
+//         startDate = LocalDate(2025, 7, 1),
+//         startTime = kotlinx.datetime.LocalTime(9, 0),
+//         endDate = LocalDate(2025, 7, 10),
+//         endTime = kotlinx.datetime.LocalTime(17, 0)
+//     ),
+//     users = listOf(
+//         User(name = "Klodiana"),
+//         User(name = "Alex"),
+//         User(name = "Sam"),
+//         User(name = "Priya"),
+//         User(name = "Diego"),
+//         User(name = "Mei"),
+//         User(name = "Fatima"),
+//         User(name = "John"),
+//         User(name = "Maria"),
+//         User(name = "Chen"),
+//         User(name = "Liam"),
+//         User(name = "Zoe")
+//     ),
+//     events = listOf(
+//         // TODO: add duration
+//         Event(title = "Niagara Falls Stop", Duration(
+//             startDate = LocalDate(2025, 7, 1),
+//             startTime = kotlinx.datetime.LocalTime(9, 0),
+//             endDate = LocalDate(2025, 7, 1),
+//             endTime = kotlinx.datetime.LocalTime(17, 0)
+//         )),
+//         Event(title = "Niagara Boat Tour", Duration(
+//             startDate = LocalDate(2025, 7, 1),
+//             startTime = kotlinx.datetime.LocalTime(9, 0),
+//             endDate = LocalDate(2025, 7, 1),
+//             endTime = kotlinx.datetime.LocalTime(17, 0)
+//         )),
+//         Event(title = "Table Rock Lunch", Duration(
+//             startDate = LocalDate(2025, 7, 1),
+//             startTime = kotlinx.datetime.LocalTime(9, 0),
+//             endDate = LocalDate(2025, 7, 1),
+//             endTime = kotlinx.datetime.LocalTime(17, 0)
+//         )),
+//         Event(title = "Ottawa Parliament Tour", Duration(
+//             startDate = LocalDate(2025, 7, 1),
+//             startTime = kotlinx.datetime.LocalTime(9, 0),
+//             endDate = LocalDate(2025, 7, 1),
+//             endTime = kotlinx.datetime.LocalTime(17, 0)
+//         ))
+//     )
+// )
 
 
 @Composable
@@ -90,7 +92,7 @@ fun App(root: RootComponent) {
             when (val instance = child.instance) {
                 is RootComponent.Child.LoginView -> LoginView(instance.component)
                 is RootComponent.Child.SignupView -> SignupView(instance.component)
-                is RootComponent.Child.TripView -> TripView(instance.component, trip)
+                is RootComponent.Child.TripView -> TripView(instance.component, instance.trip)
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)
                 is RootComponent.Child.HomeView -> HomeView(instance.component)
             }
@@ -102,5 +104,12 @@ fun App(root: RootComponent) {
 @Preview
 fun App() {
     val root = remember { RootComponent(DefaultComponentContext(LifecycleRegistry())) }
+
+    // Temporary: start the app on HomeView for development.
+    // Remove this block when you want normal startup behavior.
+    LaunchedEffect(root) {
+        root.navigateToHome()
+    }
+
     App(root)
 }
