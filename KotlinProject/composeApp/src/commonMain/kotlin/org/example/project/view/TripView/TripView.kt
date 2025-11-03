@@ -79,8 +79,7 @@ fun TripView(
                     tripTitle = trip.title,
                     selectedIndex = 0,
                     onItemSelected = { /* ... */ },
-                    onBack = { /* ... */ }
-                )
+                    onBack = { component.onBack() }                )
             }
         }
     }
