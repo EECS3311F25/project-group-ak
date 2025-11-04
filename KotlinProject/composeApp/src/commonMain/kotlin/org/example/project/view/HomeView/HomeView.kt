@@ -125,6 +125,20 @@ val user = User(
 )
 // ====================================================================
 
+/**
+ * Renders the Home screen UI for the application.
+ *
+ * This composable is the top-level presentation of the Home view. It
+ * observes UI state and delegates user interactions to the provided
+ * HomeViewComponent, which should expose the necessary state flows,
+ * event handlers, and navigation callbacks.
+ *
+ * Responsibilities:
+ *  - Display current UI state supplied by the component.
+ *  - Forward user actions (clicks, selections, refresh, etc.) to the component.
+ *
+ * @param component: HomeViewComponent that provides state and handlers required by the Home screen.
+ */
 @Composable
 fun HomeView(component: HomeViewComponent) {
 
@@ -170,6 +184,7 @@ fun HomeView(component: HomeViewComponent) {
                 }
             }
             
+            // Trips: a column of clickable TripCards
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

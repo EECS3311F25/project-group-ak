@@ -5,6 +5,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
+import com.arkivanov.decompose.router.stack.replaceCurrent
 import kotlinx.serialization.Serializable
 import org.example.project.model.Trip
 
@@ -59,6 +60,7 @@ class RootComponent(
                 TripViewComponent(
                     componentContext = context,
                     onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView) },
+                    onNavigateToAddMember = { navigation.pushNew(Configuration.AddMember(config.trip)) },
                     onGoBack = { navigation.pop() }
                 ),
                 config.trip
@@ -75,6 +77,16 @@ class RootComponent(
                     onNavigateToTripView = { trip -> navigation.pushNew(Configuration.TripView(trip)) }
                 )
             )
+            is Configuration.AddMember -> Child.AddMember(
+                AddMemberComponent(
+                    componentContext = context,
+                    onGoBack = { navigation.pop() },
+                    onAddMember = { name ->
+                        val updated = config.trip.copy(users = config.trip.users + org.example.project.model.User(name = name))
+                        navigation.replaceCurrent(Configuration.TripView(updated))
+                    }
+                )
+            )
         }
     }
 
@@ -87,6 +99,9 @@ class RootComponent(
         // Authentication screens
         data class LoginView(val component : LoginViewComponent) : Child()   // Login screen wrapper
         data class SignupView(val component : SignupViewComponent) : Child()  // Signup screen wrapper
+        data class LoginView(val component : LoginViewComponent) : Child()
+        data class SignupView(val component : SignupViewComponent) : Child()
+        data class AddMember(val component : AddMemberComponent) : Child()
     }
 
     // === CONFIGURATION: Defines all possible screens (navigation destinations) ===
@@ -105,5 +120,9 @@ class RootComponent(
         
         @Serializable
         data object HomeView : Configuration()
+        
+        @Serializable
+        data class AddMember(val trip: Trip) : Configuration()
+        
     }
 }
