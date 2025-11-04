@@ -1,12 +1,13 @@
 **Mon Oct 20 \- Sprint 1 \- Standup 1**
 
-	The group has somewhat studied the documentations of Kotlin and Kotlin Multiplatform (KMP), including how to write a Compose Multiplatform app.
+The group has somewhat studied the documentations of Kotlin and Kotlin Multiplatform (KMP), including how to write a Compose Multiplatform app.
 
 The upcoming task would be to clarify how to document the release plan and the sprint, with assistance from the professor.
 
 The above task is set to be finished by Wednesday this week.
 
 The group needs the professor’s feedback in order to continue the above task.
+
 
 **Mon Oct 27 \- Sprint 1 \- Standup 2**
 
@@ -17,6 +18,7 @@ The upcoming tasks are to continue documenting the CRC cards and make progress o
 The above tasks are set to be finished by the end of the sprint.
 
 The main struggle is the group’s lack of knowledge on Compose Multiplatform and how to write the components of the app.
+
 
 **Mon Nov 3rd \- Sprint 1 Standup 3**
 
