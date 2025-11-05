@@ -88,7 +88,11 @@ class RootComponent(
             is Configuration.TripCreationView -> Child.TripCreationView(
                 TripCreationComponent(
                     componentContext = context,
-                    onNavigateToTripView = { trip -> navigation.pushNew(Configuration.TripView(trip)) },
+                    onNavigateToTripView = { trip ->  {
+                            navigation.pop()
+                            navigation.pushNew(Configuration.TripView(trip)) 
+                        }
+                    },
                     onNavigateToHomeView = { navigation.pop()}
                 )
             )
