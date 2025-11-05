@@ -7,16 +7,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import org.example.project.model.Trip
-import org.example.project.model.Duration
-import org.example.project.model.User
-import org.example.project.model.Event
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlinx.coroutines.launch
-import org.example.project.data.TripRepository
-import org.example.project.data.local.LocalTripDataSource
+import org.example.project.model.Trip
+import org.example.project.model.Duration
+import org.example.project.model.User
+import org.example.project.model.Event
+import org.example.project.data.repository.TripRepository
+import org.example.project.data.source.LocalTripDataSource
 
 data class TripCreationState(
     val title: String = "",
@@ -39,6 +39,37 @@ class TripCreationViewModel(
     
     private val _state = MutableStateFlow(TripCreationState())
     val state: StateFlow<TripCreationState> = _state.asStateFlow()
+    
+    // Users
+    fun addUser(user: User) {
+        val currentUsers = _state.value.users.toMutableList()
+        if (!currentUsers.contains(user)) {
+            currentUsers.add(user)
+            _state.value = _state.value.copy(
+                users = currentUsers,
+                errorMessage = null
+            )
+            validateForm()
+        }
+    }
+    
+    fun removeUser(user: User) {
+        val currentUsers = _state.value.users.toMutableList()
+        currentUsers.remove(user)
+        _state.value = _state.value.copy(
+            users = currentUsers,
+            errorMessage = null
+        )
+        validateForm()
+    }
+    
+    fun updateUsers(newUsers: List<User>) {
+        _state.value = _state.value.copy(
+            users = newUsers,
+            errorMessage = null
+        )
+        validateForm()
+    }
     
     // Title
     fun updateTitle(newTitle: String) {
@@ -186,7 +217,9 @@ class TripCreationViewModel(
         val currentState = _state.value
         val isValid = currentState.title.isNotBlank() &&
                      currentState.duration != null &&
-                     currentState.location.isNotBlank()        
+                     currentState.location.isNotBlank() &&
+                     currentState.users.isNotEmpty()
+        
         _state.value = currentState.copy(isFormValid = isValid)
     }
     
