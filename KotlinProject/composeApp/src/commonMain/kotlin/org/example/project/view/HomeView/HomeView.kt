@@ -95,7 +95,8 @@ val trips = listOf(
                 endTime = kotlinx.datetime.LocalTime(17, 0)
             ))
         ),
-        imageHeaderUrl = "https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg"
+        imageHeaderUrl = "https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg",
+        createdDate = LocalDate(2025, 6, 1) // Oldest trip
     ),
     Trip(
         title = "European Adventure",
@@ -109,7 +110,8 @@ val trips = listOf(
         ),
         users = listOf(User(name = "Alice"), User(name = "Bob")),
         events = emptyList(),
-        imageHeaderUrl = "https://images.pexels.com/photos/532826/pexels-photo-532826.jpeg"
+        imageHeaderUrl = "https://images.pexels.com/photos/532826/pexels-photo-532826.jpeg",
+        createdDate = LocalDate(2025, 6, 15) // Middle trip
     ),
     Trip(
         title = "Mountain Retreat",
@@ -123,7 +125,8 @@ val trips = listOf(
         ),
         users = listOf(User(name = "Charlie"), User(name = "Diana")),
         events = emptyList(),
-        imageHeaderUrl = null
+        imageHeaderUrl = null,
+        createdDate = LocalDate(2025, 7, 1) // Newest trip
     )
 )
 
@@ -249,7 +252,11 @@ fun HomeView(component: HomeViewComponent) {
                     LazyColumn(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        items(trips, key = { it.title }) { trip ->
+                        // Sort trips by createdDate in descending order (newest first)
+                        items(
+                            items = trips.sortedByDescending { it.createdDate },
+                            key = { it.title }
+                        ) { trip ->
                             TripCard(
                                 trip = trip,
                                 modifier = Modifier

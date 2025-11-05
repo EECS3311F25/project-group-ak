@@ -13,5 +13,6 @@ data class Trip(
     val users: List<User>,
     val events: List<Event> = emptyList(),
 
-    val imageHeaderUrl: String? = null // TODO: Refactor into its own dataclass
+    val imageHeaderUrl: String? = null, // TODO: Refactor into its own dataclass
+    val createdDate: LocalDate
 )
