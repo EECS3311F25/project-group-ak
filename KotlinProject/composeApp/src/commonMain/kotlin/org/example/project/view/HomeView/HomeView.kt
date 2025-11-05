@@ -23,36 +23,24 @@ import org.example.project.model.SECONDARY
 import org.example.project.model.BACKGROUND
 import org.example.project.model.PRIMARY
 import org.example.project.data.repository.TripRepository
-import org.example.project.data.source.LocalTripDataSource
+import org.example.project.data.repository.UserRepository
 
-val user = User(
-    name = "Aga Khan",
-    pfpUrl = null
-)
-
-/**
- * Renders the Home screen UI for the application.
- *
- * This composable is the top-level presentation of the Home view. It
- * observes UI state and delegates user interactions to the provided
- * HomeViewComponent, which should expose the necessary state flows,
- * event handlers, and navigation callbacks.
- *
- * Responsibilities:
- *  - Display current UI state supplied by the component.
- *  - Forward user actions (clicks, selections, refresh, etc.) to the component.
- *
- * @param component: HomeViewComponent that provides state and handlers required by the Home screen.
- */
 @Composable
-fun HomeView(component: HomeViewComponent) {
-    // Create repository and load trips from MockSource
-    val tripRepository = remember { TripRepository(LocalTripDataSource()) }
-    var trips by remember { mutableStateOf<List<Trip>>(emptyList()) }
+fun HomeView(
+    component: HomeViewComponent,
+    tripRepository: TripRepository,    // Accept shared repository
+    userRepository: UserRepository     // Accept shared repository
+) {
+    // 🔥 Reactive state - automatically updates when repository data changes
+    val trips by tripRepository.trips.collectAsState()
+    val isLoading by tripRepository.isLoading.collectAsState()
+    val error by tripRepository.error.collectAsState()
     
-    // Load trips when component is created
-    LaunchedEffect(tripRepository) {
-        trips = tripRepository.getAllTrips()
+    var currentUser by remember { mutableStateOf<User?>(null) }
+    
+    // Load current user once
+    LaunchedEffect(userRepository) {
+        currentUser = userRepository.getCurrentUser()
     }
 
     Scaffold(
@@ -103,7 +91,7 @@ fun HomeView(component: HomeViewComponent) {
                         )
                     }
                     Text(
-                        text = user.name,
+                        text = currentUser?.name ?: "Loading...",
                         modifier = Modifier
                             .padding(top = 8.dp),
                         color = SECONDARY
@@ -111,7 +99,7 @@ fun HomeView(component: HomeViewComponent) {
                 }
             }
             
-            // Trips: a column of clickable TripCards
+            // Trips Section
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -151,12 +139,42 @@ fun HomeView(component: HomeViewComponent) {
                         }
                     }
                     
+                    // 🔥 Show loading state
+                    if (isLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    
+                    // 🔥 Show error state
+                    error?.let { errorMessage ->
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp)
+                        ) {
+                            Text(
+                                text = "Error: $errorMessage",
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    }
+                    
+                    // 🔥 Reactive trips list - automatically updates!
                     LazyColumn(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // Use trips from MockSource (already sorted by createdDate in repository)
                         items(
-                            items = trips,
+                            items = trips, // Automatically updated via StateFlow
                             key = { it.title }
                         ) { trip ->
                             TripCard(
@@ -164,7 +182,25 @@ fun HomeView(component: HomeViewComponent) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(bottom = 12.dp),
-                                onClick = { component.onEvent(HomeViewEvent.ClickButtonHomeView(trip)) }
+                                onClick = { 
+                                    component.onEvent(HomeViewEvent.ClickButtonHomeView(trip)) 
+                                }
+                            )
+                        }
+                    }
+                    
+                    // Show empty state
+                    if (!isLoading && trips.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No trips yet. Create your first trip!",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }

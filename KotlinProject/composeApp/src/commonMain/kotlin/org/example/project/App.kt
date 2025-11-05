@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.stack.Children
@@ -23,9 +22,10 @@ import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
 import org.example.project.viewModel.TripCreationViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.example.project.model.Trip
 import org.example.project.data.repository.TripRepository
+import org.example.project.data.repository.UserRepository
 import org.example.project.data.source.LocalTripDataSource
+import org.example.project.data.source.LocalUserDataSource
 
 @Composable
 /*
@@ -46,8 +46,9 @@ import org.example.project.data.source.LocalTripDataSource
  * @param root The RootComponent that manages all navigation
  */ 
 fun App(root: RootComponent) {
-    // Create repository instance
+    // 🔥 Create shared repository instances at App level
     val tripRepository = remember { TripRepository(LocalTripDataSource()) }
+    val userRepository = remember { UserRepository(LocalUserDataSource()) }
     
     MaterialTheme {
         // Subscribe to navigation state changes
@@ -72,15 +73,24 @@ fun App(root: RootComponent) {
                 }
                 
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)
-                is RootComponent.Child.HomeView -> HomeView(instance.component)
+                
+                // 🔥 Pass shared repositories to HomeView
+                is RootComponent.Child.HomeView -> {
+                    HomeView(
+                        component = instance.component,
+                        tripRepository = tripRepository,
+                        userRepository = userRepository
+                    )
+                }
                 
                 is RootComponent.Child.AddMember -> {
                     AddMember(instance.component)
                 }
                 
+                // 🔥 Pass shared repositories to TripCreationView
                 is RootComponent.Child.TripCreationView -> {
                     val tripCreationViewModel: TripCreationViewModel = viewModel { 
-                        TripCreationViewModel(tripRepository) 
+                        TripCreationViewModel(tripRepository, userRepository) 
                     }
                     TripCreationView(
                         component = instance.component,

@@ -34,7 +34,16 @@ fun TripCreationView(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
+    var currentUser by remember { mutableStateOf<User?>(null) }
     val scrollState = rememberScrollState()
+
+    // Load current user when component is created
+    LaunchedEffect(component.users) {
+        currentUser = component.users.getCurrentUser()
+        currentUser?.let { user ->
+            viewModel.addUser(user)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -164,106 +173,7 @@ fun TripCreationView(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // === EVENTS SECTION ===
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Trip Events",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Medium
-                    )
-                    
-                    OutlinedButton(
-                        onClick = { 
-                            // TODO: Open event creation dialog
-                            // For now, add a mock event
-                            val mockEvent = Event(
-                                title = "Event ${state.events.size + 1}",
-                                duration = Duration(
-                                    startDate = LocalDate(2024, 1, 1),
-                                    startTime = kotlinx.datetime.LocalTime(9, 0),
-                                    endDate = LocalDate(2024, 1, 1),
-                                    endTime = kotlinx.datetime.LocalTime(17, 0)
-                                )
-                            )
-                            viewModel.addEvent(mockEvent)
-                        }
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("Add Event")
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                if (state.events.isEmpty()) {
-                    Text(
-                        text = "No events planned yet. Events are optional.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                } else {
-                    state.events.forEach { event ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 2.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surface
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column {
-                                    Text(
-                                        text = event.title,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                    Text(
-                                        text = "${event.duration.startDate} • ${event.duration.startTime}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                                
-                                IconButton(
-                                    onClick = { viewModel.removeEvent(event) }
-                                ) {
-                                    Icon(
-                                        Icons.Default.Close,
-                                        contentDescription = "Remove ${event.title}",
-                                        tint = MaterialTheme.colorScheme.error
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
+        
         // === ERROR MESSAGE ===
         state.errorMessage?.let { error ->
             Card(

@@ -8,6 +8,9 @@ import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import kotlinx.serialization.Serializable
 import org.example.project.model.Trip
+import org.example.project.model.User
+import org.example.project.data.source.LocalUserDataSource
+import org.example.project.data.repository.UserRepository
 
 class RootComponent(
     componentContext: ComponentContext,
@@ -21,6 +24,8 @@ class RootComponent(
         handleBackButton = true,
         childFactory = ::createChild
     )
+
+    private val userRepository = UserRepository(LocalUserDataSource())
 
     fun navigateToHome() {
         navigation.pushNew(Configuration.HomeView)
@@ -88,8 +93,12 @@ class RootComponent(
             is Configuration.TripCreationView -> Child.TripCreationView(
                 TripCreationComponent(
                     componentContext = context,
-                    onNavigateToTripView = { trip -> navigation.pushNew(Configuration.TripView(trip)) },
-                    onNavigateToHomeView = { navigation.pop()}
+                    onNavigateToTripView = { trip -> 
+                        navigation.pop()
+                        navigation.pushNew(Configuration.TripView(trip))
+                    },
+                    onNavigateToHomeView = { navigation.pop() },
+                    userRepository = userRepository
                 )
             )
         }
