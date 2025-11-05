@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
@@ -13,10 +14,12 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import org.example.project.controller.RootComponent
 import org.example.project.view.TripView.TripView
 import org.example.project.view.HomeView.HomeView
+import org.example.project.view.HomeView.TripCreationView
 import org.example.project.view.TripViewSubPages.AddTripView
 import org.example.project.view.TripViewSubPages.AddMember
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
+import org.example.project.viewModel.TripCreationViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlinx.datetime.LocalDate
 import org.example.project.model.Event
@@ -120,6 +123,14 @@ fun App(root: RootComponent) {
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)
                 is RootComponent.Child.HomeView -> HomeView(instance.component)
                 is RootComponent.Child.AddMember -> AddMember(instance.component)
+                is RootComponent.Child.TripCreationView -> {
+                    // Create ViewModel here
+                    val tripCreationViewModel: TripCreationViewModel = viewModel { TripCreationViewModel() }
+                    TripCreationView(
+                        component = instance.component,
+                        viewModel = tripCreationViewModel
+                    )
+                }
             }
         }
     }
@@ -132,9 +143,9 @@ fun App() {
     val root = remember { RootComponent(DefaultComponentContext(LifecycleRegistry())) }
     // DEV USE Temporary: ================================================
     // start the app on HomeView for development.
-    // LaunchedEffect(root) {
-    //     root.navigateToHome()
-    // }
+    LaunchedEffect(root) {
+        root.navigateToHome()
+    }
     //====================================================================
   
  

@@ -4,4 +4,5 @@ import org.example.project.model.Trip
 
 sealed interface HomeViewEvent {
     data class ClickButtonHomeView(val trip: Trip) : HomeViewEvent
+    data object ClickAddTripHomeView : HomeViewEvent
 }
