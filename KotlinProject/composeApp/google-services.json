@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "363615254869",
+    "project_id": "navi-ed6a1",
+    "storage_bucket": "navi-ed6a1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363615254869:android:104211c26bbf55b29a97dc",
+        "android_client_info": {
+          "package_name": "org.example.project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "363615254869-elhmej047k0tod1vr2lgfug270d51r66.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.example.project",
+            "certificate_hash": "6f77ef8949b123b6b4167fa1b23fb9726ecdce97"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC03qW3HpA-qYlhCDQMfcdE5vnVDWiwGNo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "363615254869-ifeeaju2fdegolrqdp654uqqra5ferp7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "363615254869-26jk0fdmojar96f3ifjrfm94k4lkpevh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.example.project.KotlinProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

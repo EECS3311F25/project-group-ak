@@ -56,6 +56,17 @@ fun LoginView(component : LoginViewComponent, modifier : Modifier = Modifier)
     val email by component.email.subscribeAsState()
     val password by component.password.subscribeAsState()
 
+    //  change to v0.3.1 code plis
+    KMAuthInitializer.init(
+        webClientId = AppConstants.WEB_CLIENT_ID
+    )
+
+    val loginViewModel = LoginViewModel(
+        googleAuthManager = KMAuthGoogle.googleAuthManager
+    )
+
+    val state = loginViewModel.authUiState.collectAsState()
+
 
     // === LAYOUT: Vertical column, centered on screen ===
     Column(
@@ -106,6 +117,32 @@ fun LoginView(component : LoginViewComponent, modifier : Modifier = Modifier)
             onClick = {component.onEvent(AuthEvent.OnLoginClick)},
             enabled = email.isNotBlank() && password.isNotBlank()
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        //  Google sign-in
+        val onSignIn = {
+            loginViewModel.signInWithGoogle()
+        }
+
+        var user: String? = state.value.user
+
+//        var user: String? by remember {
+//            mutableStateOf(null)
+//        }
+
+        val onSignOut = {
+            loginViewModel.signOut()
+            //user = null
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = {
+                onSignIn()
+            }) {
+                Text("Continue with Google")
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

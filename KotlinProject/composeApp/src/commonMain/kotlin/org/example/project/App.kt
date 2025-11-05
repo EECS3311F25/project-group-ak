@@ -1,15 +1,29 @@
 package org.example.project
 
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlinx.datetime.LocalDate
+
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+
+import com.sunildhiman90.kmauth.core.KMAuthInitializer
+import com.sunildhiman90.kmauth.core.KMAuthPlatformContext
+import com.sunildhiman90.kmauth.google.KMAuthGoogle
+import com.sunildhiman90.kmauth.google.compose.GoogleSignInButton
+
 import org.example.project.controller.RootComponent
 import org.example.project.view.TripView.TripView
 import org.example.project.view.HomeView.HomeView
@@ -17,13 +31,14 @@ import org.example.project.view.TripViewSubPages.AddTripView
 import org.example.project.view.TripViewSubPages.AddMember
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import kotlinx.datetime.LocalDate
 import org.example.project.model.Event
 import org.example.project.model.Trip
 import org.example.project.model.User
 import org.example.project.model.Duration
-import androidx.compose.runtime.LaunchedEffect //for DEV
+import org.example.project.controller.LoginViewComponent
+
+import androidx.compose.runtime.LaunchedEffect  //   for DEV
+
 
 
 // TODO: Fetch from API
@@ -98,8 +113,19 @@ val trip = Trip(
  * - After successful auth → Goes to HomeView
  * 
  * @param root The RootComponent that manages all navigation
- */ 
+ */
 fun App(root: RootComponent) {
+
+    KMAuthInitializer.init(
+        webClientId = AppConstants.WEB_CLIENT_ID
+    )
+
+    val loginViewModel = LoginViewComponent(
+        googleAuthManager = KMAuthGoogle.googleAuthManager
+    )
+
+    val state = loginViewModel.authUiState.collectAsState()
+
     MaterialTheme {
         // Subscribe to navigation state changes
         val childStack by root.childStack.subscribeAsState()

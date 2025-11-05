@@ -17,6 +17,9 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 
+# Ignore client ID and secret
+**/projcet/AppConstants.kt
+
 # Ignore all Gradle-related files and directories everywhere
 .gradle/
 **/.gradle/
