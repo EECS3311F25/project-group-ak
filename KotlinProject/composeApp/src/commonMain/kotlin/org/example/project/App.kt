@@ -27,7 +27,11 @@ import org.example.project.model.Trip
 import org.example.project.model.User
 import org.example.project.model.Duration
 import androidx.compose.runtime.LaunchedEffect //for DEV
-
+// For mock data:================
+import kotlinx.datetime.Clock 
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
+// ==============================
 
 // TODO: Fetch from API
 val trip = Trip(
@@ -80,7 +84,8 @@ val trip = Trip(
             endDate = LocalDate(2025, 7, 1),
             endTime = kotlinx.datetime.LocalTime(17, 0)
         ))
-    )
+    ),
+    createdDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 )
 
 
@@ -124,7 +129,6 @@ fun App(root: RootComponent) {
                 is RootComponent.Child.HomeView -> HomeView(instance.component)
                 is RootComponent.Child.AddMember -> AddMember(instance.component)
                 is RootComponent.Child.TripCreationView -> {
-                    // Create ViewModel here
                     val tripCreationViewModel: TripCreationViewModel = viewModel { TripCreationViewModel() }
                     TripCreationView(
                         component = instance.component,

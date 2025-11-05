@@ -24,7 +24,6 @@ import org.example.project.model.User
 import org.example.project.model.Event
 import org.example.project.model.Duration
 import org.example.project.view.components.DatePickerSection
-import org.example.project.view.components.DatePickerDialog
 
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -73,10 +73,11 @@ fun DatePickerSection(
     if (showEndDatePicker) {
         DatePickerDialog(
             onDateSelected = { date ->
-                viewModel.updateEndDate(date)
-                showEndDatePicker = false
+            viewModel.updateEndDate(date)
+            showEndDatePicker = false
             },
-            onDismiss = { showEndDatePicker = false }
+            onDismiss = { showEndDatePicker = false },
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
     }
 }
@@ -85,7 +86,8 @@ fun DatePickerSection(
 @Composable
 fun DatePickerDialog(
     onDateSelected: (LocalDate) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val datePickerState = rememberDatePickerState()
     

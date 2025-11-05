@@ -1,6 +1,7 @@
 package org.example.project.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,6 +11,12 @@ import org.example.project.model.Trip
 import org.example.project.model.Duration
 import org.example.project.model.User
 import org.example.project.model.Event
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
+import kotlinx.coroutines.launch
+import org.example.project.data.TripRepository
+import org.example.project.data.local.LocalTripDataSource
 
 data class TripCreationState(
     val title: String = "",
@@ -26,7 +33,9 @@ data class TripCreationState(
     val isFormValid: Boolean = false
 )
 
-class TripCreationViewModel : ViewModel() {
+class TripCreationViewModel(
+    private val tripRepository: TripRepository = TripRepository(LocalTripDataSource())
+) : ViewModel() {
     
     private val _state = MutableStateFlow(TripCreationState())
     val state: StateFlow<TripCreationState> = _state.asStateFlow()
@@ -177,9 +186,7 @@ class TripCreationViewModel : ViewModel() {
         val currentState = _state.value
         val isValid = currentState.title.isNotBlank() &&
                      currentState.duration != null &&
-                     currentState.location.isNotBlank() &&
-                     currentState.users.isNotEmpty()
-        
+                     currentState.location.isNotBlank()        
         _state.value = currentState.copy(isFormValid = isValid)
     }
     
@@ -212,31 +219,40 @@ class TripCreationViewModel : ViewModel() {
         
         _state.value = currentState.copy(isLoading = true, errorMessage = null)
         
-        try {
-            // Create the trip object
-            val trip = Trip(
-                title = currentState.title.trim(),
-                duration = duration,
-                description = currentState.description.trim(),
-                location = currentState.location.trim(),
-                users = currentState.users,
-                events = currentState.events,
-                imageHeaderUrl = currentState.imageHeaderUrl
-            )
-            
-            // TODO: Save trip to repository/API
-            // tripRepository.createTrip(trip)
-            
-            // Simulate network call
-            _state.value = currentState.copy(isLoading = false)
-            onSuccess(trip)
-            
-        } catch (e: Exception) {
-            _state.value = currentState.copy(
-                isLoading = false,
-                errorMessage = "Failed to create trip: ${e.message}"
-            )
-            onError("Failed to create trip: ${e.message}")
+        viewModelScope.launch {
+            try {
+                val trip = Trip(
+                    title = currentState.title.trim(),
+                    duration = duration,
+                    description = currentState.description.trim(),
+                    location = currentState.location.trim(),
+                    users = currentState.users,
+                    events = currentState.events,
+                    imageHeaderUrl = currentState.imageHeaderUrl,
+                    createdDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+                )
+                
+                tripRepository.createTrip(trip).fold(
+                    onSuccess = { createdTrip ->
+                        _state.value = currentState.copy(isLoading = false)
+                        onSuccess(createdTrip)
+                    },
+                    onFailure = { error ->
+                        _state.value = currentState.copy(
+                            isLoading = false,
+                            errorMessage = "Failed to create trip: ${error.message}"
+                        )
+                        onError("Failed to create trip: ${error.message}")
+                    }
+                )
+                
+            } catch (e: Exception) {
+                _state.value = currentState.copy(
+                    isLoading = false,
+                    errorMessage = "Failed to create trip: ${e.message}"
+                )
+                onError("Failed to create trip: ${e.message}")
+            }
         }
     }
     
