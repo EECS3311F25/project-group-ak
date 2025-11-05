@@ -16,7 +16,9 @@ import org.example.project.model.Duration
 import org.example.project.model.User
 import org.example.project.model.Event
 import org.example.project.data.repository.TripRepository
+import org.example.project.data.repository.UserRepository
 import org.example.project.data.source.LocalTripDataSource
+import org.example.project.data.source.LocalUserDataSource
 
 data class TripCreationState(
     val title: String = "",
@@ -34,11 +36,36 @@ data class TripCreationState(
 )
 
 class TripCreationViewModel(
-    private val tripRepository: TripRepository = TripRepository(LocalTripDataSource())
+    private val tripRepository: TripRepository = TripRepository(LocalTripDataSource()),
+    private val userRepository: UserRepository = UserRepository(LocalUserDataSource()) // Add UserRepository
 ) : ViewModel() {
     
     private val _state = MutableStateFlow(TripCreationState())
     val state: StateFlow<TripCreationState> = _state.asStateFlow()
+    
+    // 🔥 Initialize with current user when ViewModel is created
+    init {
+        viewModelScope.launch {
+            try {
+                val currentUser = userRepository.getCurrentUser()
+                addUser(currentUser)
+            } catch (e: Exception) {
+                // Handle error if needed
+                _state.value = _state.value.copy(
+                    errorMessage = "Failed to load current user: ${e.message}"
+                )
+            }
+        }
+    }
+    
+    // 🔥 Expose UserRepository for getting all users (for adding members)
+    suspend fun getAllUsers(): List<User> {
+        return userRepository.getAllUsers()
+    }
+    
+    suspend fun getCurrentUser(): User {
+        return userRepository.getCurrentUser()
+    }
     
     // Users
     fun addUser(user: User) {
@@ -217,9 +244,8 @@ class TripCreationViewModel(
         val currentState = _state.value
         val isValid = currentState.title.isNotBlank() &&
                      currentState.duration != null &&
-                     currentState.location.isNotBlank() &&
-                     currentState.users.isNotEmpty()
-        
+                     currentState.location.isNotBlank()
+                     // Note: Don't require users.isNotEmpty() since current user is auto-added        
         _state.value = currentState.copy(isFormValid = isValid)
     }
     
@@ -236,7 +262,6 @@ class TripCreationViewModel(
                 currentState.title.isBlank() -> "Trip title is required"
                 currentState.duration == null -> "Trip duration is required"
                 currentState.location.isBlank() -> "Trip location is required"
-                currentState.users.isEmpty() -> "At least one user is required"
                 else -> "Please fill in all required fields"
             }
             onError(errorMsg)
@@ -246,7 +271,7 @@ class TripCreationViewModel(
         // Additional validation
         val duration = currentState.duration!!
         if (duration.startDate > duration.endDate) {
-            onError("End date must be after start date")
+            onError("End date cannot be before start date")
             return
         }
         
@@ -259,7 +284,7 @@ class TripCreationViewModel(
                     duration = duration,
                     description = currentState.description.trim(),
                     location = currentState.location.trim(),
-                    users = currentState.users,
+                    users = currentState.users, // Includes current user + any added users
                     events = currentState.events,
                     imageHeaderUrl = currentState.imageHeaderUrl,
                     createdDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
@@ -292,6 +317,15 @@ class TripCreationViewModel(
     // Reset form
     fun resetForm() {
         _state.value = TripCreationState()
+        // Re-add current user after reset
+        viewModelScope.launch {
+            try {
+                val currentUser = userRepository.getCurrentUser()
+                addUser(currentUser)
+            } catch (e: Exception) {
+                // Handle error if needed
+            }
+        }
     }
     
     // Clear error

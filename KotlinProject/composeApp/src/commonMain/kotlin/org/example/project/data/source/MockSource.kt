@@ -350,3 +350,41 @@ class LocalTripDataSource : TripDataSource {
         trips.removeAll { it.title == tripId }
     }
 }
+
+class LocalUserDataSource : UserDataSource {
+    
+    // Mock current user (the logged-in user)
+    private val currentUser = User(
+        name = "Aga Khan",
+        pfpUrl = null
+    )
+    
+    // Mock other users (for adding to trips)
+    private val allUsers = listOf(
+        currentUser, // Current user
+        User(name = "Klodiana", pfpUrl = null),
+        User(name = "Alex", pfpUrl = null),
+        User(name = "Sam", pfpUrl = null),
+        User(name = "Priya", pfpUrl = null),
+        User(name = "Diego", pfpUrl = null),
+        User(name = "Mei", pfpUrl = null),
+        User(name = "Fatima", pfpUrl = null),
+        User(name = "John", pfpUrl = null),
+        User(name = "Maria", pfpUrl = null),
+        User(name = "Chen", pfpUrl = null),
+        User(name = "Liam", pfpUrl = null),
+        User(name = "Zoe", pfpUrl = null)
+    )
+    
+    override suspend fun getCurrentUser(): User {
+        return currentUser
+    }
+    
+    override suspend fun getAllUsers(): List<User> {
+        return allUsers
+    }
+    
+    override suspend fun getUserById(id: String): User? {
+        return allUsers.find { it.name == id } // Using name as ID for now
+    }
+}
