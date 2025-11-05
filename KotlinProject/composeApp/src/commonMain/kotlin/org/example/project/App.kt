@@ -26,7 +26,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.example.project.model.Trip
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.source.LocalTripDataSource
-import kotlinx.coroutines.runBlocking
 
 @Composable
 /*
@@ -50,19 +49,6 @@ fun App(root: RootComponent) {
     // Create repository instance
     val tripRepository = remember { TripRepository(LocalTripDataSource()) }
     
-    // Get the first trip from mock data for TripView
-    val mockTrip = remember {
-        mutableStateOf<Trip?>(null)
-    }
-    
-    LaunchedEffect(tripRepository) {
-        // Fetch the first trip from mock data
-        val trips = tripRepository.getAllTrips()
-        if (trips.isNotEmpty()) {
-            mockTrip.value = trips.first()
-        }
-    }
-    
     MaterialTheme {
         // Subscribe to navigation state changes
         val childStack by root.childStack.subscribeAsState()
@@ -79,19 +65,19 @@ fun App(root: RootComponent) {
                 is RootComponent.Child.LoginView -> LoginView(instance.component)
                 // SignupView: Registration form, accessible from LoginView
                 is RootComponent.Child.SignupView -> SignupView(instance.component)
+                
                 is RootComponent.Child.TripView -> {
-                    // Use trip from mock data source instead of hardcoded trip
-                    mockTrip.value?.let { trip ->
-                        TripView(instance.component, trip)
-                    }
+                    // Use the specific trip passed from navigation
+                    TripView(instance.component, instance.trip)
                 }
+                
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)
                 is RootComponent.Child.HomeView -> HomeView(instance.component)
+                
                 is RootComponent.Child.AddMember -> {
-                    mockTrip.value?.let { trip ->
-                        AddMember(instance.component)
-                    }
+                    AddMember(instance.component)
                 }
+                
                 is RootComponent.Child.TripCreationView -> {
                     val tripCreationViewModel: TripCreationViewModel = viewModel { 
                         TripCreationViewModel(tripRepository) 

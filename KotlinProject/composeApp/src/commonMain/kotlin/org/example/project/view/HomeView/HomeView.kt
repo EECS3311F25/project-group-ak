@@ -1,30 +1,15 @@
 package org.example.project.view.HomeView
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,108 +18,17 @@ import androidx.compose.ui.unit.dp
 import org.example.project.controller.HomeViewComponent
 import org.example.project.controller.HomeViewEvent
 import org.example.project.model.Trip
-import org.example.project.model.Duration
-import org.example.project.model.Event
 import org.example.project.model.User
-import kotlinx.datetime.LocalDate
 import org.example.project.model.SECONDARY
 import org.example.project.model.BACKGROUND
 import org.example.project.model.PRIMARY
-
-// TODO: Fetch from API
-// MOCK DATA ==========================================================
-val trips = listOf(
-    Trip(
-        title = "Summer Getaway",
-        description = "Road trip across Ontario",
-        location = "Toronto to Ottawa",
-        duration = Duration(
-            startDate = LocalDate(2025, 7, 1),
-            startTime = kotlinx.datetime.LocalTime(9, 0),
-            endDate = LocalDate(2025, 7, 10),
-            endTime = kotlinx.datetime.LocalTime(17, 0)
-        ),
-        users = listOf(
-            User(name = "Klodiana"),
-            User(name = "Alex"),
-            User(name = "Sam"),
-            User(name = "Priya"),
-            User(name = "Diego"),
-            User(name = "Mei"),
-            User(name = "Fatima"),
-            User(name = "John"),
-            User(name = "Maria"),
-            User(name = "Chen"),
-            User(name = "Liam"),
-            User(name = "Zoe")
-        ),
-        events = listOf(
-            // TODO: add duration
-            Event(title = "Niagara Falls Stop", Duration(
-                startDate = LocalDate(2025, 7, 1),
-                startTime = kotlinx.datetime.LocalTime(9, 0),
-                endDate = LocalDate(2025, 7, 1),
-                endTime = kotlinx.datetime.LocalTime(17, 0)
-            )),
-            Event(title = "Niagara Boat Tour", Duration(
-                startDate = LocalDate(2025, 7, 1),
-                startTime = kotlinx.datetime.LocalTime(9, 0),
-                endDate = LocalDate(2025, 7, 1),
-                endTime = kotlinx.datetime.LocalTime(17, 0)
-            )),
-            Event(title = "Table Rock Lunch", Duration(
-                startDate = LocalDate(2025, 7, 1),
-                startTime = kotlinx.datetime.LocalTime(9, 0),
-                endDate = LocalDate(2025, 7, 1),
-                endTime = kotlinx.datetime.LocalTime(17, 0)
-            )),
-            Event(title = "Ottawa Parliament Tour", Duration(
-                startDate = LocalDate(2025, 7, 1),
-                startTime = kotlinx.datetime.LocalTime(9, 0),
-                endDate = LocalDate(2025, 7, 1),
-                endTime = kotlinx.datetime.LocalTime(17, 0)
-            ))
-        ),
-        imageHeaderUrl = "https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg",
-        createdDate = LocalDate(2025, 6, 1) // Oldest trip
-    ),
-    Trip(
-        title = "European Adventure",
-        description = "Backpacking through Europe",
-        location = "Paris to Rome",
-        duration = Duration(
-            startDate = LocalDate(2025, 8, 15),
-            startTime = kotlinx.datetime.LocalTime(10, 0),
-            endDate = LocalDate(2025, 8, 30),
-            endTime = kotlinx.datetime.LocalTime(18, 0)
-        ),
-        users = listOf(User(name = "Alice"), User(name = "Bob")),
-        events = emptyList(),
-        imageHeaderUrl = "https://images.pexels.com/photos/532826/pexels-photo-532826.jpeg",
-        createdDate = LocalDate(2025, 6, 15) // Middle trip
-    ),
-    Trip(
-        title = "Mountain Retreat",
-        description = "Peaceful getaway in the mountains",
-        location = "Banff National Park",
-        duration = Duration(
-            startDate = LocalDate(2025, 9, 5),
-            startTime = kotlinx.datetime.LocalTime(8, 0),
-            endDate = LocalDate(2025, 9, 12),
-            endTime = kotlinx.datetime.LocalTime(16, 0)
-        ),
-        users = listOf(User(name = "Charlie"), User(name = "Diana")),
-        events = emptyList(),
-        imageHeaderUrl = null,
-        createdDate = LocalDate(2025, 7, 1) // Newest trip
-    )
-)
+import org.example.project.data.repository.TripRepository
+import org.example.project.data.source.LocalTripDataSource
 
 val user = User(
     name = "Aga Khan",
     pfpUrl = null
 )
-// ====================================================================
 
 /**
  * Renders the Home screen UI for the application.
@@ -152,6 +46,14 @@ val user = User(
  */
 @Composable
 fun HomeView(component: HomeViewComponent) {
+    // Create repository and load trips from MockSource
+    val tripRepository = remember { TripRepository(LocalTripDataSource()) }
+    var trips by remember { mutableStateOf<List<Trip>>(emptyList()) }
+    
+    // Load trips when component is created
+    LaunchedEffect(tripRepository) {
+        trips = tripRepository.getAllTrips()
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -252,9 +154,9 @@ fun HomeView(component: HomeViewComponent) {
                     LazyColumn(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // Sort trips by createdDate in descending order (newest first)
+                        // Use trips from MockSource (already sorted by createdDate in repository)
                         items(
-                            items = trips.sortedByDescending { it.createdDate },
+                            items = trips,
                             key = { it.title }
                         ) { trip ->
                             TripCard(
