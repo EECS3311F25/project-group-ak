@@ -38,7 +38,7 @@ import org.example.project.model.Duration
 import org.example.project.controller.LoginViewComponent
 
 import androidx.compose.runtime.LaunchedEffect  //   for DEV
-
+import org.example.project.controller.GoogleSigninComponent
 
 
 // TODO: Fetch from API
@@ -120,7 +120,7 @@ fun App(root: RootComponent) {
         webClientId = AppConstants.WEB_CLIENT_ID
     )
 
-    val loginViewModel = LoginViewComponent(
+    val loginViewModel = GoogleSigninComponent(
         googleAuthManager = KMAuthGoogle.googleAuthManager
     )
 

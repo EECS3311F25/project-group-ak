@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -15,12 +15,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+
+import org.example.project.AppConstants
 import org.example.project.controller.AuthEvent
 import org.example.project.controller.LoginViewComponent
-
 // Reusable authentication UI components
 import org.example.project.view.AuthView.AuthComponents.AuthButton
 import org.example.project.view.AuthView.AuthComponents.InputField
+
+import com.sunildhiman90.kmauth.core.KMAuthInitializer
+import com.sunildhiman90.kmauth.google.KMAuthGoogle
+import com.sunildhiman90.kmauth.core.KMAuthConfig
+import kotlinx.coroutines.launch
 
 /*
  * LoginView - UI layer for the Login screen
@@ -55,17 +61,6 @@ fun LoginView(component : LoginViewComponent, modifier : Modifier = Modifier)
     // When these values change in component, UI automatically updates
     val email by component.email.subscribeAsState()
     val password by component.password.subscribeAsState()
-
-    //  change to v0.3.1 code plis
-    KMAuthInitializer.init(
-        webClientId = AppConstants.WEB_CLIENT_ID
-    )
-
-    val loginViewModel = LoginViewModel(
-        googleAuthManager = KMAuthGoogle.googleAuthManager
-    )
-
-    val state = loginViewModel.authUiState.collectAsState()
 
 
     // === LAYOUT: Vertical column, centered on screen ===
@@ -120,26 +115,22 @@ fun LoginView(component : LoginViewComponent, modifier : Modifier = Modifier)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        //  Google sign-in
-        val onSignIn = {
-            loginViewModel.signInWithGoogle()
-        }
+        KMAuthInitializer.initialize(
+            config = KMAuthConfig.forGoogle(AppConstants.WEB_CLIENT_ID))
 
-        var user: String? = state.value.user
+        val googleAuthManager = KMAuthGoogle.googleAuthManager
 
-//        var user: String? by remember {
-//            mutableStateOf(null)
-//        }
+        val scope = rememberCoroutineScope()
 
-        val onSignOut = {
-            loginViewModel.signOut()
-            //user = null
-        }
-
+        //  Google signin button
         Row(verticalAlignment = Alignment.CenterVertically) {
-            TextButton(onClick = {
-                onSignIn()
-            }) {
+            TextButton(
+                onClick = {
+                    scope.launch {
+                        val result = googleAuthManager.signIn()
+                    }
+                    component.onEvent(AuthEvent.OnLoginClick)
+                }) {
                 Text("Continue with Google")
             }
         }

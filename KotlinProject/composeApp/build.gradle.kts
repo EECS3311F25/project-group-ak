@@ -74,6 +74,8 @@ kotlin {
 
             implementation("io.github.sunildhiman90:kmauth-google:0.3.1")
             implementation("io.github.sunildhiman90:kmauth-google-compose:0.3.1")
+
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

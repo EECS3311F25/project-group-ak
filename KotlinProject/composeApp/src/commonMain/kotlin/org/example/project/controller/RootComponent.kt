@@ -99,8 +99,6 @@ class RootComponent(
         // Authentication screens
         data class LoginView(val component : LoginViewComponent) : Child()   // Login screen wrapper
         data class SignupView(val component : SignupViewComponent) : Child()  // Signup screen wrapper
-        data class LoginView(val component : LoginViewComponent) : Child()
-        data class SignupView(val component : SignupViewComponent) : Child()
         data class AddMember(val component : AddMemberComponent) : Child()
     }
 
