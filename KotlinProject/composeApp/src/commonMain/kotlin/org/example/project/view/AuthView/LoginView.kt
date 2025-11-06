@@ -116,10 +116,9 @@ fun LoginView(component : LoginViewComponent, modifier : Modifier = Modifier)
         Spacer(modifier = Modifier.height(16.dp))
 
         KMAuthInitializer.initialize(
-            config = KMAuthConfig.forGoogle(AppConstants.WEB_CLIENT_ID))
-
+            config = KMAuthConfig.forGoogle(
+                AppConstants.WEB_CLIENT_ID))
         val googleAuthManager = KMAuthGoogle.googleAuthManager
-
         val scope = rememberCoroutineScope()
 
         //  Google signin button

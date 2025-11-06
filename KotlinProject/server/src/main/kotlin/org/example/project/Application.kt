@@ -15,6 +15,10 @@ fun main() {
         host = "0.0.0.0",
         module = Application::module
     ).start(wait = true)
+
+    //  TODO: initialize DB connection (to then do stuff)
+    //  for each endpoint, it basically queries the DB, to then get stuff from the DB
+    //  the stuff you retrieved from the DB goes into an HTTP response that gets sent from back -> front
 }
 
 fun Application.module() {
