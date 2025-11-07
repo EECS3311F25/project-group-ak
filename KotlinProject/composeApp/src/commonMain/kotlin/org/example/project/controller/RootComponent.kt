@@ -5,6 +5,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import kotlinx.serialization.Serializable
 import org.example.project.model.Trip
@@ -57,7 +58,7 @@ class RootComponent(
                     componentContext = context,
                     onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView) },
                     onNavigateToAddMember = { navigation.pushNew(Configuration.AddMember(config.trip)) },
-                    onGoBack = { navigation.pop() }
+                    onGoBack = { navigation.replaceAll(Configuration.HomeView) }
                 ),
                 config.trip
             )
@@ -83,7 +84,7 @@ class RootComponent(
                     onGoBack = { navigation.pop() },
                     onAddMember = { name ->
                         val updated = config.trip.copy(
-                            users = config.trip.users + org.example.project.model.User(name = name)
+                            users = config.trip.users + User(name = name)
                         )
                         navigation.replaceCurrent(Configuration.TripView(updated))
                     }
