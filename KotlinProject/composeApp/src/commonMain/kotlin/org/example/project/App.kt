@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import org.example.project.model.LightColorScheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arkivanov.decompose.DefaultComponentContext
@@ -51,7 +52,9 @@ fun App(root: RootComponent) {
     val tripRepository = remember { TripRepository(LocalTripDataSource()) }
     val userRepository = remember { UserRepository(LocalUserDataSource()) }
     
-    MaterialTheme {
+    MaterialTheme(
+        colorScheme = LightColorScheme
+    ) {
         // Subscribe to navigation state changes
         val childStack by root.childStack.subscribeAsState()
         
