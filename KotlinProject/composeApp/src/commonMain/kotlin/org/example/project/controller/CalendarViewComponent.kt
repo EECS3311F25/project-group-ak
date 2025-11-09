@@ -1,16 +1,29 @@
 package org.example.project.controller
 
+import com.arkivanov.decompose.ComponentContext
 import org.example.project.model.Event
+import org.example.project.model.Trip
 import kotlinx.datetime.LocalDate
 
-interface CalendarViewComponent {
-    fun onDateSelected(date: LocalDate)
-    fun onEventSelected(event: Event)
-    fun onBack()
+class CalendarViewComponent(
+    componentContext: ComponentContext,
+    private val onGoBack: () -> Unit,
+    private val onNavigateToTripView: () -> Unit
+) : ComponentContext by componentContext {
+
+    fun onBack() {
+        onGoBack()
+    }
+
+    fun onEvent(event: CalendarViewEvent) {
+        when (event) {
+            CalendarViewEvent.Back -> onBack()
+            CalendarViewEvent.NavigateToTrip -> onNavigateToTripView()
+        }
+    }
 }
 
 sealed class CalendarViewEvent {
-    data class SelectDate(val date: LocalDate) : CalendarViewEvent()
-    data class SelectEvent(val event: Event) : CalendarViewEvent()
     object Back : CalendarViewEvent()
+    object NavigateToTrip : CalendarViewEvent()
 }

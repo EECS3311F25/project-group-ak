@@ -96,8 +96,14 @@ fun TripView(
                 NavBar(
                     tripTitle = trip.title,
                     selectedIndex = 0,
-                    onItemSelected = { /* ... */ },
-                    onBack = { component.onBack() }                )
+                    onItemSelected = { index -> 
+                        when (index) {
+                            1 -> component.onEvent(TripViewEvent.ClickCalendar(trip)) // Calendar
+                            // 2 -> Map view (to be implemented later)
+                        }
+                    },
+                    onBack = { component.onBack() }
+                )
             }
         }
     }

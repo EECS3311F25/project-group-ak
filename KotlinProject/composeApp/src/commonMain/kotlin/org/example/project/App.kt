@@ -22,7 +22,9 @@ import org.example.project.view.TripViewSubPages.AddTripView
 import org.example.project.view.TripViewSubPages.AddMember
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
+import org.example.project.view.CalendarView.CalendarView
 import org.example.project.viewModel.TripCreationViewModel
+import org.example.project.viewModel.CalendarViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
@@ -101,6 +103,15 @@ fun App(root: RootComponent) {
                     TripCreationView(
                         component = instance.component,
                         viewModel = tripCreationViewModel
+                    )
+                }
+
+                is RootComponent.Child.CalendarView -> {
+                    val calendarViewModel: CalendarViewModel = viewModel()
+                    CalendarView(
+                        component = instance.component,
+                        viewModel = calendarViewModel,
+                        trip = instance.trip
                     )
                 }
             }

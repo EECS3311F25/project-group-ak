@@ -58,7 +58,11 @@ class RootComponent(
                     componentContext = context,
                     onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView) },
                     onNavigateToAddMember = { navigation.pushNew(Configuration.AddMember(config.trip)) },
-                    onGoBack = { navigation.replaceAll(Configuration.HomeView) }
+                    onGoBack = { navigation.replaceAll(Configuration.HomeView) },
+                    onNavigateToCalendar = { trip -> 
+                        navigation.pop()
+                        navigation.pushNew(Configuration.CalendarView(trip))
+                    }
                 ),
                 config.trip
             )
@@ -102,6 +106,18 @@ class RootComponent(
                     userRepository = userRepository
                 )
             )
+
+            is Configuration.CalendarView -> Child.CalendarView(
+                CalendarViewComponent(
+                    componentContext = context,
+                    onGoBack = { navigation.replaceAll(Configuration.HomeView) },
+                    onNavigateToTripView = { 
+                        navigation.pop()
+                        navigation.pushNew(Configuration.TripView(config.trip))
+                    }
+                ),
+                config.trip
+            )
         }
     }
 
@@ -113,6 +129,7 @@ class RootComponent(
         data class LoginView(val component : LoginViewComponent) : Child()
         data class SignupView(val component : SignupViewComponent) : Child()
         data class AddMember(val component : AddMemberComponent) : Child()
+        data class CalendarView(val component: CalendarViewComponent, val trip: Trip) : Child()
     }
 
     @Serializable
@@ -131,5 +148,7 @@ class RootComponent(
         data class AddMember(val trip: Trip) : Configuration()
         @Serializable
         data object TripCreationView : Configuration()
+        @Serializable
+        data class CalendarView(val trip: Trip): Configuration()
     }
 }
