@@ -28,3 +28,9 @@ class HomeViewComponent(
         viewModel.deleteTrip(tripTitle)
     }
 }
+
+sealed interface HomeViewEvent {
+    data class ClickButtonHomeView(val trip: Trip) : HomeViewEvent
+    data object ClickAddTripHomeView : HomeViewEvent
+}
+
