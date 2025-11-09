@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import org.example.project.model.PRIMARY
+import org.example.project.model.SECONDARY
 
 data class NavItem(val title: String, val icon: ImageVector)
 
@@ -120,12 +122,23 @@ fun NavBar(
         ) {
             items.forEachIndexed { index, item ->
                 BottomNavigationItem(
-                    icon = { Icon(item.icon, contentDescription = item.title) },
+                    icon = { 
+                        Icon(
+                            item.icon,
+                            contentDescription = item.title,
+                            tint = if (index == current) 
+                                PRIMARY
+                            else 
+                                PRIMARY.copy(alpha = 0.6f)
+                        )
+                    },
                     selected = index == current,
                     onClick = {
                         if (selectedIndex == null) internalSelected = index
                         onItemSelected(index)
-                    }
+                    },
+                    selectedContentColor = MaterialTheme.colors.primary,
+                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
                 )
             }
         }
