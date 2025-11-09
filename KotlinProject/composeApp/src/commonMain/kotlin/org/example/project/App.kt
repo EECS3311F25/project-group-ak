@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.stack.Children
+import org.example.project.viewmodel.HomeViewModel
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
@@ -74,12 +75,14 @@ fun App(root: RootComponent) {
                 
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)
                 
-                // 🔥 Pass shared repositories to HomeView
+                // 🔥 Create HomeViewModel and pass it to HomeView
                 is RootComponent.Child.HomeView -> {
+                    val homeViewModel: HomeViewModel = viewModel { 
+                        HomeViewModel(tripRepository, userRepository) 
+                    }
                     HomeView(
                         component = instance.component,
-                        tripRepository = tripRepository,
-                        userRepository = userRepository
+                        viewModel = homeViewModel
                     )
                 }
                 
