@@ -107,7 +107,9 @@ fun App(root: RootComponent) {
                 }
 
                 is RootComponent.Child.CalendarView -> {
-                    val calendarViewModel: CalendarViewModel = viewModel()
+                    val calendarViewModel: CalendarViewModel = viewModel { 
+                        CalendarViewModel(instance.trip, tripRepository)
+                    }
                     CalendarView(
                         component = instance.component,
                         viewModel = calendarViewModel,
