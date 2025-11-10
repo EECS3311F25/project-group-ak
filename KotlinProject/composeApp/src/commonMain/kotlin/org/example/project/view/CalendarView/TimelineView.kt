@@ -51,75 +51,81 @@ fun TimelineView(
     }
     
     Box(modifier = modifier.fillMaxSize()) {
-        // Single LazyColumn for both time labels and grid (background layer)
+        // Single LazyColumn containing the entire timeline
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize()
         ) {
             items(24) { hour ->
-                Row(modifier = Modifier.height(pixelsPerHour)) {
-                    // Time label
-                    Box(
-                        modifier = Modifier
-                            .width(60.dp)
-                            .fillMaxHeight(),
-                        contentAlignment = Alignment.TopStart
-                    ) {
-                        Text(
-                            text = String.format("%02d:00", hour),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
+                Box(modifier = Modifier.height(pixelsPerHour)) {
+                    Row(modifier = Modifier.fillMaxSize()) {
+                        // Time label
+                        Box(
+                            modifier = Modifier
+                                .width(60.dp)
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.TopStart
+                        ) {
+                            Text(
+                                text = String.format("%02d:00", hour),
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+                        
+                        // Grid lines
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            // Hour line
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outline,
+                                thickness = 1.dp
+                            )
+                            Spacer(modifier = Modifier.height(pixelsPerHour / 2 - 0.5.dp))
+                            
+                            // Half-hour line
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                thickness = 0.5.dp
+                            )
+                            Spacer(modifier = Modifier.height(pixelsPerHour / 2 - 0.5.dp))
+                        }
                     }
                     
-                    // Grid lines
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        // Hour line
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline,
-                            thickness = 1.dp
-                        )
-                        Spacer(modifier = Modifier.height(pixelsPerHour / 2 - 0.5.dp))
-                        
-                        // Half-hour line
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                            thickness = 0.5.dp
-                        )
-                        Spacer(modifier = Modifier.height(pixelsPerHour / 2 - 0.5.dp))
+                    // Events that fall in this hour block
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 68.dp, end = 8.dp)
+                    ) {
+                        events.forEach { event ->
+                            val eventStartMinutes = event.duration.startTime.hour * 60 + event.duration.startTime.minute
+                            val eventEndMinutes = event.duration.endTime.hour * 60 + event.duration.endTime.minute
+                            val hourStartMinutes = hour * 60
+                            val hourEndMinutes = (hour + 1) * 60
+                            
+                            // Check if event overlaps with this hour
+                            if (eventStartMinutes < hourEndMinutes && eventEndMinutes > hourStartMinutes) {
+                                // Calculate position within this hour block
+                                val offsetInHour = (eventStartMinutes - hourStartMinutes).coerceAtLeast(0)
+                                val visibleDuration = (eventEndMinutes.coerceAtMost(hourEndMinutes) - eventStartMinutes.coerceAtLeast(hourStartMinutes))
+                                
+                                val topOffset = pixelsPerMinute * offsetInHour
+                                val height = pixelsPerMinute * visibleDuration
+                                
+                                println("Hour $hour: Event ${event.title} - offset=$topOffset, height=$height")
+                                
+                                EventCard(
+                                    event = event,
+                                    isTimelineView = true,
+                                    modifier = Modifier
+                                        .offset(y = topOffset)
+                                        .height(height)
+                                        .fillMaxWidth()
+                                )
+                            }
+                        }
                     }
                 }
-            }
-        }
-        
-        // Events overlay - on top of the grid (foreground layer)
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 68.dp, end = 8.dp) // 60dp for time + 8dp padding
-                .background(Color.Red.copy(alpha = 0.1f)) // DEBUG: visible background
-        ) {
-            println("Rendering ${events.size} event cards...")
-            // Events are already filtered by ViewModel for the selected date
-            events.forEachIndexed { index, event ->
-                val startMinutes = event.duration.startTime.hour * 60 + event.duration.startTime.minute
-                val endMinutes = event.duration.endTime.hour * 60 + event.duration.endTime.minute
-                val durationMinutes = endMinutes - startMinutes
-                
-                val topOffset = pixelsPerMinute * startMinutes
-                val height = pixelsPerMinute * durationMinutes
-                
-                println("Card $index: offset=${topOffset}, height=${height}")
-                
-                EventCard(
-                    event = event,
-                    isTimelineView = true,
-                    modifier = Modifier
-                        .offset(y = topOffset)
-                        .height(height)
-                        .fillMaxWidth()
-                        .background(Color.Blue.copy(alpha = 0.2f)) // DEBUG: visible card background
-                )
             }
         }
     }

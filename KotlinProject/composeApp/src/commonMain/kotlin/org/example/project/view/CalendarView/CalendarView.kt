@@ -1,11 +1,21 @@
 package org.example.project.view.CalendarView
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.example.project.view.components.NavBar
 import org.example.project.controller.CalendarViewComponent
 import org.example.project.controller.CalendarViewEvent
@@ -56,18 +66,102 @@ fun CalendarView(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Calendar View",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                    
+                Column(modifier = Modifier.padding(16.dp)) {    
                     selectedDate?.let { date ->
                         Text(
                             text = "${date.dayOfMonth} ${date.month} ${date.year}",
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(top = 8.dp)
                         )
+                    }
+                    
+                    // Horizontal scrollable day selector with center snapping
+                    val tripDays = trip.duration.getAllDates()
+                    val listState = rememberLazyListState()
+                    val coroutineScope = rememberCoroutineScope()
+                    
+                    // Calculate center index based on scroll position
+                    val centerIndex by remember {
+                        derivedStateOf {
+                            listState.firstVisibleItemIndex + 
+                            if (listState.firstVisibleItemScrollOffset > listState.layoutInfo.visibleItemsInfo.firstOrNull()?.size?.div(2) ?: 0) 1 else 0
+                        }
+                    }
+                    
+                    // Auto-select the centered date
+                    LaunchedEffect(centerIndex) {
+                        if (centerIndex in tripDays.indices) {
+                            val centeredDate = tripDays[centerIndex]
+                            if (centeredDate != selectedDate) {
+                                viewModel.selectDate(centeredDate)
+                            }
+                        }
+                    }
+                    
+                    // Initialize scroll position to first day
+                    LaunchedEffect(Unit) {
+                        if (selectedDate != null) {
+                            val initialIndex = tripDays.indexOf(selectedDate).coerceAtLeast(0)
+                            listState.scrollToItem(initialIndex)
+                        }
+                    }
+                    
+                    // Top and bottom dividers around the horizontal selector
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                    ) {
+                        Divider(color = Color.LightGray, thickness = 1.dp)
+
+                        LazyRow(
+                            state = listState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            contentPadding = PaddingValues(horizontal = 120.dp), // Center padding
+                            flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
+                        ) {
+                            items(tripDays.size) { index ->
+                                val date = tripDays[index]
+                                val isSelected = date == selectedDate
+                                FilterChip(
+                                    selected = isSelected,
+                                    onClick = {
+                                        viewModel.selectDate(date)
+                                        coroutineScope.launch {
+                                            listState.animateScrollToItem(index)
+                                        }
+                                    },
+                                    label = {
+                                        Text(
+                                            text = "Day ${index + 1}",
+                                            style = if (isSelected) {
+                                                MaterialTheme.typography.labelLarge.copy(
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color.Black
+                                                )
+                                            } else {
+                                                MaterialTheme.typography.labelLarge.copy(
+                                                    fontWeight = FontWeight.Thin,
+                                                    color = Color.Gray
+                                                )
+                                            }
+                                        )
+                                    },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        containerColor = Color.Transparent,
+                                        selectedContainerColor = Color.Transparent,
+                                        labelColor = if (isSelected) Color.Black else Color.Gray,
+                                        selectedLabelColor = Color.Black
+                                    ),
+                                    border = null
+                                )
+                            }
+                        }
+
+                        Divider(color = Color.LightGray, thickness = 1.dp)
                     }
                 }
             }
