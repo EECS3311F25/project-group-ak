@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.androidLibrary)
     //  plugins for DB setup
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -31,11 +30,6 @@ kotlin {
     }
     
     sourceSets {
-        //  Use case uncertain
-        all {
-            languageSettings.optIn("kotlin.time.ExperimentalTime")
-        }
-        //  Ktor and DB setup dependencies
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)
 
@@ -43,7 +37,6 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.runtime)
             implementation(libs.kotlinx.datetime)
             implementation(libs.koin.core)
         }
@@ -52,11 +45,9 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.android)
-            implementation(libs.android.driver)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation(libs.native.driver)
         }
     }
 }
