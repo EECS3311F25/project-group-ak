@@ -1,78 +1,120 @@
 package org.example.project.trip
 
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
+
 object TripRepositoryMock {
 
-    private val trips = mutableListOf(
-        Trip(
-            id = "1",
-            name = "Toronto Fall Trip",
-            owner = "kai",
-            users = mutableListOf("kai", "andrew", "toni"),
-            events = mutableListOf(
-                Event(
-                    id = "e1",
-                    title = "CN Tower",
-                    description = "View deck",
-                    location = Location(43.6426, -79.3871),
-                    duration = Duration("2025-11-03T10:00:00", "2025-11-03T12:00:00")
+    // In-memory store
+    private val idGenTrip = AtomicInteger(100)
+    private val idGenEvent = AtomicInteger(1000)
+
+    // Map<tripId, Trip>
+    private val trips = ConcurrentHashMap<String, Trip>().apply {
+        put(
+            "1",
+            Trip(
+                id = "1",
+                name = "Toronto Fall Trip",
+                owner = "kai",
+                users = listOf("kai", "andrew", "toni"),
+                events = listOf(
+                    Event(
+                        id = "e1",
+                        title = "CN Tower",
+                        description = "View deck",
+                        location = Location(43.6426, -79.3871),
+                        duration = Duration("2025-11-03T10:00:00", "2025-11-03T12:00:00")
+                    )
                 ),
-                Event(
-                    id = "e2",
-                    title = "Lunch at Harbourfront",
-                    description = "Seafood",
-                    location = Location(43.6385, -79.3810),
-                    duration = Duration("2025-11-03T12:30:00", "2025-11-03T13:30:00")
-                )
-            ),
-            duration = Duration("2025-11-03T09:00:00", "2025-11-05T18:00:00")
-        ),
-        Trip(
-            id = "2",
-            name = "Niagara Day",
-            owner = "kai",
-            users = mutableListOf("kai"),
-            events = mutableListOf(),
-            duration = Duration("2025-11-10T08:00:00", "2025-11-10T20:00:00")
+                duration = Duration("2025-11-03T09:00:00", "2025-11-05T18:00:00")
+            )
         )
-    )
-
-    fun getAllForUser(username: String): List<Trip> =
-        trips.filter { it.users.contains(username) || it.owner == username }
-
-    fun getInvited(username: String): List<Trip> =
-        trips.filter { it.users.contains(username) && it.owner != username }
-
-    fun getById(tripId: String): Trip? = trips.find { it.id == tripId }
-
-
-    fun getEvent(tripId: String, eventId: String): Event? {
-        return trips.find { it.id == tripId }?.events?.find { it.id == eventId }
+        put(
+            "2",
+            Trip(
+                id = "2",
+                name = "Niagara Day",
+                owner = "kai",
+                users = listOf("kai"),
+                events = emptyList(),
+                duration = Duration("2025-12-10T08:00:00", "2025-12-10T20:00:00")
+            )
+        )
     }
 
-    fun addEvent(tripId: String, event: Event): Event? {
-        val trip = trips.find { it.id == tripId } ?: return null
+    /* ----------------- Trip queries ----------------- */
+    fun getAllForUser(user: String): List<Trip> =
+        trips.values.filter { it.owner == user || it.users.contains(user) }.sortedBy { it.id }
 
-        val idx = trip.events.indexOfFirst { it.id == event.id }
-        
-        if (idx >= 0) {
-            trip.events[idx] = event
-        } else {
-            trip.events.add(event)
-        }
-        return event
+    fun getById(id: String): Trip? = trips[id]
+
+    fun createTrip(req: TripCreateRequest): Trip {
+        val newId = idGenTrip.incrementAndGet().toString()
+        val trip = Trip(
+            id = newId,
+            name = req.name,
+            owner = req.owner,
+            users = req.users,
+            events = emptyList(),
+            duration = req.duration
+        )
+        trips[newId] = trip
+        return trip
     }
 
-    fun updateEvent(tripId: String, eventId: String, updated: Event): Event? {
-        val trip = trips.find { it.id == tripId } ?: return null
-        val idx = trip.events.indexOfFirst { it.id == eventId }
+    fun updateTrip(id: String, req: TripUpdateRequest): Trip? {
+        val cur = trips[id] ?: return null
+        val updated = cur.copy(
+            name = req.name ?: cur.name,
+            users = req.users ?: cur.users,
+            duration = req.duration ?: cur.duration
+        )
+        trips[id] = updated
+        return updated
+    }
+
+    fun deleteTrip(id: String): Boolean = trips.remove(id) != null
+
+    /* ----------------- Event queries (under a Trip) ----------------- */
+    fun listEvents(tripId: String): List<Event>? =
+        trips[tripId]?.events
+
+    fun createEvent(tripId: String, req: EventCreateRequest): Event? {
+        val cur = trips[tripId] ?: return null
+        val newEvent = Event(
+            id = "e" + idGenEvent.incrementAndGet().toString(),
+            title = req.title,
+            description = req.description,
+            location = req.location,
+            duration = req.duration
+        )
+        val updated = cur.copy(events = cur.events + newEvent)
+        trips[tripId] = updated
+        return newEvent
+    }
+
+    fun updateEvent(tripId: String, eventId: String, req: EventUpdateRequest): Event? {
+        val cur = trips[tripId] ?: return null
+        val idx = cur.events.indexOfFirst { it.id == eventId }
         if (idx == -1) return null
-
-        trip.events[idx] = updated.copy(id = eventId)
-        return trip.events[idx]
+        val ev = cur.events[idx]
+        val newEv = ev.copy(
+            title = req.title ?: ev.title,
+            description = req.description ?: ev.description,
+            location = req.location ?: ev.location,
+            duration = req.duration ?: ev.duration
+        )
+        val newList = cur.events.toMutableList().also { it[idx] = newEv }
+        trips[tripId] = cur.copy(events = newList)
+        return newEv
     }
 
     fun deleteEvent(tripId: String, eventId: String): Boolean {
-        val trip = trips.find { it.id == tripId } ?: return false
-        return trip.events.removeIf { it.id == eventId }
+        val cur = trips[tripId] ?: return false
+        val newList = cur.events.filterNot { it.id == eventId }
+        if (newList.size == cur.events.size) return false
+        trips[tripId] = cur.copy(events = newList)
+        return true
     }
 }

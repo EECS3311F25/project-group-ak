@@ -6,19 +6,16 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-
 fun Route.tripRoutes() {
+
+    /* ========== TRIP CRUD (SCRUM-70,71,72,73) ========== */
 
     get("/trip") {
         val trips = TripRepositoryMock.getAllForUser("kai")
         call.respond(trips)
     }
 
-    get("/trip/invited") {
-        val invited = TripRepositoryMock.getInvited("kai")
-        call.respond(invited)
-    }
-
+    // GET /trip/{id}
     get("/trip/{id}") {
         val id = call.parameters["id"]
         if (id == null) {
@@ -30,68 +27,82 @@ fun Route.tripRoutes() {
         else call.respond(trip)
     }
 
-    // ======= EVENT ROUTES (SCRUM-59/60/61/62) =======
-
-    // SCRUM-59: GET EVENT
-    get("/trip/{tripId}/events/{eventId}") {
-        val tripId = call.parameters["tripId"]
-        val eventId = call.parameters["eventId"]
-        if (tripId.isNullOrBlank() || eventId.isNullOrBlank()) {
-            call.respond(HttpStatusCode.BadRequest, "tripId & eventId are required")
-            return@get
-        }
-        val event = TripRepositoryMock.getEvent(tripId, eventId)
-        if (event == null) call.respond(HttpStatusCode.NotFound, "event not found")
-        else call.respond(event)
+    // POST /trip
+    post("/trip") {
+        val body = call.receive<TripCreateRequest>()
+        val created = TripRepositoryMock.createTrip(body)
+        call.respond(HttpStatusCode.Created, created)
     }
 
-    // SCRUM-60: CREATE NEW EVENT
-    post("/trip/{tripId}/events") {
-        val tripId = call.parameters["tripId"]
-        if (tripId.isNullOrBlank()) {
-            call.respond(HttpStatusCode.BadRequest, "tripId is required")
-            return@post
-        }
-        val newEvent = try {
-            call.receive<Event>()
-        } catch (e: Exception) {
-            call.respond(HttpStatusCode.BadRequest, "invalid body: ${e.message}")
-            return@post
-        }
-        val created = TripRepositoryMock.addEvent(tripId, newEvent)
-        if (created == null) call.respond(HttpStatusCode.NotFound, "trip not found")
-        else call.respond(HttpStatusCode.Created, created)
+    // PUT /trip/{id}
+    put("/trip/{id}") {
+        val id = call.parameters["id"] ?: return@put call.respond(
+            HttpStatusCode.BadRequest, "id is required"
+        )
+        val body = call.receive<TripUpdateRequest>()
+        val updated = TripRepositoryMock.updateTrip(id, body)
+        if (updated == null) call.respond(HttpStatusCode.NotFound, "trip not found")
+        else call.respond(updated)
     }
 
-    // SCRUM-62: UPDATE EVENT
-    put("/trip/{tripId}/events/{eventId}") {
-        val tripId = call.parameters["tripId"]
-        val eventId = call.parameters["eventId"]
-        if (tripId.isNullOrBlank() || eventId.isNullOrBlank()) {
-            call.respond(HttpStatusCode.BadRequest, "tripId & eventId are required")
-            return@put
-        }
-        val body = try {
-            call.receive<Event>()
-        } catch (e: Exception) {
-            call.respond(HttpStatusCode.BadRequest, "invalid body: ${e.message}")
-            return@put
-        }
-        val updated = TripRepositoryMock.updateEvent(tripId, eventId, body)
-        if (updated == null) call.respond(HttpStatusCode.NotFound, "event not found")
-        else call.respond(HttpStatusCode.OK, updated)
+    // DELETE /trip/{id}
+    delete("/trip/{id}") {
+        val id = call.parameters["id"] ?: return@delete call.respond(
+            HttpStatusCode.BadRequest, "id is required"
+        )
+        val ok = TripRepositoryMock.deleteTrip(id)
+        if (!ok) call.respond(HttpStatusCode.NotFound, "trip not found")
+        else call.respond(HttpStatusCode.NoContent)
     }
 
-    // SCRUM-61: DELETE EVENT
-    delete("/trip/{tripId}/events/{eventId}") {
-        val tripId = call.parameters["tripId"]
-        val eventId = call.parameters["eventId"]
-        if (tripId.isNullOrBlank() || eventId.isNullOrBlank()) {
-            call.respond(HttpStatusCode.BadRequest, "tripId & eventId are required")
-            return@delete
-        }
-        val ok = TripRepositoryMock.deleteEvent(tripId, eventId)
-        if (!ok) call.respond(HttpStatusCode.NotFound, "event not found")
+    /* ========== EVENT CRUD (SCRUM-59,60,61,62) ========== */
+
+    // GET /trip/{id}/events
+    get("/trip/{id}/events") {
+        val id = call.parameters["id"] ?: return@get call.respond(
+            HttpStatusCode.BadRequest, "id is required"
+        )
+        val events = TripRepositoryMock.listEvents(id) ?: return@get call.respond(
+            HttpStatusCode.NotFound, "trip not found"
+        )
+        call.respond(events)
+    }
+
+    // POST /trip/{id}/events
+    post("/trip/{id}/events") {
+        val id = call.parameters["id"] ?: return@post call.respond(
+            HttpStatusCode.BadRequest, "id is required"
+        )
+        val body = call.receive<EventCreateRequest>()
+        val created = TripRepositoryMock.createEvent(id, body)
+            ?: return@post call.respond(HttpStatusCode.NotFound, "trip not found")
+        call.respond(HttpStatusCode.Created, created)
+    }
+
+    // PUT /trip/{id}/events/{eventId}
+    put("/trip/{id}/events/{eventId}") {
+        val id = call.parameters["id"] ?: return@put call.respond(
+            HttpStatusCode.BadRequest, "id is required"
+        )
+        val eventId = call.parameters["eventId"] ?: return@put call.respond(
+            HttpStatusCode.BadRequest, "eventId is required"
+        )
+        val body = call.receive<EventUpdateRequest>()
+        val updated = TripRepositoryMock.updateEvent(id, eventId, body)
+            ?: return@put call.respond(HttpStatusCode.NotFound, "trip or event not found")
+        call.respond(updated)
+    }
+
+    // DELETE /trip/{id}/events/{eventId}
+    delete("/trip/{id}/events/{eventId}") {
+        val id = call.parameters["id"] ?: return@delete call.respond(
+            HttpStatusCode.BadRequest, "id is required"
+        )
+        val eventId = call.parameters["eventId"] ?: return@delete call.respond(
+            HttpStatusCode.BadRequest, "eventId is required"
+        )
+        val ok = TripRepositoryMock.deleteEvent(id, eventId)
+        if (!ok) call.respond(HttpStatusCode.NotFound, "trip or event not found")
         else call.respond(HttpStatusCode.NoContent)
     }
 }

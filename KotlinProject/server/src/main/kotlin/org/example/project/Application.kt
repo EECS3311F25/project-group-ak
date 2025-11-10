@@ -7,6 +7,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.example.project.trip.tripRoutes
 
+const val SERVER_PORT: Int = 8080
+
 fun main() {
     embeddedServer(
         Netty,
