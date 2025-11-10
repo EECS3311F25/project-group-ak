@@ -18,45 +18,26 @@ import androidx.compose.ui.unit.dp
 import org.example.project.controller.HomeViewComponent
 import org.example.project.controller.HomeViewEvent
 import org.example.project.model.Trip
-import org.example.project.model.User
 import org.example.project.model.SECONDARY
 import org.example.project.model.BACKGROUND
 import org.example.project.model.PRIMARY
-import org.example.project.data.repository.TripRepository
-import org.example.project.data.repository.UserRepository
+import org.example.project.viewmodel.HomeViewModel
 
 @Composable
 fun HomeView(
     component: HomeViewComponent,
-    tripRepository: TripRepository,    // Accept shared repository
-    userRepository: UserRepository     // Accept shared repository
+    viewModel: HomeViewModel
 ) {
-    // 🔥 Reactive state - automatically updates when repository data changes
-    val trips by tripRepository.trips.collectAsState()
-    val isLoading by tripRepository.isLoading.collectAsState()
-    val error by tripRepository.error.collectAsState()
+    // 🔥 Collect states from ViewModel
+    val trips by viewModel.trips.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
+    val currentUser by viewModel.currentUser
     
-    var currentUser by remember { mutableStateOf<User?>(null) }
-    
-    // Load current user once
-    LaunchedEffect(userRepository) {
-        currentUser = userRepository.getCurrentUser()
-    }
+    var tripForOptions by remember { mutableStateOf<Trip?>(null) }
 
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { 
-                    component.onEvent(HomeViewEvent.ClickAddTripHomeView) 
-                },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Trip"
-                )
-            }
-        }
+
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -184,6 +165,10 @@ fun HomeView(
                                     .padding(bottom = 12.dp),
                                 onClick = { 
                                     component.onEvent(HomeViewEvent.ClickButtonHomeView(trip)) 
+                                },
+                                onDeleteClick = {
+                                    // Show options dialog
+                                    tripForOptions = trip
                                 }
                             )
                         }
@@ -207,5 +192,54 @@ fun HomeView(
                 }
             }
         }
+    }
+
+    // Add Trip Options Dialog
+    tripForOptions?.let { trip ->
+        AlertDialog(
+            onDismissRequest = { tripForOptions = null },
+            title = {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Are you sure?",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+            },
+            text = {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Your trip data will be lost.",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { tripForOptions = null }
+                ) {
+                    Text("Cancel")
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteTrip(trip.title)
+                        tripForOptions = null
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Delete Trip")
+                }
+            }
+        )
     }
 }
