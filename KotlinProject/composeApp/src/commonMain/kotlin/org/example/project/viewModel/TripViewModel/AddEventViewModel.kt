@@ -1,4 +1,4 @@
-package org.example.project.viewModel.TripViewModel
+package org.example.project.viewmodel.trip
 
 class AddEventViewModel {
 }

@@ -12,6 +12,7 @@ class LocalTripDataSource : TripDataSource {
     // Mock in-memory storage (replace with Room/SQLDelight later)
     private val trips = mutableListOf<Trip>(
         Trip(
+            id = "trip_summer_getaway",
             title = "Summer Getaway",
             description = "Road trip across Ontario",
             location = "Toronto to Ottawa",
@@ -116,6 +117,7 @@ class LocalTripDataSource : TripDataSource {
             createdDate = LocalDate(2025, 6, 1)
         ),
         Trip(
+            id = "trip_european_adventure",
             title = "European Adventure",
             description = "Backpacking through Europe",
             location = "Paris to Rome",
@@ -220,6 +222,7 @@ class LocalTripDataSource : TripDataSource {
             createdDate = LocalDate(2025, 6, 15) // Middle trip
         ),
         Trip(
+            id = "trip_mountain_retreat",
             title = "Mountain Retreat",
             description = "Peaceful getaway in the mountains",
             location = "Banff National Park",
@@ -330,7 +333,7 @@ class LocalTripDataSource : TripDataSource {
     }
     
     override suspend fun getTripById(id: String): Trip? {
-        return trips.find { it.title == id } // Using title as ID for now
+        return trips.find { it.id == id }
     }
     
     override suspend fun insertTrip(trip: Trip): Trip {
@@ -339,7 +342,7 @@ class LocalTripDataSource : TripDataSource {
     }
     
     override suspend fun updateTrip(trip: Trip): Trip {
-        val index = trips.indexOfFirst { it.title == trip.title }
+        val index = trips.indexOfFirst { it.id == trip.id }
         if (index != -1) {
             trips[index] = trip
         }
@@ -347,7 +350,48 @@ class LocalTripDataSource : TripDataSource {
     }
     
     override suspend fun deleteTrip(tripId: String) {
-        trips.removeAll { it.title == tripId }
+        trips.removeAll { it.id == tripId }
+    }
+
+    override suspend fun addEventToTrip(tripId: String, event: Event) {
+        mutateTrip(tripId) { trip -> trip.copy(events = trip.events + event) }
+    }
+
+    override suspend fun deleteEventFromTrip(tripId: String, eventId: String) {
+        mutateTrip(tripId) { trip ->
+            trip.copy(events = trip.events.filterNot { it.title == eventId })
+        }
+    }
+
+    override suspend fun updateEventInTrip(tripId: String, eventId: String, updated: Event) {
+        mutateTrip(tripId) { trip ->
+            val newEvents = trip.events.map { if (it.title == eventId) updated else it }
+            trip.copy(events = newEvents)
+        }
+    }
+
+    override suspend fun addMemberToTrip(tripId: String, userId: String) {
+        mutateTrip(tripId) { trip ->
+            if (trip.users.any { it.name == userId }) {
+                trip
+            } else {
+                trip.copy(users = trip.users + User(name = userId))
+            }
+        }
+    }
+
+    override suspend fun removeMemberFromTrip(tripId: String, userId: String) {
+        mutateTrip(tripId) { trip ->
+            trip.copy(users = trip.users.filterNot { it.name == userId })
+        }
+    }
+
+    private fun mutateTrip(tripId: String, transform: (Trip) -> Trip) {
+        val index = trips.indexOfFirst { it.id == tripId }
+        if (index == -1) {
+            throw IllegalArgumentException("Trip not found: $tripId")
+        }
+        trips[index] = transform(trips[index])
     }
 }
 

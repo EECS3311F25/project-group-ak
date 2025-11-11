@@ -1,9 +1,11 @@
-package org.example.project.viewModel.TripViewModel
+package org.example.project.viewmodel.trip
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.example.project.data.repository.TripRepository
 import org.example.project.model.Trip
@@ -14,13 +16,21 @@ class TripViewModel(
     private val tripRepository: TripRepository
 ) : ViewModel() {
     private val _trip = MutableStateFlow<Trip?>(null)
-    val trip: StateFlow<Trip?> = _trip
+    val trip: StateFlow<Trip?> = _trip.asStateFlow()
     val isLoading: StateFlow<Boolean> = tripRepository.isLoading
     val error: StateFlow<String?> = tripRepository.error
 
     init {
         viewModelScope.launch {
-            _trip.value = tripRepository.getTripById(tripId)
+            tripRepository.trips.collect { trips ->
+                _trip.value = trips.find { it.id == tripId }
+            }
+        }
+
+        viewModelScope.launch {
+            if (_trip.value == null) {
+                _trip.value = tripRepository.getTripById(tripId)
+            }
         }
     }
 

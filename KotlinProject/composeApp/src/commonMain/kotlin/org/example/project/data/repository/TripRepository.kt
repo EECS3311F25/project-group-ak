@@ -109,7 +109,7 @@ class TripRepository(
         _isLoading.value = true
         _error.value = null
         return try {
-            val updatedTrip = localDataSource.addEventToTrip(tripId, event)
+            localDataSource.addEventToTrip(tripId, event)
             refreshTrips()
             _isLoading.value = false
             Result.success(event)
@@ -139,10 +139,10 @@ class TripRepository(
         _isLoading.value = true
         _error.value = null
         return try {
-            val event = localDataSource.updateEventInTrip(tripId, eventId, updated)
+            localDataSource.updateEventInTrip(tripId, eventId, updated)
             refreshTrips()
             _isLoading.value = false
-            Result.success(event)
+            Result.success(Unit)
         } catch (e: Exception) {
             _isLoading.value = false
             _error.value = e.message

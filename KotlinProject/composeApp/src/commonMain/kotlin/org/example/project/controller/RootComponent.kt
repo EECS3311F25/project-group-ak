@@ -77,14 +77,11 @@ class RootComponent(
             )
 
             is Configuration.AddMember -> Child.AddMember(
-                AddMemberComponent(
+                component = AddMemberComponent(
                     componentContext = context,
-                    onGoBack = { navigation.pop() },
-                    onAddMember = { name ->
-                        // Add member in component/repository, then navigate back to the trip view
-                        navigation.replaceCurrent(Configuration.TripView(config.tripId))
-                    }
-                )
+                    onGoBack = { navigation.pop() }
+                ),
+                tripId = config.tripId
             )
 
             is Configuration.TripCreationView -> Child.TripCreationView(
@@ -108,7 +105,7 @@ class RootComponent(
         data class TripCreationView(val component: TripCreationComponent) : Child()
         data class LoginView(val component : LoginViewComponent) : Child()
         data class SignupView(val component : SignupViewComponent) : Child()
-        data class AddMember(val component : AddMemberComponent) : Child()
+        data class AddMember(val component : AddMemberComponent, val tripId: String) : Child()
     }
 
     @Serializable

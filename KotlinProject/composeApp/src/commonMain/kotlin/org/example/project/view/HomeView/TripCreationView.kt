@@ -5,7 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.datetime.LocalDate
 import org.example.project.controller.TripCreationComponent
 import org.example.project.controller.TripCreationEvent
-import org.example.project.viewModel.TripCreationViewModel
+import org.example.project.viewmodel.TripCreationViewModel
 import org.example.project.model.User
 import org.example.project.model.Event
 import org.example.project.model.Duration
@@ -65,7 +65,7 @@ fun TripCreationView(
                     component.onEvent(TripCreationEvent.ClickBack) 
                 }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Go Back"
                     )
                 }

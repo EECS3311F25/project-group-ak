@@ -156,7 +156,7 @@ fun HomeView(
                     ) {
                         items(
                             items = trips, // Automatically updated via StateFlow
-                            key = { it.title }
+                            key = { it.id }
                         ) { trip ->
                             TripCard(
                                 trip = trip,
@@ -230,7 +230,7 @@ fun HomeView(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.deleteTrip(trip.title)
+                        viewModel.deleteTrip(trip.id)
                         tripForOptions = null
                     },
                     colors = ButtonDefaults.textButtonColors(

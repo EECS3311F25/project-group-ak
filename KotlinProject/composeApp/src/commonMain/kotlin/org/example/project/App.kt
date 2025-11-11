@@ -22,13 +22,14 @@ import org.example.project.view.TripView.TripViewSubPages.AddTripView
 import org.example.project.view.TripView.TripViewSubPages.AddMember
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
-import org.example.project.viewModel.TripCreationViewModel
+import org.example.project.viewmodel.TripCreationViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
 import org.example.project.data.source.LocalTripDataSource
 import org.example.project.data.source.LocalUserDataSource
-import org.example.project.viewModel.TripViewModel.TripViewModel
+import org.example.project.viewmodel.trip.TripViewModel
+import org.example.project.viewmodel.trip.AddMemberViewModel
 
 @Composable
 /*
@@ -99,7 +100,16 @@ fun App(root: RootComponent) {
                 }
                 
                 is RootComponent.Child.AddMember -> {
-                    AddMember(instance.component)
+                    val addMemberViewModel: AddMemberViewModel = viewModel {
+                        AddMemberViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository
+                        )
+                    }
+                    AddMember(
+                        component = instance.component,
+                        viewModel = addMemberViewModel
+                    )
                 }
                 
                 // 🔥 Pass shared repositories to TripCreationView
