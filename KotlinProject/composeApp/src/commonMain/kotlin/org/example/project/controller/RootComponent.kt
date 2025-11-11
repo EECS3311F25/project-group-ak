@@ -8,8 +8,6 @@ import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import kotlinx.serialization.Serializable
-import org.example.project.model.Trip
-import org.example.project.model.User
 import org.example.project.data.source.LocalUserDataSource
 import org.example.project.data.repository.UserRepository
 
@@ -52,51 +50,49 @@ class RootComponent(
                     onNavigateToLogin = {navigation.pop()}
                 )
             )
-            
+
             is Configuration.TripView -> Child.TripView(
                 TripViewComponent(
                     componentContext = context,
                     onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView) },
-                    onNavigateToAddMember = { navigation.pushNew(Configuration.AddMember(config.trip)) },
+                    onNavigateToAddMember = { navigation.pushNew(Configuration.AddMember(config.tripId)) },
                     onGoBack = { navigation.replaceAll(Configuration.HomeView) }
                 ),
-                config.trip
+                config.tripId
             )
-            
+
             is Configuration.AddTripView -> Child.AddTripView(
                 AddTripViewComponent(
                     componentContext = context,
                     onGoBack = { navigation.pop() }
                 )
             )
-            
+
             is Configuration.HomeView -> Child.HomeView(
                 HomeViewComponent(
                     componentContext = context,
-                    onNavigateToTripView = { trip -> navigation.pushNew(Configuration.TripView(trip)) },
+                    onNavigateToTripView = { trip -> navigation.pushNew(Configuration.TripView(trip.id)) },
                     onNavigateToTripCreation = { navigation.pushNew(Configuration.TripCreationView)}
                 )
             )
-            
+
             is Configuration.AddMember -> Child.AddMember(
                 AddMemberComponent(
                     componentContext = context,
                     onGoBack = { navigation.pop() },
                     onAddMember = { name ->
-                        val updated = config.trip.copy(
-                            users = config.trip.users + User(name = name)
-                        )
-                        navigation.replaceCurrent(Configuration.TripView(updated))
+                        // Add member in component/repository, then navigate back to the trip view
+                        navigation.replaceCurrent(Configuration.TripView(config.tripId))
                     }
                 )
             )
-            
+
             is Configuration.TripCreationView -> Child.TripCreationView(
                 TripCreationComponent(
                     componentContext = context,
-                    onNavigateToTripView = { trip -> 
+                    onNavigateToTripView = { trip ->
                         navigation.pop()
-                        navigation.pushNew(Configuration.TripView(trip))
+                        navigation.pushNew(Configuration.TripView(trip.id))
                     },
                     onNavigateToHomeView = { navigation.pop() },
                     userRepository = userRepository
@@ -106,7 +102,7 @@ class RootComponent(
     }
 
     sealed class Child {
-        data class TripView(val component: TripViewComponent, val trip: Trip) : Child()
+        data class TripView(val component: TripViewComponent, val tripId: String) : Child()
         data class AddTripView(val component: AddTripViewComponent) : Child()
         data class HomeView(val component: HomeViewComponent) : Child()
         data class TripCreationView(val component: TripCreationComponent) : Child()
@@ -118,7 +114,7 @@ class RootComponent(
     @Serializable
     sealed class Configuration {
         @Serializable
-        data class TripView(val trip: Trip): Configuration()
+        data class TripView(val tripId: String): Configuration()
         @Serializable
         data object AddTripView : Configuration()
         @Serializable
@@ -128,7 +124,7 @@ class RootComponent(
         @Serializable
         data object HomeView : Configuration()
         @Serializable
-        data class AddMember(val trip: Trip) : Configuration()
+        data class AddMember(val tripId: String) : Configuration()
         @Serializable
         data object TripCreationView : Configuration()
     }

@@ -5,8 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Trip(
+    val id: String,
     val title: String,
     val duration: Duration,
+
     val description: String = "",
     val location: String = "", // TODO: Create Location data class
 

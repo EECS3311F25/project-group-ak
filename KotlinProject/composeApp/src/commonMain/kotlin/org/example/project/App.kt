@@ -18,8 +18,8 @@ import org.example.project.controller.RootComponent
 import org.example.project.view.TripView.TripView
 import org.example.project.view.HomeView.HomeView
 import org.example.project.view.HomeView.TripCreationView
-import org.example.project.view.TripViewSubPages.AddTripView
-import org.example.project.view.TripViewSubPages.AddMember
+import org.example.project.view.TripView.TripViewSubPages.AddTripView
+import org.example.project.view.TripView.TripViewSubPages.AddMember
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
 import org.example.project.viewModel.TripCreationViewModel
@@ -28,6 +28,7 @@ import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
 import org.example.project.data.source.LocalTripDataSource
 import org.example.project.data.source.LocalUserDataSource
+import org.example.project.viewModel.TripViewModel.TripViewModel
 
 @Composable
 /*
@@ -72,8 +73,16 @@ fun App(root: RootComponent) {
                 is RootComponent.Child.SignupView -> SignupView(instance.component)
                 
                 is RootComponent.Child.TripView -> {
-                    // Use the specific trip passed from navigation
-                    TripView(instance.component, instance.trip)
+                    val tripViewModel: TripViewModel = viewModel {
+                        TripViewModel(
+                            tripRepository = tripRepository,
+                            tripId = instance.tripId
+                        )
+                    }
+                    TripView(
+                        instance.component,
+                        viewModel = tripViewModel,
+                    )
                 }
                 
                 is RootComponent.Child.AddTripView -> AddTripView(instance.component)

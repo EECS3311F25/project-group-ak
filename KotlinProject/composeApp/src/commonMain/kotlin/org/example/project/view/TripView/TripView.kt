@@ -13,7 +13,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.key
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,7 @@ import org.example.project.view.Header
 import org.example.project.view.ListMembersSection
 import org.example.project.view.TripSummarySection
 import org.example.project.view.components.NavBar
+import org.example.project.viewModel.TripViewModel.TripViewModel
 
 /**
  * Renders the Trip screen.
@@ -40,13 +43,14 @@ import org.example.project.view.components.NavBar
 @Composable
 fun TripView(
     component: TripViewComponent,
-    trip: Trip,
-    modifier: Modifier = Modifier,
+    viewModel: TripViewModel,
 ) {
+
+    val trip by viewModel.trip.collectAsState()
     // height used to inset the list so content is not hidden behind the nav bar
     val navBarHeight = 64.dp
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
         // main scrollable content with bottom padding so it doesn't scroll under the nav bar
         LazyColumn(
             modifier = Modifier
@@ -56,14 +60,14 @@ fun TripView(
         ) {
             item {
                 Header(
-                    tripTitle = trip.title,
-                    duration = trip.duration,
+                    tripTitle = trip!!.title,
+                    duration = trip!!.duration,
                     onShareClick = { component.onEvent(TripViewEvent.ClickShare) }
                 )
             }
-            item { ListMembersSection(trip.users) }
-            item { TripSummarySection(trip.description) }
-            item { EventsSection(trip.duration, trip.events) }
+            item { ListMembersSection(trip!!.users) }
+            item { TripSummarySection(trip!!.description) }
+            item { EventsSection(trip!!.duration, trip!!.events) }
         }
 
         // Floating action button anchored above the nav bar
@@ -92,9 +96,9 @@ fun TripView(
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            key(trip.title) {
+            key(trip!!.title) {
                 NavBar(
-                    tripTitle = trip.title,
+                    tripTitle = trip!!.title,
                     selectedIndex = 0,
                     onItemSelected = { /* ... */ },
                     onBack = { component.onBack() }                )

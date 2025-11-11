@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.example.project.model.Trip
 import org.example.project.data.source.TripDataSource
+import org.example.project.model.Event
 
 class TripRepository(
     private val localDataSource: TripDataSource
@@ -103,4 +104,112 @@ class TripRepository(
             _error.value = e.message
         }
     }
+
+    suspend fun addEvent(tripId: String, event: Event): Result<Event> {
+        _isLoading.value = true
+        _error.value = null
+        return try {
+            val updatedTrip = localDataSource.addEventToTrip(tripId, event)
+            refreshTrips()
+            _isLoading.value = false
+            Result.success(event)
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _error.value = e.message
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteEvent(tripId: String, eventId: String): Result<Unit> {
+        _isLoading.value = true
+        _error.value = null
+        return try {
+            localDataSource.deleteEventFromTrip(tripId, eventId)
+            refreshTrips()
+            _isLoading.value = false
+            Result.success(Unit)
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _error.value = e.message
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateEvent(tripId: String, eventId: String, updated: Event): Result<Unit> {
+        _isLoading.value = true
+        _error.value = null
+        return try {
+            val event = localDataSource.updateEventInTrip(tripId, eventId, updated)
+            refreshTrips()
+            _isLoading.value = false
+            Result.success(event)
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _error.value = e.message
+            Result.failure(e)
+        }
+    }
+
+    suspend fun addMember(tripId: String, userId: String): Result<Unit> {
+        _isLoading.value = true
+        _error.value = null
+        return try {
+            localDataSource.addMemberToTrip(tripId, userId)
+            refreshTrips()
+            _isLoading.value = false
+            Result.success(Unit)
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _error.value = e.message
+            Result.failure(e)
+        }
+    }
+
+    suspend fun removeMember(tripId: String, userId: String): Result<Unit> {
+        _isLoading.value = true
+        _error.value = null
+        return try {
+            localDataSource.removeMemberFromTrip(tripId, userId)
+            refreshTrips()
+            _isLoading.value = false
+            Result.success(Unit)
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _error.value = e.message
+            Result.failure(e)
+        }
+    }
+       // TODO: FIX AND ADD
+//    suspend fun updateTripImage(tripId: String, imageUrl: String): Result<Unit> {
+//        return updateTripField(tripId) { it.copy(imageUrl = imageUrl) }
+//    }
+//
+//    suspend fun updateTripDuration(tripId: String, durationMinutes: Int): Result<Unit> {
+//        return updateTripField(tripId) { it.copy(durationMinutes = durationMinutes) }
+//    }
+
+    suspend fun updateTripTitle(tripId: String, title: String): Result<Unit> {
+        return updateTripField(tripId) { it.copy(title = title) }
+    }
+
+    suspend fun updateTripDescription(tripId: String, description: String): Result<Unit> {
+        return updateTripField(tripId) { it.copy(description = description) }
+    }
+
+    private suspend fun updateTripField(tripId: String, update: (Trip) -> Trip): Result<Unit> {
+        _isLoading.value = true
+        _error.value = null
+        return try {
+            val trip = localDataSource.getTripById(tripId) ?: return Result.failure(Exception("Trip not found"))
+            localDataSource.updateTrip(update(trip))
+            refreshTrips()
+            _isLoading.value = false
+            Result.success(Unit)
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _error.value = e.message
+            Result.failure(e)
+        }
+    }
+
 }

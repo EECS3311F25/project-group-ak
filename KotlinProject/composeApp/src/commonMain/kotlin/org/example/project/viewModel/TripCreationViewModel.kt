@@ -280,6 +280,7 @@ class TripCreationViewModel(
         viewModelScope.launch {
             try {
                 val trip = Trip(
+                    id = Clock.System.now().toEpochMilliseconds().toString(),
                     title = currentState.title.trim(),
                     duration = duration,
                     description = currentState.description.trim(),

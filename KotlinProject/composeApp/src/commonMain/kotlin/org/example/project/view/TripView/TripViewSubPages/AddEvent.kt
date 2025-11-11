@@ -1,4 +1,4 @@
-package org.example.project.view.TripViewSubPages
+package org.example.project.view.TripView.TripViewSubPages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
