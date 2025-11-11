@@ -1,24 +1,19 @@
 package org.example.project.view.CalendarView
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.example.project.model.Event
-import kotlin.math.abs
 
 @Composable
 fun TimelineView(
@@ -27,104 +22,85 @@ fun TimelineView(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
-    val pixelsPerHour = 120.dp // Height for each hour
-    val pixelsPerMinute = pixelsPerHour / 60
-    
-    println("=== TimelineView Debug ===")
-    println("Selected Date: $selectedDate")
-    println("Events count: ${events.size}")
-    events.forEachIndexed { index, event ->
-        println("Event $index: ${event.title}")
-        println("  Start: ${event.duration.startDate} ${event.duration.startTime}")
-        println("  End: ${event.duration.endDate} ${event.duration.endTime}")
-    }
-    
+    val pixelsPerHour = 120.dp
+    val pixelsPerMinute = pixelsPerHour / 60f
+    val totalHeight = pixelsPerHour * 24
+
+    // capture density in composition (Composable context)
+    val density = LocalDensity.current
+
     // Auto-scroll to first event when events change
     LaunchedEffect(events.firstOrNull()?.duration?.startTime) {
         events.firstOrNull()?.let { firstEvent ->
             val startHour = firstEvent.duration.startTime.hour
-            // Scroll to 2 hours before the event (or hour 0 if event is early)
             val targetHour = (startHour - 2).coerceAtLeast(0)
-            println("Auto-scrolling to hour $targetHour (event at hour $startHour)")
-            listState.scrollToItem(targetHour)
+            // convert Dp to px for scroll offset using captured density
+            val offsetPx = (with(density) { (pixelsPerHour * targetHour).toPx() }).toInt()
+            // use animateScrollToItem for smoothness (or scrollToItem for instant jump)
+            listState.animateScrollToItem(0, offsetPx)
         }
     }
-    
-    Box(modifier = modifier.fillMaxSize()) {
-        // Single LazyColumn containing the entire timeline
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(24) { hour ->
-                Box(modifier = Modifier.height(pixelsPerHour)) {
-                    Row(modifier = Modifier.fillMaxSize()) {
-                        // Time label
-                        Box(
-                            modifier = Modifier
-                                .width(60.dp)
-                                .fillMaxHeight(),
-                            contentAlignment = Alignment.TopStart
-                        ) {
-                            Text(
-                                text = String.format("%02d:00", hour),
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.padding(end = 8.dp)
-                            )
-                        }
-                        
-                        // Grid lines
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            // Hour line
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outline,
-                                thickness = 1.dp
-                            )
-                            Spacer(modifier = Modifier.height(pixelsPerHour / 2 - 0.5.dp))
-                            
-                            // Half-hour line
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                thickness = 0.5.dp
-                            )
-                            Spacer(modifier = Modifier.height(pixelsPerHour / 2 - 0.5.dp))
-                        }
-                    }
-                    
-                    // Events that fall in this hour block
-                    Box(
+
+    LazyColumn(
+        state = listState,
+        modifier = modifier.fillMaxSize()
+    ) {
+        item {
+            Box(modifier = Modifier
+                .height(totalHeight)
+                .fillMaxWidth()
+            ) {
+                // Draw hour labels and grid lines
+                for (hour in 0..23) {
+                    val hourOffset = pixelsPerHour * hour
+                    // Hour label
+                    androidx.compose.material3.Text(
+                        text = String.format("%02d:00", hour),
+                        style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier
-                            .fillMaxSize()
+                            .offset(y = hourOffset)
+                            .padding(start = 8.dp)
+                            .align(Alignment.TopStart)
+                    )
+
+                    // Hour divider
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outline,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .offset(y = hourOffset)
+                            .fillMaxWidth()
+                    )
+
+                    // Half-hour divider
+                    val halfOffset = hourOffset + (pixelsPerHour / 2f)
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                        thickness = 0.5.dp,
+                        modifier = Modifier
+                            .offset(y = halfOffset)
+                            .fillMaxWidth()
+                    )
+                }
+
+                // Render events as single boxes positioned relative to top of day
+                events.forEach { event ->
+                    val startMinutes = event.duration.startTime.hour * 60 + event.duration.startTime.minute
+                    val endMinutes = event.duration.endTime.hour * 60 + event.duration.endTime.minute
+                    val durationMinutes = (endMinutes - startMinutes).coerceAtLeast(1)
+
+                    val topOffset = pixelsPerMinute * startMinutes
+                    val height = pixelsPerMinute * durationMinutes
+
+                    // place event card across the full timeline (leaving time label gutter)
+                    EventCard(
+                        event = event,
+                        modifier = Modifier
+                            .offset(y = topOffset)
+                            .height(height)
+                            .fillMaxWidth()
                             .padding(start = 68.dp, end = 8.dp)
-                    ) {
-                        events.forEach { event ->
-                            val eventStartMinutes = event.duration.startTime.hour * 60 + event.duration.startTime.minute
-                            val eventEndMinutes = event.duration.endTime.hour * 60 + event.duration.endTime.minute
-                            val hourStartMinutes = hour * 60
-                            val hourEndMinutes = (hour + 1) * 60
-                            
-                            // Check if event overlaps with this hour
-                            if (eventStartMinutes < hourEndMinutes && eventEndMinutes > hourStartMinutes) {
-                                // Calculate position within this hour block
-                                val offsetInHour = (eventStartMinutes - hourStartMinutes).coerceAtLeast(0)
-                                val visibleDuration = (eventEndMinutes.coerceAtMost(hourEndMinutes) - eventStartMinutes.coerceAtLeast(hourStartMinutes))
-                                
-                                val topOffset = pixelsPerMinute * offsetInHour
-                                val height = pixelsPerMinute * visibleDuration
-                                
-                                println("Hour $hour: Event ${event.title} - offset=$topOffset, height=$height")
-                                
-                                EventCard(
-                                    event = event,
-                                    isTimelineView = true,
-                                    modifier = Modifier
-                                        .offset(y = topOffset)
-                                        .height(height)
-                                        .fillMaxWidth()
-                                )
-                            }
-                        }
-                    }
+                    )
                 }
             }
         }
