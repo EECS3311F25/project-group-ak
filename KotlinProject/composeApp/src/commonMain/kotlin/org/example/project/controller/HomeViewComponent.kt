@@ -2,6 +2,7 @@ package org.example.project.controller
 
 import com.arkivanov.decompose.ComponentContext
 import org.example.project.model.Trip
+import org.example.project.viewModel.HomeViewModel
 
 class HomeViewComponent(
     componentContext: ComponentContext,
@@ -14,5 +15,16 @@ class HomeViewComponent(
             is HomeViewEvent.ClickButtonHomeView -> onNavigateToTripView(event.trip)
             is HomeViewEvent.ClickAddTripHomeView -> onNavigateToTripCreation()
         }
+    }
+
+    /**
+     * Helper to delegate deletion from the UI layer through a ViewModel.
+     * Keeps the controller API stable while allowing the view to call into the ViewModel.
+     *
+     * Usage from a composable:
+     *   component.deleteTrip(viewModel, trip.title)
+     */
+    fun deleteTrip(viewModel: HomeViewModel, tripTitle: String) {
+        viewModel.deleteTrip(tripTitle)
     }
 }
