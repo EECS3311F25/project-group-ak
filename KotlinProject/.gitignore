@@ -81,3 +81,10 @@ Thumbs.db
 *.log
 tmp/
 temp/
+
+# Documentation files (server directory)
+server/DATABASE_SETUP.md
+server/IMPLEMENTATION_SUMMARY.md
+server/QUICK_START.md
+server/ARCHITECTURE.md
+server/CHECKLIST.md

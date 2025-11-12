@@ -1,0 +1,9 @@
+
+1) Extend server module : 
+    - Add migration
+    - A repository wiring
+    - Service Layer
+    - Ktor routes and serialization
+    - Integration with Compose Client
+
+    
