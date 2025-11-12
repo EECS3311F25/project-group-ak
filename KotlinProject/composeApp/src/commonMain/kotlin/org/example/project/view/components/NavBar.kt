@@ -12,13 +12,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-// import androidx.compose.foundation.layout.weight
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import org.example.project.model.PRIMARY
@@ -66,8 +68,9 @@ fun NavBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(32.dp),
-            color = androidx.compose.ui.graphics.Color.Gray,
-            elevation = 4.dp
+            color = MaterialTheme.colorScheme.background,
+            shadowElevation = 4.dp,
+            shape = RoundedCornerShape(bottomStart = 12.dp) // only left-bottom corner rounded
         ) {
             Row(
                 modifier = Modifier
@@ -77,67 +80,82 @@ fun NavBar(
             ) {
                 // Box with back icon and home text
                 Box(
-                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .width(100.dp)
-                        .fillMaxHeight()
-                        .background(color = MaterialTheme.colors.surface)
-                        .clickable(onClick = onBack)
-                ) {
-        
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            modifier = Modifier
-                                .size(18.dp)
-                        )
-                        Text(
-                            text = "Home",
-                            modifier = Modifier.padding(start = 8.dp),
-                            style = MaterialTheme.typography.body2
-                        )
+                        .background(color = MaterialTheme.colorScheme.secondary)
+                ){
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .width(100.dp)
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(topEnd = 12.dp))
+                            .background(color = MaterialTheme.colorScheme.surface)
+                            .clickable(onClick = onBack)
+                    ) {
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                modifier = Modifier
+                                    .size(18.dp)
+                            )
+                            Text(
+                                text = "Home",
+                                modifier = Modifier.padding(start = 8.dp),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
 
-                // trailing text inside same surface
-                Text(
-                    text = tripTitle,
-                    style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.onPrimary,
-                    maxLines = 1,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(end = 8.dp, start = 16.dp)
-                )
+
+                // Box showing trip title (clip bottom-start corner)
+                Box(
+                    contentAlignment = Alignment.CenterStart,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(bottomStart = 12.dp))
+                        .background(color = MaterialTheme.colorScheme.secondary)
+                ) {
+                    Text(
+                        text = tripTitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                    )
+                }
             }
         }
-
-        BottomNavigation(
+        NavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(44.dp),
-            backgroundColor = MaterialTheme.colors.surface,
-            elevation = 8.dp
+                .height(56.dp),
+            containerColor = MaterialTheme.colorScheme.surface,
         ) {
             items.forEachIndexed { index, item ->
-                BottomNavigationItem(
-                    icon = { 
-                        Icon(
-                            item.icon,
-                            contentDescription = item.title,
-                            tint = if (index == current) 
-                                PRIMARY
-                            else 
-                                PRIMARY.copy(alpha = 0.6f)
-                        )
-                    },
-                    selected = index == current,
+                val selected = index == current
+                NavigationBarItem(
+                    selected = selected,
                     onClick = {
                         if (selectedIndex == null) internalSelected = index
                         onItemSelected(index)
                     },
-                    selectedContentColor = MaterialTheme.colors.primary,
-                    unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                    icon = {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.title,
+                            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
                 )
             }
         }
