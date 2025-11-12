@@ -82,7 +82,7 @@ fun NavBar(
                         .width(100.dp)
                         .fillMaxHeight()
                         .background(color = MaterialTheme.colors.surface)
-                        .clickable(onClick = onBack) // make the whole box clickable
+                        .clickable(onClick = onBack)
                 ) {
         
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -100,12 +100,11 @@ fun NavBar(
                     }
                 }
 
-                //Spacer(modifier = Modifier.weight(1f))
-
                 // trailing text inside same surface
                 Text(
                     text = tripTitle,
                     style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onPrimary,
                     maxLines = 1,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                     modifier = Modifier.padding(end = 8.dp, start = 16.dp)

@@ -69,7 +69,7 @@ fun CalendarView(
                 Column(modifier = Modifier.padding(16.dp)) {    
                     selectedDate?.let { date ->
                         Text(
-                            text = "${date.dayOfMonth} ${date.month} ${date.year}",
+                            text = "${date.month} ${date.dayOfMonth}, ${date.year}",
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(top = 8.dp)
                         )
