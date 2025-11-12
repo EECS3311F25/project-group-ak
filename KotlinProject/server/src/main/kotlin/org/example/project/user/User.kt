@@ -1,9 +1,6 @@
-package org.example.project
+package org.example.project.user
 
-//  import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
-//  every serializable class must be marked @Serializable
 
 @Serializable
 data class User (

@@ -10,7 +10,7 @@ import org.jetbrains.exposed.v1.core.Transaction
 //  refer to: https://www.jetbrains.com/help/exposed/migration-guide-1-0-0.html
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 
-import org.example.project.User
+import org.example.project.user.User
 
 
 /*  References:
@@ -21,14 +21,17 @@ import org.example.project.User
 //  TODO: improve logic of field nullability
 
 
-//  Table / IntIdTable(table_name)
+//  maps properties of User type to columns in DB's user table
+//  Table / IntIdTable(db_table_name)
+//  -   IntIdTable corresponds to a table with an auto column for entry id (i.e surrogate key)
+//  TODO: revise UserTable, in correspondence to DB table's entity relations
 object UserTable: IntIdTable("user") {
     val userName = varchar("userName", 50)
     val userEmail = varchar("userEmail", 50)
     val userPassword = varchar("userEmail", 50)
 }
 
-//  maps UserTable to DB user table
+//  UserDAO adds helper methods for CRUD operations
 class UserDAO(userid: EntityID<Int>): IntEntity(userid) {
     companion object : IntEntityClass<UserDAO>(UserTable)
 

@@ -1,4 +1,4 @@
-package org.example.project
+package org.example.project.plugins
 
 import io.ktor.server.application.*
 import org.jetbrains.exposed.v1.jdbc.Database

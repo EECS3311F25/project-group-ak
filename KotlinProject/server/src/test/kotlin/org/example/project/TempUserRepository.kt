@@ -1,6 +1,7 @@
 package org.example.project
 
-import org.example.project.userModel.UserRepository
+import org.example.project.user.User
+import org.example.project.user.UserRepository
 
 class TempUserRepository: UserRepository {
     private var users = listOf(

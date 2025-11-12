@@ -1,6 +1,5 @@
-package org.example.project.userModel
+package org.example.project.user
 
-import org.example.project.User
 import org.example.project.db.UserDAO
 import org.example.project.db.UserTable
 import org.example.project.db.suspendTransaction
@@ -27,6 +26,14 @@ class PostgresUserRepository: UserRepository {
             userEmail = user.userEmail!!
             userPassword = user.userPassword!!
         }
+    }
+
+    override suspend fun getUserByName(userName: String): User? = suspendTransaction {
+        UserDAO
+            .find { (UserTable.userName eq userName) }
+            .limit(1)
+            .map(::daoToModel)
+            .firstOrNull()
     }
 
     override suspend fun updateUserPassword(userName: String?, newPassword: String) {

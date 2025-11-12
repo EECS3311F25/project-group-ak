@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.server.content.negotiation.jvm)
     implementation(libs.ktor.server.cors.jvm)
+    implementation(libs.ktor.server.status.pages)
 
     //  H2 driver for JDBC
     //  refer to: https://www.jetbrains.com/help/exposed/working-with-database.html#choosing-between-jdbc-and-r2dbc
