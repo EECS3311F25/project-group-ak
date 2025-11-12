@@ -30,6 +30,7 @@ import org.example.project.data.source.LocalTripDataSource
 import org.example.project.data.source.LocalUserDataSource
 import org.example.project.viewmodel.trip.TripViewModel
 import org.example.project.viewmodel.trip.AddMemberViewModel
+import org.example.project.viewmodel.trip.AddEventViewModel
 
 @Composable
 /*
@@ -86,7 +87,18 @@ fun App(root: RootComponent) {
                     )
                 }
                 
-                is RootComponent.Child.AddTripView -> AddTripView(instance.component)
+                is RootComponent.Child.AddTripView -> {
+                    val addEventViewModel: AddEventViewModel = viewModel {
+                        AddEventViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository
+                        )
+                    }
+                    AddTripView(
+                        component = instance.component,
+                        viewModel = addEventViewModel
+                    )
+                }
                 
                 // 🔥 Create HomeViewModel and pass it to HomeView
                 is RootComponent.Child.HomeView -> {
