@@ -1,7 +1,7 @@
 package org.example.project.data.source
 
-import org.example.project.model.Event
-import org.example.project.model.Trip
+import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Trip
 
 interface TripDataSource {
     suspend fun getAllTrips(): List<Trip>

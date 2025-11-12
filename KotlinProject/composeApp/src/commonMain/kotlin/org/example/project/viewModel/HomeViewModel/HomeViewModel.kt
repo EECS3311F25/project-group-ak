@@ -1,4 +1,4 @@
-package org.example.project.viewmodel
+package org.example.project.viewModel.HomeViewModel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
-import org.example.project.model.Trip
-import org.example.project.model.User
+import org.example.project.model.dataClasses.Trip
+import org.example.project.model.dataClasses.User
 
 class HomeViewModel(
     private val tripRepository: TripRepository,
@@ -19,16 +19,16 @@ class HomeViewModel(
     val trips: StateFlow<List<Trip>> = tripRepository.trips
     val isLoading: StateFlow<Boolean> = tripRepository.isLoading
     val error: StateFlow<String?> = tripRepository.error
-    
+
     private var _currentUser = mutableStateOf<User?>(null)
     val currentUser: State<User?> = _currentUser
-    
+
     init {
         viewModelScope.launch {
             _currentUser.value = userRepository.getCurrentUser()
         }
     }
-    
+
     fun deleteTrip(tripId: String) {
         viewModelScope.launch {
             tripRepository.deleteTrip(tripId)

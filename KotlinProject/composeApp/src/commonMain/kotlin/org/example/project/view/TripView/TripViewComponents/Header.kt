@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.model.Duration
+import org.example.project.model.dataClasses.Duration
 import org.example.project.model.PRIMARY
 import org.example.project.model.SECONDARY
 

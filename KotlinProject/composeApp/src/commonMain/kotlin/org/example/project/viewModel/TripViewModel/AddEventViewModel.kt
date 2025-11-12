@@ -9,8 +9,8 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.example.project.data.repository.TripRepository
-import org.example.project.model.Duration
-import org.example.project.model.Event
+import org.example.project.model.dataClasses.Duration
+import org.example.project.model.dataClasses.Event
 
 data class AddEventUiState(
     val title: String = "",

@@ -6,8 +6,14 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceAll
-import com.arkivanov.decompose.router.stack.replaceCurrent
 import kotlinx.serialization.Serializable
+import org.example.project.controller.AuthController.LoginViewComponent
+import org.example.project.controller.AuthController.SignupViewComponent
+import org.example.project.controller.HomeController.HomeViewComponent
+import org.example.project.controller.HomeController.TripCreationComponent
+import org.example.project.controller.TripController.AddEventComponent
+import org.example.project.controller.TripController.AddMemberComponent
+import org.example.project.controller.TripController.TripViewComponent
 import org.example.project.data.source.LocalUserDataSource
 import org.example.project.data.repository.UserRepository
 
@@ -38,16 +44,16 @@ class RootComponent(
             is Configuration.LoginView -> Child.LoginView(
                 LoginViewComponent(
                     componentContext = context,
-                    onNavigateToTripView = {navigation.pushNew(Configuration.HomeView)},
-                    onNavigateToSignup = {navigation.pushNew(Configuration.SignupView)}
+                    onNavigateToTripView = { navigation.pushNew(Configuration.HomeView) },
+                    onNavigateToSignup = { navigation.pushNew(Configuration.SignupView) }
                 )
             )
 
             is Configuration.SignupView -> Child.SignupView(
                 SignupViewComponent(
                     componentContext = context,
-                    onNavigateToTripView = {navigation.pushNew(Configuration.HomeView)},
-                    onNavigateToLogin = {navigation.pop()}
+                    onNavigateToTripView = { navigation.pushNew(Configuration.HomeView) },
+                    onNavigateToLogin = { navigation.pop() }
                 )
             )
 
@@ -62,7 +68,7 @@ class RootComponent(
             )
 
             is Configuration.AddTripView -> Child.AddTripView(
-                AddTripViewComponent(
+                AddEventComponent(
                     componentContext = context,
                     onGoBack = { navigation.pop() }
                 ),
@@ -73,7 +79,7 @@ class RootComponent(
                 HomeViewComponent(
                     componentContext = context,
                     onNavigateToTripView = { trip -> navigation.pushNew(Configuration.TripView(trip.id)) },
-                    onNavigateToTripCreation = { navigation.pushNew(Configuration.TripCreationView)}
+                    onNavigateToTripCreation = { navigation.pushNew(Configuration.TripCreationView) }
                 )
             )
 
@@ -101,7 +107,7 @@ class RootComponent(
 
     sealed class Child {
         data class TripView(val component: TripViewComponent, val tripId: String) : Child()
-        data class AddTripView(val component: AddTripViewComponent, val tripId: String) : Child()
+        data class AddTripView(val component: AddEventComponent, val tripId: String) : Child()
         data class HomeView(val component: HomeViewComponent) : Child()
         data class TripCreationView(val component: TripCreationComponent) : Child()
         data class LoginView(val component : LoginViewComponent) : Child()

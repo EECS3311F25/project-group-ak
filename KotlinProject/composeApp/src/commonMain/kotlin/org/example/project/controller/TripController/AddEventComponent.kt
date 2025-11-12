@@ -1,8 +1,8 @@
-package org.example.project.controller
+package org.example.project.controller.TripController
 
 import com.arkivanov.decompose.ComponentContext
 
-class AddTripViewComponent(
+class AddEventComponent(
     componentContext: ComponentContext,
     private val onGoBack: () -> Unit,
 ): ComponentContext by componentContext {

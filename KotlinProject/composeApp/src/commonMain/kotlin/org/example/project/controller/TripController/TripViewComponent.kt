@@ -1,7 +1,7 @@
-package org.example.project.controller
+package org.example.project.controller.TripController
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.value.MutableValue
+import org.example.project.controller.TripController.TripViewEvent
 
 class TripViewComponent(
     componentContext: ComponentContext,
@@ -9,6 +9,7 @@ class TripViewComponent(
     private val onGoBack: () -> Unit, // new callback to request pop()
     private val onNavigateToAddMember: () -> Unit
 ) : ComponentContext by componentContext {
+
     fun onEvent(event: TripViewEvent) {
         when (event) {
             TripViewEvent.ClickButtonTripView -> onNavigateToAddTripView()

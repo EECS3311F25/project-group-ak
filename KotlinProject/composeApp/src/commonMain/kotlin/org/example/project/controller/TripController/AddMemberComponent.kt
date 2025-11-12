@@ -1,4 +1,4 @@
-package org.example.project.controller
+package org.example.project.controller.TripController
 
 import com.arkivanov.decompose.ComponentContext
 

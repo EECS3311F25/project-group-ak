@@ -1,4 +1,4 @@
-package org.example.project.model
+package org.example.project.model.dataClasses
 
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable

@@ -1,5 +1,4 @@
-
-package org.example.project.controller
+package org.example.project.controller.AuthController
 
 sealed interface AuthEvent {
     data object OnLoginClick : AuthEvent

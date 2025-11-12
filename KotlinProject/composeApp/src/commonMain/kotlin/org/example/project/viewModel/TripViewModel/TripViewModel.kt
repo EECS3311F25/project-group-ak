@@ -5,11 +5,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.example.project.data.repository.TripRepository
-import org.example.project.model.Trip
-import org.example.project.model.Event
+import org.example.project.model.dataClasses.Trip
+import org.example.project.model.dataClasses.Event
 
 class TripViewModel(
     private val tripId: String,

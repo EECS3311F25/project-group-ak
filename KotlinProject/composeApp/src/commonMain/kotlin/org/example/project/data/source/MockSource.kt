@@ -1,9 +1,9 @@
 package org.example.project.data.source
 
-import org.example.project.model.Trip
-import org.example.project.model.User
-import org.example.project.model.Duration
-import org.example.project.model.Event
+import org.example.project.model.dataClasses.Trip
+import org.example.project.model.dataClasses.User
+import org.example.project.model.dataClasses.Duration
+import org.example.project.model.dataClasses.Event
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 

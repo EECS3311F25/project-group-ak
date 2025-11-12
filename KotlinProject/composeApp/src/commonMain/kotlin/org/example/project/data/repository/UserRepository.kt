@@ -3,7 +3,7 @@ package org.example.project.data.repository
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.example.project.model.User
+import org.example.project.model.dataClasses.User
 import org.example.project.data.source.UserDataSource
 
 class UserRepository(

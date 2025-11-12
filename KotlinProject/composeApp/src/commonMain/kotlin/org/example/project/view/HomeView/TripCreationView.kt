@@ -4,25 +4,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.datetime.LocalDate
-import org.example.project.controller.TripCreationComponent
-import org.example.project.controller.TripCreationEvent
+import org.example.project.controller.HomeController.TripCreationComponent
+import org.example.project.controller.HomeController.TripCreationEvent
 import org.example.project.viewmodel.TripCreationViewModel
-import org.example.project.model.User
-import org.example.project.model.Event
-import org.example.project.model.Duration
+import org.example.project.model.dataClasses.User
 import org.example.project.view.components.DatePickerSection
 
 

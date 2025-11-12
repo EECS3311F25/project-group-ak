@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.example.project.model.Trip
+import org.example.project.model.dataClasses.Trip
 import org.example.project.data.source.TripDataSource
-import org.example.project.model.Event
+import org.example.project.model.dataClasses.Event
 
 class TripRepository(
     private val localDataSource: TripDataSource

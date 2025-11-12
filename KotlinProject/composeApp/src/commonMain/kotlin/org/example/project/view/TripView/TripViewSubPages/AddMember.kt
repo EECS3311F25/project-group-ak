@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.project.controller.AddMemberComponent
+import org.example.project.controller.TripController.AddMemberComponent
 import org.example.project.model.PRIMARY
 import org.example.project.model.SECONDARY
 import org.example.project.viewmodel.trip.AddMemberViewModel

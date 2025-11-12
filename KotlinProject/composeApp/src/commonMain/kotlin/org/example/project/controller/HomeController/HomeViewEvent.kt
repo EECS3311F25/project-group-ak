@@ -1,6 +1,6 @@
-package org.example.project.controller
+package org.example.project.controller.HomeController
 
-import org.example.project.model.Trip
+import org.example.project.model.dataClasses.Trip
 
 sealed interface HomeViewEvent {
     data class ClickButtonHomeView(val trip: Trip) : HomeViewEvent

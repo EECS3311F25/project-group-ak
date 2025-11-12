@@ -17,8 +17,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.example.project.controller.TripViewComponent
-import org.example.project.controller.TripViewEvent
+import org.example.project.controller.TripController.TripViewComponent
+import org.example.project.controller.TripController.TripViewEvent
 import org.example.project.model.PRIMARY
 import org.example.project.model.SECONDARY
 import org.example.project.view.EventsSection
