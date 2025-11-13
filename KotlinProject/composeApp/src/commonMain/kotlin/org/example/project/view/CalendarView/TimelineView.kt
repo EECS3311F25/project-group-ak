@@ -83,13 +83,30 @@ fun TimelineView(
                     )
                 }
 
-                // Render events as single boxes positioned relative to top of day
+                // Render events as single boxes positioned relative to top of the selected day.
+                // Handle multi-day events and overnight events by clamping start/end to [00:00, 24:00] of selectedDate.
                 events.forEach { event ->
-                    val startMinutes = event.duration.startTime.hour * 60 + event.duration.startTime.minute
-                    val endMinutes = event.duration.endTime.hour * 60 + event.duration.endTime.minute
-                    val durationMinutes = (endMinutes - startMinutes).coerceAtLeast(1)
+                    val selDate = selectedDate ?: event.duration.startDate
 
-                    val topOffset = pixelsPerMinute * startMinutes
+                    val eventStartDate = event.duration.startDate
+                    val eventEndDate = event.duration.endDate
+
+                    // minutes from midnight for start/end times
+                    val rawStartMin = event.duration.startTime.hour * 60 + event.duration.startTime.minute
+                    val rawEndMin = event.duration.endTime.hour * 60 + event.duration.endTime.minute
+
+                    val dayStartMin = 0
+                    val dayEndMin = 24 * 60
+
+                    // If the event started before the selected date, begin at 00:00
+                    val effectiveStartMin = if (eventStartDate < selDate) dayStartMin else rawStartMin
+
+                    // If the event ends after the selected date, end at 24:00
+                    val effectiveEndMin = if (eventEndDate > selDate) dayEndMin else rawEndMin
+
+                    val durationMinutes = (effectiveEndMin - effectiveStartMin).coerceAtLeast(1)
+
+                    val topOffset = pixelsPerMinute * effectiveStartMin
                     val height = pixelsPerMinute * durationMinutes
 
                     // place event card across the full timeline (leaving time label gutter)

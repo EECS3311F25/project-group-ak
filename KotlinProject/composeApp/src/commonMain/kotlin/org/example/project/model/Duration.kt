@@ -79,4 +79,21 @@ data class Duration(
         
         return dates
     }
+
+    /**
+     * Return true if this duration overlaps any portion of the given date.
+     * This is more precise than checking only start/end dates because it
+     * compares datetimes and will include events that start before the date
+     * and end on it, start on the date and end after it, or span the whole day.
+     */
+    fun overlapsDate(date: LocalDate): Boolean {
+        val thisStart = getStartDateTime()
+        val thisEnd = getEndDateTime()
+        val dayStart = LocalDateTime(date, LocalTime(0, 0))
+        // end of day: set to the last possible nanosecond of the day
+        val dayEnd = LocalDateTime(date, LocalTime(23, 59, 59, 999_999_999))
+
+        // Overlap exists when the event starts before or at dayEnd and ends after or at dayStart
+        return thisStart <= dayEnd && thisEnd >= dayStart
+    }
 }

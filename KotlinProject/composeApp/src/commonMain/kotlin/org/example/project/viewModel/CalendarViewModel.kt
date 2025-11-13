@@ -44,12 +44,14 @@ class CalendarViewModel(
                 println("Loading events for date: $date")
                 println("Total trip events: ${_currentTrip.value.events.size}")
                 
-                // Filter events for the selected date using Duration.isWithin
+                // Filter events for the selected date by checking overlap with that date.
+                // This includes events that started the day before and end on this date,
+                // events that start on this date and end the next day, and multi-day events.
                 val filteredEvents = _currentTrip.value.events.filter { event ->
-                    val isWithin = event.duration.isWithin(date)
-                    println("  ${event.title}: isWithin($date) = $isWithin")
-                    println("    Duration: ${event.duration.startDate} to ${event.duration.endDate}")
-                    isWithin
+                    val overlaps = event.duration.overlapsDate(date)
+                    println("  ${event.title}: overlapsDate($date) = $overlaps")
+                    println("    Duration: ${event.duration.startDate} ${event.duration.startTime} -> ${event.duration.endDate} ${event.duration.endTime}")
+                    overlaps
                 }
                 println("Filtered events count: ${filteredEvents.size}")
                 _events.value = filteredEvents

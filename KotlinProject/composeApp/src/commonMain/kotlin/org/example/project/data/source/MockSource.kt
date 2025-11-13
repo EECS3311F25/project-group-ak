@@ -150,6 +150,17 @@ class LocalTripDataSource : TripDataSource {
                     location = "Paris, France"
                 ),
                 Event(
+                    title = "Clubbing",
+                    duration = Duration(
+                        startDate = LocalDate(2025, 8, 16),
+                        startTime = LocalTime(23, 0),
+                        endDate = LocalDate(2025, 8, 17),
+                        endTime = LocalTime(4, 0)
+                    ),
+                    description = "All night long",
+                    location = "Paris, France"
+                ),
+                Event(
                     title = "Train to Amsterdam",
                     duration = Duration(
                         startDate = LocalDate(2025, 8, 17),
