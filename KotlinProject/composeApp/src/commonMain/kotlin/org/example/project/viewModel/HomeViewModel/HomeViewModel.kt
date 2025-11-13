@@ -1,4 +1,4 @@
-package org.example.project.viewModel.HomeViewModel
+package org.example.project.viewmodel.home
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

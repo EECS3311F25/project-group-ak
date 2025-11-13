@@ -21,7 +21,7 @@ import org.example.project.model.dataClasses.Trip
 import org.example.project.model.SECONDARY
 import org.example.project.model.BACKGROUND
 import org.example.project.model.PRIMARY
-import org.example.project.viewModel.HomeViewModel.HomeViewModel
+import org.example.project.viewmodel.home.HomeViewModel
 
 @Composable
 fun HomeView(

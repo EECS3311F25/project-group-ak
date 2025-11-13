@@ -60,17 +60,18 @@ class RootComponent(
             is Configuration.TripView -> Child.TripView(
                 TripViewComponent(
                     componentContext = context,
-                    onNavigateToAddTripView = { navigation.pushNew(Configuration.AddTripView(config.tripId)) },
+                    onNavigateToAddTripView = { navigation.pushNew(Configuration.AddEvent(config.tripId)) },
                     onNavigateToAddMember = { navigation.pushNew(Configuration.AddMember(config.tripId)) },
                     onGoBack = { navigation.replaceAll(Configuration.HomeView) }
                 ),
                 config.tripId
             )
 
-            is Configuration.AddTripView -> Child.AddTripView(
+            is Configuration.AddEvent-> Child.AddEvent(
                 AddEventComponent(
                     componentContext = context,
-                    onGoBack = { navigation.pop() }
+                    onGoBack = { navigation.pop() },
+                    onCreateEvent = { navigation.pop() }
                 ),
                 config.tripId
             )
@@ -107,7 +108,7 @@ class RootComponent(
 
     sealed class Child {
         data class TripView(val component: TripViewComponent, val tripId: String) : Child()
-        data class AddTripView(val component: AddEventComponent, val tripId: String) : Child()
+        data class AddEvent(val component: AddEventComponent, val tripId: String) : Child()
         data class HomeView(val component: HomeViewComponent) : Child()
         data class TripCreationView(val component: TripCreationComponent) : Child()
         data class LoginView(val component : LoginViewComponent) : Child()
@@ -120,7 +121,7 @@ class RootComponent(
         @Serializable
         data class TripView(val tripId: String): Configuration()
         @Serializable
-        data class AddTripView(val tripId: String) : Configuration()
+        data class AddEvent(val tripId: String) : Configuration()
         @Serializable
         data object LoginView : Configuration()
         @Serializable

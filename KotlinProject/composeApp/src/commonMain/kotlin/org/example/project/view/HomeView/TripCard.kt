@@ -10,6 +10,8 @@ import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.ui.draw.clip
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -160,9 +162,13 @@ fun TripCard(
                 )
             }
             
+            val menuShape = RoundedCornerShape(12.dp)
+            val menuBackground = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp)
+
             DropdownMenu(
                 expanded = showMenu,
-                onDismissRequest = { showMenu = false }
+                onDismissRequest = { showMenu = false },
+                modifier = Modifier.background(menuBackground, menuShape)
             ) {
                 DropdownMenuItem(
                     text = { Text("Delete Trip") },
@@ -170,6 +176,10 @@ fun TripCard(
                         onDeleteClick()
                         showMenu = false
                     },
+                    colors = MenuDefaults.itemColors(
+                        textColor = MaterialTheme.colorScheme.onSurface,
+                        leadingIconColor = MaterialTheme.colorScheme.error
+                    ),
                     leadingIcon = {
                         Icon(
                             Icons.Default.Delete,

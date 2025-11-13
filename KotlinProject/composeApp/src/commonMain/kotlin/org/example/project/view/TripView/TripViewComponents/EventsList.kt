@@ -1,5 +1,6 @@
 package org.example.project.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -150,9 +153,13 @@ fun EventCard(
                     )
                 }
 
+                val menuShape = RoundedCornerShape(12.dp)
+                val menuBackground = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp)
+
                 DropdownMenu(
                     expanded = showMenu,
-                    onDismissRequest = { showMenu = false }
+                    onDismissRequest = { showMenu = false },
+                    modifier = Modifier.background(menuBackground, menuShape)
                 ) {
                     DropdownMenuItem(
                         text = { Text("Edit Event") },
@@ -160,6 +167,10 @@ fun EventCard(
                             onEditClick()
                             showMenu = false
                         },
+                        colors = MenuDefaults.itemColors(
+                            textColor = MaterialTheme.colorScheme.onSurface,
+                            leadingIconColor = MaterialTheme.colorScheme.primary
+                        ),
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Edit,
@@ -173,6 +184,10 @@ fun EventCard(
                             onDeleteClick()
                             showMenu = false
                         },
+                        colors = MenuDefaults.itemColors(
+                            textColor = MaterialTheme.colorScheme.onSurface,
+                            leadingIconColor = MaterialTheme.colorScheme.error
+                        ),
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Delete,

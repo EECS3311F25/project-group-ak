@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.stack.Children
-import org.example.project.viewModel.HomeViewModel.HomeViewModel
+import org.example.project.viewmodel.home.HomeViewModel
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
@@ -18,7 +18,7 @@ import org.example.project.controller.RootComponent
 import org.example.project.view.TripView.TripView
 import org.example.project.view.HomeView.HomeView
 import org.example.project.view.HomeView.TripCreationView
-import org.example.project.view.TripView.TripViewSubPages.AddTripView
+import org.example.project.view.TripView.TripViewSubPages.AddEvent
 import org.example.project.view.TripView.TripViewSubPages.AddMember
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
@@ -68,38 +68,25 @@ fun App(root: RootComponent) {
         ) { child ->
             // Render the appropriate view based on current navigation state
             when (val instance = child.instance) {
-                // === AUTHENTICATION SCREENS ===
+
+
+
+                // =============================================================================================
+                // === AUTHENTICATION SCREENS ==================================================================
+                // =============================================================================================
                 // LoginView: Entry point, shows login form
                 is RootComponent.Child.LoginView -> LoginView(instance.component)
                 // SignupView: Registration form, accessible from LoginView
                 is RootComponent.Child.SignupView -> SignupView(instance.component)
-                
-                is RootComponent.Child.TripView -> {
-                    val tripViewModel: TripViewModel = viewModel {
-                        TripViewModel(
-                            tripRepository = tripRepository,
-                            tripId = instance.tripId
-                        )
-                    }
-                    TripView(
-                        instance.component,
-                        viewModel = tripViewModel,
-                    )
-                }
-                
-                is RootComponent.Child.AddTripView -> {
-                    val addEventViewModel: AddEventViewModel = viewModel {
-                        AddEventViewModel(
-                            tripId = instance.tripId,
-                            tripRepository = tripRepository
-                        )
-                    }
-                    AddTripView(
-                        component = instance.component,
-                        viewModel = addEventViewModel
-                    )
-                }
-                
+                // =============================================================================================
+                // === AUTHENTICATION SCREENS ==================================================================
+                // =============================================================================================
+
+
+
+                // =============================================================================================
+                // === HOME SCREENS ============================================================================
+                // =============================================================================================
                 // 🔥 Create HomeViewModel and pass it to HomeView
                 is RootComponent.Child.HomeView -> {
                     val homeViewModel: HomeViewModel = viewModel { 
@@ -108,19 +95,6 @@ fun App(root: RootComponent) {
                     HomeView(
                         component = instance.component,
                         viewModel = homeViewModel
-                    )
-                }
-                
-                is RootComponent.Child.AddMember -> {
-                    val addMemberViewModel: AddMemberViewModel = viewModel {
-                        AddMemberViewModel(
-                            tripId = instance.tripId,
-                            tripRepository = tripRepository
-                        )
-                    }
-                    AddMember(
-                        component = instance.component,
-                        viewModel = addMemberViewModel
                     )
                 }
                 
@@ -134,6 +108,66 @@ fun App(root: RootComponent) {
                         viewModel = tripCreationViewModel
                     )
                 }
+                // =============================================================================================
+                // === HOME SCREENS ============================================================================
+                // =============================================================================================
+
+
+
+
+                // =============================================================================================
+                // === TRIP SCREENS ============================================================================
+                // =============================================================================================
+                is RootComponent.Child.TripView -> {
+                    val tripViewModel: TripViewModel = viewModel(
+                        key = "TripView=${instance.tripId}"
+                    ) {
+                        TripViewModel(
+                            tripRepository = tripRepository,
+                            tripId = instance.tripId
+                        )
+                    }
+                    TripView(
+                        instance.component,
+                        viewModel = tripViewModel,
+                    )
+                }
+
+                is RootComponent.Child.AddEvent -> {
+                    val addEventViewModel: AddEventViewModel = viewModel(
+                        key = "AddEvent-${instance.tripId}"
+                    ) {
+                        AddEventViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository
+                        )
+                    }
+                    AddEvent(
+                        component = instance.component,
+                        viewModel = addEventViewModel
+                    )
+                }
+
+                is RootComponent.Child.AddMember -> {
+                    val addMemberViewModel: AddMemberViewModel = viewModel(
+                        key="AddMember-${instance.tripId}"
+                    ) {
+                        AddMemberViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository
+                        )
+                    }
+                    AddMember(
+                        component = instance.component,
+                        viewModel = addMemberViewModel
+                    )
+                }
+                // =============================================================================================
+                // === TRIP SCREENS ============================================================================
+                // =============================================================================================
+
+
+
             }
         }
     }

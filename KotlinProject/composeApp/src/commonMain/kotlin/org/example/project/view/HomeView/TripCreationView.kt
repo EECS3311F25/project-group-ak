@@ -123,10 +123,12 @@ fun TripCreationView(
                 )
                 
                 Spacer(modifier = Modifier.height(8.dp))
-                
+
                 DatePickerSection(
-                    state = state,
-                    viewModel = viewModel
+                    startDate = state.duration?.startDate,
+                    endDate   = state.duration?.endDate,
+                    onStartDateSelected = { viewModel.updateStartDate(it) },
+                    onEndDateSelected   = { viewModel.updateEndDate(it) }
                 )
                 
                 if (!viewModel.isFieldValid("duration")) {
