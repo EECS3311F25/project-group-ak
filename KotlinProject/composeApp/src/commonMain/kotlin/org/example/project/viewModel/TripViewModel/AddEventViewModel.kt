@@ -53,6 +53,8 @@ data class AddEventUiState(
     val duration: Duration? = null,
     /** Trip duration window that events must stay within. */
     val tripDuration: Duration? = null,
+    /** Already scheduled events for the trip to check overlaps. */
+    val existingEvents: List<Event> = emptyList(),
     /** Whether the event creation is in progress. */
     val isLoading: Boolean = false,
     /** Error message to be displayed, if any. */
@@ -80,7 +82,10 @@ class AddEventViewModel(
         viewModelScope.launch {
             val trip = tripRepository.getTripById(tripId)
             if (trip != null) {
-                _state.value = _state.value.copy(tripDuration = trip.duration)
+                _state.value = _state.value.copy(
+                    tripDuration = trip.duration,
+                    existingEvents = trip.events
+                )
             }
         }
     }
@@ -194,6 +199,15 @@ class AddEventViewModel(
             endTime = parsedEndTime
         )
 
+        current.existingEvents.firstOrNull { it.duration.conflictsWith(duration) }?.let { conflicting ->
+            val conflictingRange = "${conflicting.duration.startDate} ${conflicting.duration.startTime} - " +
+                "${conflicting.duration.endDate} ${conflicting.duration.endTime}"
+            _state.value = current.copy(
+                errorMessage = "Overlaps with existing event ${conflicting.title} ($conflictingRange)"
+            )
+            return
+        }
+
         val event = Event(
             title = current.title.trim(),
             duration = duration,
@@ -211,6 +225,7 @@ class AddEventViewModel(
                         location = "",
                         durationFields = DurationFields(),
                         duration = duration,
+                        existingEvents = current.existingEvents + event,
                         isLoading = false,
                         errorMessage = null,
                         didCreateEvent = true

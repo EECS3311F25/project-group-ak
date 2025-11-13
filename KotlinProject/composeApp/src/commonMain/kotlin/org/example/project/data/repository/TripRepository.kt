@@ -109,6 +109,15 @@ class TripRepository(
         _isLoading.value = true
         _error.value = null
         return try {
+            val trip = localDataSource.getTripById(tripId)
+                ?: throw IllegalArgumentException("Trip not found")
+            trip.events.firstOrNull { it.duration.conflictsWith(event.duration) }?.let { conflicting ->
+                val conflictingRange = "${conflicting.duration.startDate} ${conflicting.duration.startTime} - " +
+                    "${conflicting.duration.endDate} ${conflicting.duration.endTime}"
+                throw IllegalArgumentException(
+                    "Overlaps with existing event ${conflicting.title} ($conflictingRange)"
+                )
+            }
             localDataSource.addEventToTrip(tripId, event)
             refreshTrips()
             _isLoading.value = false

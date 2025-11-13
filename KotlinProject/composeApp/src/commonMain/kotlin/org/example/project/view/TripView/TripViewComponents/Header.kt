@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Share
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.LocalDate
 import org.example.project.model.dataClasses.Duration
 import org.example.project.model.PRIMARY
 import org.example.project.model.SECONDARY
@@ -63,14 +65,14 @@ fun Header(tripTitle: String, duration: Duration, onShareClick: () -> Unit = {})
                 Icon(
                     imageVector = Icons.Filled.CalendarToday,
                     contentDescription = null,
-                    tint = Color.White
+                    tint = Color.White.copy(alpha = 0.85f)
                 )
-                Spacer(modifier = Modifier.height(0.dp).then(Modifier.padding(start = 8.dp)))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "${duration.startDate.dayOfMonth}/${duration.startDate.monthNumber}/${duration.startDate.year} - ${duration.endDate.dayOfMonth}/${duration.endDate.monthNumber}/${duration.endDate.year}",
-                    color = Color.White,
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.SemiBold
+                    text = "${duration.startDate.asDayMonthYear()} - ${duration.endDate.asDayMonthYear()}",
+                    color = Color.White.copy(alpha = 0.85f),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Medium
                     )
                 )
             }
@@ -78,3 +80,12 @@ fun Header(tripTitle: String, duration: Duration, onShareClick: () -> Unit = {})
         }
     )
 }
+
+private fun LocalDate.asDayMonthYear(): String =
+    buildString(10) {
+        append(dayOfMonth.toString().padStart(2, '0'))
+        append('/')
+        append(monthNumber.toString().padStart(2, '0'))
+        append('/')
+        append(year)
+    }

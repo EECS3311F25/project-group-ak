@@ -4,15 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -35,6 +38,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import org.example.project.utils.rangeUntil
 import org.example.project.model.dataClasses.Duration
 import org.example.project.model.dataClasses.Event
@@ -57,7 +62,20 @@ fun EventsSection(
     onEditEvent: (Event) -> Unit = {}
 ) {
     val dates = duration.startDate.rangeUntil(duration.endDate)
-    val eventsByDate = events.groupBy { it.duration.startDate }
+    val eventsByDate = mutableMapOf<LocalDate, MutableList<EventSegment>>()
+    events.forEach { event ->
+        // Expand multi-day events so they render under every day they cover
+        val span = event.duration.startDate.rangeUntil(event.duration.endDate)
+        span.forEach { date ->
+            val isStartDate = date == event.duration.startDate
+            val isEndDate = date == event.duration.endDate
+            val dayStart = if (isStartDate) event.duration.startTime else LocalTime(0, 0)
+            val dayEnd = if (isEndDate) event.duration.endTime else LocalTime(23, 59)
+            eventsByDate
+                .getOrPut(date) { mutableListOf() }
+                .add(EventSegment(event, dayStart, dayEnd))
+        }
+    }
     Column {
         dates.forEachIndexed { index, date ->
             val list = eventsByDate[date].orEmpty()
@@ -80,9 +98,9 @@ fun EventsSection(
  * @param eventsForDate Events scheduled on this date.
  */
 // TODO: Find a way to get rid of the counter/index, I don't like it
-fun EventsGroup(
+private fun EventsGroup(
     index: Int,
-    eventsForDate: List<Event>,
+    eventsForDate: List<EventSegment>,
     onDeleteEvent: (Event) -> Unit = {},
     onEditEvent: (Event) -> Unit = {}
 ) {
@@ -95,11 +113,13 @@ fun EventsGroup(
             modifier = Modifier.padding(start = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(eventsForDate) { event ->
+            items(eventsForDate) { segment ->
                 EventCard(
-                    event = event,
-                    onEditClick = { onEditEvent(event) },
-                    onDeleteClick = { onDeleteEvent(event) }
+                    event = segment.event,
+                    displayStart = segment.displayStart,
+                    displayEnd = segment.displayEnd,
+                    onEditClick = { onEditEvent(segment.event) },
+                    onDeleteClick = { onDeleteEvent(segment.event) }
                 )
             }
         }
@@ -117,6 +137,8 @@ fun EventsGroup(
  */
 fun EventCard(
     event: Event,
+    displayStart: LocalTime,
+    displayEnd: LocalTime,
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {}
 ) {
@@ -134,6 +156,21 @@ fun EventCard(
                     color = Color.White,
                     style = MaterialTheme.typography.titleLarge
                 )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.AccessTime,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.85f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "${displayStart.asHourMinute()} - ${displayEnd.asHourMinute()}",
+                        color = Color.White.copy(alpha = 0.85f),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
             Box(
                 modifier = Modifier
@@ -201,3 +238,16 @@ fun EventCard(
         }
     )
 }
+
+private fun LocalTime.asHourMinute(): String =
+    buildString(5) {
+        append(hour.toString().padStart(2, '0'))
+        append(':')
+        append(minute.toString().padStart(2, '0'))
+    }
+
+private data class EventSegment(
+    val event: Event,
+    val displayStart: LocalTime,
+    val displayEnd: LocalTime
+)
