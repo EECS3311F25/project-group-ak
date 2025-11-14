@@ -30,18 +30,22 @@ fun CalendarView(
     trip: Trip,
     modifier: Modifier = Modifier
 ) {
-    // Collect states from ViewModel
-    val events by viewModel.events.collectAsState()
-    val selectedDate by viewModel.selectedDate.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val error by viewModel.error.collectAsState()
+    // Collect UI state from ViewModel
+    val uiState by viewModel.uiState.collectAsState()
+    val events = uiState.events
+    val selectedDate = uiState.selectedDate
+    val isLoading = uiState.isLoading
+    val error = uiState.error
 
     // Initialize with trip's start date if no date selected
-    LaunchedEffect(Unit) {
-        if (selectedDate == null) {
-            println("=== CalendarView: Initializing with trip start date: ${trip.duration.startDate} ===")
-            viewModel.selectDate(trip.duration.startDate)
-        }
+    // When the `trip` parameter changes (navigating to a different trip), update the ViewModel
+    // so its currentTrip/selectedDate/events reflect the new trip. This handles the case
+    // where the same ViewModel instance is reused across navigations.
+    LaunchedEffect(trip.title) {
+        println("=== CalendarView: trip changed -> updating ViewModel to trip: ${trip.title} ===")
+        viewModel.updateTrip(trip, selectStartDate = true)
+        // ensure selectedDate is set
+        viewModel.selectDate(trip.duration.startDate)
     }
     
     println("=== CalendarView State ===")
