@@ -5,6 +5,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Commute
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -83,29 +89,21 @@ fun TimelineView(
                     )
                 }
 
-                // Render events as single boxes positioned relative to top of the selected day.
-                // Handle multi-day events and overnight events by clamping start/end to [00:00, 24:00] of selectedDate.
-                events.forEach { event ->
-                    val selDate = selectedDate ?: event.duration.startDate
-
+                // Precompute effective start/end minutes for each event (clamped to the selected date)
+                val selDate = selectedDate
+                val eventWithMinutes = events.map { event ->
                     val eventStartDate = event.duration.startDate
                     val eventEndDate = event.duration.endDate
-
-                    // minutes from midnight for start/end times
                     val rawStartMin = event.duration.startTime.hour * 60 + event.duration.startTime.minute
                     val rawEndMin = event.duration.endTime.hour * 60 + event.duration.endTime.minute
+                    val effectiveStartMin = if (eventStartDate < (selDate ?: eventStartDate)) 0 else rawStartMin
+                    val effectiveEndMin = if (eventEndDate > (selDate ?: eventStartDate)) 24 * 60 else rawEndMin
+                    Triple(event, effectiveStartMin, effectiveEndMin)
+                }.sortedBy { it.second }
 
-                    val dayStartMin = 0
-                    val dayEndMin = 24 * 60
-
-                    // If the event started before the selected date, begin at 00:00
-                    val effectiveStartMin = if (eventStartDate < selDate) dayStartMin else rawStartMin
-
-                    // If the event ends after the selected date, end at 24:00
-                    val effectiveEndMin = if (eventEndDate > selDate) dayEndMin else rawEndMin
-
+                // Render events as single boxes positioned relative to top of the selected day.
+                eventWithMinutes.forEach { (event, effectiveStartMin, effectiveEndMin) ->
                     val durationMinutes = (effectiveEndMin - effectiveStartMin).coerceAtLeast(1)
-
                     val topOffset = pixelsPerMinute * effectiveStartMin
                     val height = pixelsPerMinute * durationMinutes
 
@@ -118,6 +116,57 @@ fun TimelineView(
                             .fillMaxWidth()
                             .padding(start = 68.dp, end = 8.dp)
                     )
+                }
+
+                // Draw vertical line and commute icons on the right side between consecutive events when there is a gap
+                val minGapToShowIconMinutes = 5 // don't show for very tiny gaps
+                val iconPaddingEnd = 8.dp
+                val iconSize = 30.dp
+                val iconBoxSize = iconSize + 8.dp
+                val lineWidth = 4.dp
+                val lineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                eventWithMinutes.windowed(2).forEach { pair ->
+                    val (_, _, firstEnd) = pair[0]
+                    val (_, secondStart, _) = pair[1]
+                    val gap = secondStart - firstEnd
+                    if (gap > minGapToShowIconMinutes) {
+                        val lineTop = pixelsPerMinute * firstEnd
+                        val lineHeight = pixelsPerMinute * gap
+
+                        // Draw vertical line (behind the icon). Drawn before the icon so icon appears on top.
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .offset(y = lineTop)
+                                .padding(end = iconPaddingEnd + (iconBoxSize / 2f))
+                                .width(lineWidth)
+                                .height(lineHeight)
+                                .background(lineColor)
+                        )
+
+                        val midpointMin = firstEnd + gap / 2f
+                        // Position the top of the icon box so the icon is vertically centered at midpoint
+                        val iconBoxTopOffset = (pixelsPerMinute * midpointMin) - (iconBoxSize / 2f)
+
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .offset(y = iconBoxTopOffset)
+                                .padding(end = iconPaddingEnd)
+                                .size(iconBoxSize)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surface)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Commute,
+                                contentDescription = "Commute",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .size(iconSize)
+                            )
+                        }
+                    }
                 }
             }
         }
