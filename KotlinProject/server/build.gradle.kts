@@ -28,12 +28,10 @@ dependencies {
 
     //  H2 driver for JDBC
     //  refer to: https://www.jetbrains.com/help/exposed/working-with-database.html#choosing-between-jdbc-and-r2dbc
-    implementation(libs.h2)
     implementation(libs.exposed.jdbc)
-    //  postgres dependency
-    implementation(libs.postgresql)
-
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
+    implementation(libs.flyway.core)
+    implementation(libs.postgresql)
     implementation(libs.h2)
 }
