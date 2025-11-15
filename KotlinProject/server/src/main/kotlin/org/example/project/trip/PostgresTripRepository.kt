@@ -6,7 +6,6 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 
 class PostgresTripRepository: TripRepository {
 
-    //  TODO: implement correctly pls
     override suspend fun allTripsByUsername(userName: String?): List<Trip> = suspendTransaction {
         TripDAO.all().map(::daoToTripModel)
     }

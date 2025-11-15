@@ -6,7 +6,6 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 
 class PostgresEventRepository: EventRepository {
 
-    //  TODO: implement correctly pls
     override suspend fun allEventsByTripId(tripId: Int?): List<Event> = suspendTransaction {
         EventDAO.all().map(::daoToEventModel)
     }

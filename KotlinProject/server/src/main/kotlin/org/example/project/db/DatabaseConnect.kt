@@ -20,9 +20,4 @@ fun Application.configureDatabases() {
     )
 
     log.info("DB connected successfully: ${config.databaseName}")
-
-    //  TODO: replace deprecated method
-    environment.monitor.subscribe(ApplicationStopped) {
-        log.info("Closing DB connection")
-    }
 }

@@ -5,11 +5,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.example.project.db.configureDatabases
 import org.example.project.db.configureRouting
-import org.example.project.event.PostgresEventRepository
-import org.example.project.trip.PostgresTripRepository
-import org.example.project.user.configureUserSerialization
-
-import org.example.project.user.PostgresUserRepository
+import org.example.project.db.configureSerialization
 
 
 fun main() {
@@ -26,13 +22,12 @@ fun main() {
 //  -   https://ktor.io/docs/server-integrate-database.html#add-routes
 
 fun Application.module() {
-    val userRepository = PostgresUserRepository()
-    val tripRepository = PostgresTripRepository()
-    val eventRepository = PostgresEventRepository()
-    configureUserSerialization(userRepository)
-    //  TODO: implement TripRoutes.kt and EventRoutes.kt
-    //  configureTripSerialization(tripRepository)
-    //  configureEventSerialization(eventRepository)
+    //  Serialization.kt
+    configureSerialization()
+
+    //  DatabaseConnect.kt
     configureDatabases()
+
+    //  Routing.kt
     configureRouting()
 }

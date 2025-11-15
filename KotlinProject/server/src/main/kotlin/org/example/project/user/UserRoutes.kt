@@ -15,11 +15,7 @@ import io.ktor.server.routing.*
 
 
 fun Application.configureUserSerialization(repository: PostgresUserRepository) {
-    install(ContentNegotiation) {
-        json()
-    }
 
-    //  user account HTTPS request routes
     routing {
 
         //  TODO: decide whether there allUsers() should be routed
