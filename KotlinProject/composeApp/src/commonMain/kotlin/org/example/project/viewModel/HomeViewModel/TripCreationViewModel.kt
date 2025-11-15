@@ -1,4 +1,4 @@
-package org.example.project.viewModel
+package org.example.project.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,10 +11,10 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlinx.coroutines.launch
-import org.example.project.model.Trip
-import org.example.project.model.Duration
-import org.example.project.model.User
-import org.example.project.model.Event
+import org.example.project.model.dataClasses.Trip
+import org.example.project.model.dataClasses.Duration
+import org.example.project.model.dataClasses.User
+import org.example.project.model.dataClasses.Event
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
 import org.example.project.data.source.LocalTripDataSource
@@ -280,6 +280,7 @@ class TripCreationViewModel(
         viewModelScope.launch {
             try {
                 val trip = Trip(
+                    id = Clock.System.now().toEpochMilliseconds().toString(),
                     title = currentState.title.trim(),
                     duration = duration,
                     description = currentState.description.trim(),

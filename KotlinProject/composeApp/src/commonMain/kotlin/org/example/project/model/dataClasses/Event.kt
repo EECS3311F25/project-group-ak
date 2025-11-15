@@ -1,7 +1,6 @@
-package org.example.project.model
+package org.example.project.model.dataClasses
 
 import kotlinx.serialization.Serializable
-import kotlinx.datetime.LocalDate
 
 @Serializable
 data class Event(

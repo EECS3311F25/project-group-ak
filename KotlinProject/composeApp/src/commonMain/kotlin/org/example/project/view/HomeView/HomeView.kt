@@ -15,13 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.controller.HomeViewComponent
-import org.example.project.controller.HomeViewEvent
-import org.example.project.model.Trip
+import org.example.project.controller.HomeController.HomeViewComponent
+import org.example.project.controller.HomeController.HomeViewEvent
+import org.example.project.model.dataClasses.Trip
 import org.example.project.model.SECONDARY
 import org.example.project.model.BACKGROUND
 import org.example.project.model.PRIMARY
-import org.example.project.viewmodel.HomeViewModel
+import org.example.project.viewmodel.home.HomeViewModel
 
 @Composable
 fun HomeView(
@@ -156,7 +156,7 @@ fun HomeView(
                     ) {
                         items(
                             items = trips, // Automatically updated via StateFlow
-                            key = { it.title }
+                            key = { it.id }
                         ) { trip ->
                             TripCard(
                                 trip = trip,
@@ -230,7 +230,7 @@ fun HomeView(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.deleteTrip(trip.title)
+                        viewModel.deleteTrip(trip.id)
                         tripForOptions = null
                     },
                     colors = ButtonDefaults.textButtonColors(

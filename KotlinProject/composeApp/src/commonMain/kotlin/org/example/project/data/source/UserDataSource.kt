@@ -1,6 +1,6 @@
 package org.example.project.data.source
 
-import org.example.project.model.User
+import org.example.project.model.dataClasses.User
 
 interface UserDataSource {
     suspend fun getCurrentUser(): User
