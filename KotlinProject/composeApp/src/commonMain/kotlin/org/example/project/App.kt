@@ -135,11 +135,12 @@ fun App(root: RootComponent) {
 
                 is RootComponent.Child.AddEvent -> {
                     val addEventViewModel: AddEventViewModel = viewModel(
-                        key = "AddEvent-${instance.tripId}"
+                        key = "AddEvent-${instance.tripId}-${instance.eventId ?: "new"}"
                     ) {
                         AddEventViewModel(
                             tripId = instance.tripId,
-                            tripRepository = tripRepository
+                            tripRepository = tripRepository,
+                            eventId = instance.eventId
                         )
                     }
                     AddEvent(

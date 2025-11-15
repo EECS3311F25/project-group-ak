@@ -71,7 +71,18 @@ fun TripView(
                 }
                 item { ListMembersSection(tripData.users) }
                 item { TripSummarySection(tripData.description) }
-                item { EventsSection(tripData.duration, tripData.events) }
+                item {
+                    EventsSection(
+                        duration = tripData.duration,
+                        events = tripData.events,
+                        onDeleteEvent = { event ->
+                            viewModel.deleteEvent(event.title)
+                        },
+                        onEditEvent = { event ->
+                            component.onEvent(TripViewEvent.ClickEditEvent(event.title))
+                        }
+                    )
+                }
             }
 
             // Floating action button anchored above the nav bar

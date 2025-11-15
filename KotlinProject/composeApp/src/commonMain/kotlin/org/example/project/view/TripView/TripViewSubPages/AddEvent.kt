@@ -69,7 +69,7 @@ fun AddEvent(
         TopAppBar(
             title = {
                 Text(
-                    text = "Add New Event",
+                    text = if (state.isEditMode) "Edit Event" else "Add New Event",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -191,12 +191,8 @@ fun AddEvent(
 
                 val startTimeText = state.durationFields.startTime
                 val endTimeText = state.durationFields.endTime
-                val showStartTimeError = startTimeText.contains(":") &&
-                    startTimeText.length >= 4 &&
-                    !viewModel.isFieldValid("startTime")
-                val showEndTimeError = endTimeText.contains(":") &&
-                    endTimeText.length >= 4 &&
-                    !viewModel.isFieldValid("endTime")
+                val startTimeError = viewModel.getFieldError("startTime")
+                val endTimeError = viewModel.getFieldError("endTime")
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -207,14 +203,13 @@ fun AddEvent(
                         onValueChange = { input ->
                             viewModel.updateStartTime(formatTimeInput(input))
                         },
-                        label = { Text("Start Time") },
+                        label = { Text("Start Time *") },
                         placeholder = { Text("e.g., 09:00") },
-                        isError = showStartTimeError,
+                        isError = false,
                         supportingText = {
-                            if (showStartTimeError) {
+                            startTimeError?.let { error ->
                                 Text(
-                                    text = viewModel.getFieldError("startTime")
-                                        ?: "Invalid time",
+                                    text = error,
                                     color = MaterialTheme.colorScheme.error
                                 )
                             }
@@ -227,14 +222,13 @@ fun AddEvent(
                         onValueChange = { input ->
                             viewModel.updateEndTime(formatTimeInput(input))
                         },
-                        label = { Text("End Time") },
+                        label = { Text("End Time *") },
                         placeholder = { Text("e.g., 17:30") },
-                        isError = showEndTimeError,
+                        isError = false,
                         supportingText = {
-                            if (showEndTimeError) {
+                            endTimeError?.let { error ->
                                 Text(
-                                    text = viewModel.getFieldError("endTime")
-                                        ?: "Invalid time",
+                                    text = error,
                                     color = MaterialTheme.colorScheme.error
                                 )
                             }
@@ -275,7 +269,7 @@ fun AddEvent(
                     modifier = Modifier.size(16.dp)
                 )
             } else {
-                Text("Save Event")
+                Text(if (state.isEditMode) "Update Event" else "Save Event")
             }
         }
 

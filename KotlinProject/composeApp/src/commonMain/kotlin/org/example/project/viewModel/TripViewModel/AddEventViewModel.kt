@@ -59,8 +59,10 @@ data class AddEventUiState(
     val isLoading: Boolean = false,
     /** Error message to be displayed, if any. */
     val errorMessage: String? = null,
-    /** Indicates if the event was successfully created. */
-    val didCreateEvent: Boolean = false
+    /** Indicates if the event was successfully created/updated. */
+    val didCreateEvent: Boolean = false,
+    /** True when editing an existing event instead of creating a new one. */
+    val isEditMode: Boolean = false
 )
 
 /**
@@ -69,7 +71,8 @@ data class AddEventUiState(
  */
 class AddEventViewModel(
     private val tripId: String,
-    private val tripRepository: TripRepository
+    private val tripRepository: TripRepository,
+    private val eventId: String? = null
 ) : ViewModel() {
 
     /** Holds the mutable state flow of the UI. */
@@ -82,10 +85,26 @@ class AddEventViewModel(
         viewModelScope.launch {
             val trip = tripRepository.getTripById(tripId)
             if (trip != null) {
+                val editingEvent = eventId?.let { id -> trip.events.find { it.title == id } }
+                val otherEvents = trip.events.filterNot { it.title == eventId }
                 _state.value = _state.value.copy(
                     tripDuration = trip.duration,
-                    existingEvents = trip.events
+                    existingEvents = otherEvents,
+                    isEditMode = eventId != null
                 )
+                editingEvent?.let { event ->
+                    _state.value = _state.value.copy(
+                        title = event.title,
+                        description = event.description,
+                        location = event.location,
+                        durationFields = DurationFields(
+                            startDate = event.duration.startDate.toString(),
+                            endDate = event.duration.endDate.toString(),
+                            startTime = event.duration.startTime.toTimeString(),
+                            endTime = event.duration.endTime.toTimeString()
+                        )
+                    )
+                }
             }
         }
     }
@@ -217,28 +236,49 @@ class AddEventViewModel(
 
         viewModelScope.launch {
             _state.value = current.copy(isLoading = true, errorMessage = null, didCreateEvent = false)
-            tripRepository.addEvent(tripId, event).fold(
-                onSuccess = {
-                    _state.value = current.copy(
-                        title = "",
-                        description = "",
-                        location = "",
-                        durationFields = DurationFields(),
-                        duration = duration,
-                        existingEvents = current.existingEvents + event,
-                        isLoading = false,
-                        errorMessage = null,
-                        didCreateEvent = true
-                    )
-                },
-                onFailure = { error ->
-                    _state.value = current.copy(
-                        isLoading = false,
-                        errorMessage = error.message ?: "Failed to add event",
-                        didCreateEvent = false
-                    )
-                }
-            )
+            if (current.isEditMode && eventId != null) {
+                tripRepository.updateEvent(tripId, eventId, event).fold(
+                    onSuccess = {
+                        _state.value = current.copy(
+                            duration = duration,
+                            existingEvents = current.existingEvents + event,
+                            isLoading = false,
+                            errorMessage = null,
+                            didCreateEvent = true
+                        )
+                    },
+                    onFailure = { error ->
+                        _state.value = current.copy(
+                            isLoading = false,
+                            errorMessage = error.message ?: "Failed to update event",
+                            didCreateEvent = false
+                        )
+                    }
+                )
+            } else {
+                tripRepository.addEvent(tripId, event).fold(
+                    onSuccess = {
+                        _state.value = current.copy(
+                            title = "",
+                            description = "",
+                            location = "",
+                            durationFields = DurationFields(),
+                            duration = duration,
+                            existingEvents = current.existingEvents + event,
+                            isLoading = false,
+                            errorMessage = null,
+                            didCreateEvent = true
+                        )
+                    },
+                    onFailure = { error ->
+                        _state.value = current.copy(
+                            isLoading = false,
+                            errorMessage = error.message ?: "Failed to add event",
+                            didCreateEvent = false
+                        )
+                    }
+                )
+            }
         }
     }
 
@@ -286,6 +326,9 @@ class AddEventViewModel(
 
     private fun isValidTime(value: String): Boolean =
         normalizeTime(value) != null
+
+    private fun LocalTime.toTimeString(): String =
+        "${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
 
     fun isFieldValid(field: String): Boolean {
         val current = _state.value

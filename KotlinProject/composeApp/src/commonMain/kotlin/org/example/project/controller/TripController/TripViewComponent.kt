@@ -7,13 +7,15 @@ class TripViewComponent(
     componentContext: ComponentContext,
     private val onNavigateToAddTripView: () -> Unit,
     private val onGoBack: () -> Unit, // new callback to request pop()
-    private val onNavigateToAddMember: () -> Unit
+    private val onNavigateToAddMember: () -> Unit,
+    private val onNavigateToEditEvent: (String) -> Unit
 ) : ComponentContext by componentContext {
 
     fun onEvent(event: TripViewEvent) {
         when (event) {
             TripViewEvent.ClickButtonTripView -> onNavigateToAddTripView()
             TripViewEvent.ClickShare -> onNavigateToAddMember()
+            is TripViewEvent.ClickEditEvent -> onNavigateToEditEvent(event.eventId)
         }
     }
 

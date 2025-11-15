@@ -78,7 +78,9 @@ fun EventsSection(
     }
     Column {
         dates.forEachIndexed { index, date ->
-            val list = eventsByDate[date].orEmpty()
+            val list = eventsByDate[date]
+                ?.sortedWith(compareBy<EventSegment> { it.displayStart }.thenBy { it.displayEnd })
+                .orEmpty()
             EventsGroup(
                 index = index,
                 eventsForDate = list,
