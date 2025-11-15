@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -74,15 +75,17 @@ fun TripView(
             contentAlignment = Alignment.BottomEnd
         ) {
             FloatingActionButton(
-            onClick = { component.onEvent(TripViewEvent.ClickButtonTripView) },
-            containerColor = SECONDARY,
-            contentColor = PRIMARY,
-            modifier = Modifier.align(Alignment.BottomEnd)
-        ) {
-            Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = null
-            )
+                onClick = { component.onEvent(TripViewEvent.ClickButtonTripView) },
+                containerColor = SECONDARY,
+                contentColor = PRIMARY,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .offset(y = (-12).dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = null
+                )
             }
         }
 

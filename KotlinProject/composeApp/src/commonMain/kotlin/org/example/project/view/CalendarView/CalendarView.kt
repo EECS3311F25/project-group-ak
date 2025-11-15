@@ -116,7 +116,7 @@ fun CalendarView(
                             .fillMaxWidth()
                             .padding(top = 16.dp)
                     ) {
-                        Divider(color = Color.LightGray, thickness = 1.dp)
+                        HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
 
                         LazyRow(
                             state = listState,
@@ -165,7 +165,7 @@ fun CalendarView(
                             }
                         }
 
-                        Divider(color = Color.LightGray, thickness = 1.dp)
+                        HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
                     }
                 }
             }
