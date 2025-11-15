@@ -31,7 +31,6 @@ dependencies {
     implementation(libs.exposed.jdbc)
     //  postgres dependency
     implementation(libs.postgresql)
-    implementation(libs.flyway.core)
 
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
