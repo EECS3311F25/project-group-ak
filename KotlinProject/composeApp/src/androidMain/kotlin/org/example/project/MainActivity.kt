@@ -9,12 +9,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arkivanov.decompose.retainedComponent
 import org.example.project.controller.RootComponent
 
-class MainActivity : ComponentActivity() {
+import com.sunildhiman90.kmauth.core.KMAuthInitializer
+import com.sunildhiman90.kmauth.core.KMAuthPlatformContext
+
+class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val root = retainedComponent { RootComponent(it) }
         setContent {
+            KMAuthInitializer.initContext(
+                kmAuthPlatformContext = KMAuthPlatformContext(this)
+            )
             App(root)
         }
     }

@@ -109,9 +109,16 @@ class RootComponent(
         data class TripView(val component: TripViewComponent, val trip: Trip) : Child()
         data class AddTripView(val component: AddTripViewComponent) : Child()
         data class HomeView(val component: HomeViewComponent) : Child()
+<<<<<<< HEAD
         data class TripCreationView(val component: TripCreationComponent) : Child()
         data class LoginView(val component : LoginViewComponent) : Child()
         data class SignupView(val component : SignupViewComponent) : Child()
+=======
+        
+        // Authentication screens
+        data class LoginView(val component : LoginViewComponent) : Child()   // Login screen wrapper
+        data class SignupView(val component : SignupViewComponent) : Child()  // Signup screen wrapper
+>>>>>>> origin/SCRUM-64-create-database
         data class AddMember(val component : AddMemberComponent) : Child()
     }
 

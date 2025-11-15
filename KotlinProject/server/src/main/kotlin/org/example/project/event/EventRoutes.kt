@@ -1,4 +1,4 @@
-package org.example.project.trip
+package org.example.project.event
 
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.json
@@ -8,47 +8,54 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.configureTripRoutes(tripService: TripService) {
+fun Application.configureEventRoutes(eventService: EventService) {
     install(ContentNegotiation) {
         json()
     }
 
     routing {
-        route("/trips") {
+        route("/events") {
 
-            // GET /trips  
-            get {
-                val trips = tripService.allTripsByUsername(null)
-                call.respond(trips)
-            }
-
-            // GET /trips/{id}
-            get("/{id}") {
-                val idParam = call.parameters["id"]
-                val id = idParam?.toIntOrNull()
-                if (id == null) {
+            // GET /events/trip/{tripId}
+            get("/trip/{tripId}") {
+                val tripIdParam = call.parameters["tripId"]
+                val tripId = tripIdParam?.toIntOrNull()
+                if (tripId == null) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid trip id")
                     return@get
                 }
 
-                val trip = tripService.getTripById(id)
-                if (trip == null) {
-                    call.respond(HttpStatusCode.NotFound, "Trip not found")
+                val events = eventService.allEventsByTripId(tripId)
+                call.respond(events)
+            }
+
+            // GET /events/{id}
+            get("/{id}") {
+                val idParam = call.parameters["id"]
+                val id = idParam?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid event id")
+                    return@get
+                }
+
+                val event = eventService.getEventById(id)
+                if (event == null) {
+                    call.respond(HttpStatusCode.NotFound, "Event not found")
                 } else {
-                    call.respond(trip)
+                    call.respond(event)
                 }
             }
 
-            // POST /trips
+            // POST /events
             post {
-                val trip = try {
-                    call.receive<Trip>()
+                val event = try {
+                    call.receive<Event>()
                 } catch (e: Exception) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
+                    call.respond(HttpStatusCode.BadRequest, "Invalid event payload")
                     return@post
                 }
 
-                val result = tripService.addTrip(trip)
+                val result = eventService.addEvent(event)
                 result
                     .onSuccess { created ->
                         call.respond(HttpStatusCode.Created, created)
@@ -56,28 +63,28 @@ fun Application.configureTripRoutes(tripService: TripService) {
                     .onFailure { error ->
                         call.respond(
                             HttpStatusCode.BadRequest,
-                            error.message ?: "Failed to create trip"
+                            error.message ?: "Failed to create event"
                         )
                     }
             }
 
-            // PUT /trips/{id}
+            // PUT /events/{id}
             put("/{id}") {
                 val idParam = call.parameters["id"]
                 val id = idParam?.toIntOrNull()
                 if (id == null) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid trip id")
+                    call.respond(HttpStatusCode.BadRequest, "Invalid event id")
                     return@put
                 }
 
-                val trip = try {
-                    call.receive<Trip>()
+                val event = try {
+                    call.receive<Event>()
                 } catch (e: Exception) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
+                    call.respond(HttpStatusCode.BadRequest, "Invalid event payload")
                     return@put
                 }
 
-                val result = tripService.updateTrip(id, trip)
+                val result = eventService.updateEvent(id, event)
                 result
                     .onSuccess {
                         call.respond(HttpStatusCode.OK)
@@ -87,28 +94,28 @@ fun Application.configureTripRoutes(tripService: TripService) {
                             is NoSuchElementException ->
                                 call.respond(
                                     HttpStatusCode.NotFound,
-                                    error.message ?: "Trip not found"
+                                    error.message ?: "Event not found"
                                 )
 
                             else ->
                                 call.respond(
                                     HttpStatusCode.BadRequest,
-                                    error.message ?: "Failed to update trip"
+                                    error.message ?: "Failed to update event"
                                 )
                         }
                     }
             }
 
-            // DELETE /trips/{id}
+            // DELETE /events/{id}
             delete("/{id}") {
                 val idParam = call.parameters["id"]
                 val id = idParam?.toIntOrNull()
                 if (id == null) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid trip id")
+                    call.respond(HttpStatusCode.BadRequest, "Invalid event id")
                     return@delete
                 }
 
-                val result = tripService.deleteTripById(id)
+                val result = eventService.deleteEventById(id)
                 result
                     .onSuccess {
                         call.respond(HttpStatusCode.NoContent)
@@ -118,13 +125,13 @@ fun Application.configureTripRoutes(tripService: TripService) {
                             is NoSuchElementException ->
                                 call.respond(
                                     HttpStatusCode.NotFound,
-                                    error.message ?: "Trip not found"
+                                    error.message ?: "Event not found"
                                 )
 
                             else ->
                                 call.respond(
                                     HttpStatusCode.BadRequest,
-                                    error.message ?: "Failed to delete trip"
+                                    error.message ?: "Failed to delete event"
                                 )
                         }
                     }

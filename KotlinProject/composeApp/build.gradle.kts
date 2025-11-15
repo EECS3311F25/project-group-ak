@@ -71,6 +71,12 @@ kotlin {
             implementation(libs.decompose.extensions.compose)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation("io.github.sunildhiman90:kmauth-google:0.3.1")
+            implementation("io.github.sunildhiman90:kmauth-google-compose:0.3.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -80,7 +86,6 @@ kotlin {
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.kamel.image)
             implementation(libs.ktor.client.cio)
-            implementation("ch.qos.logback:logback-classic:1.5.18")  //SLF4J provider error for networkImage
         }
     }
 }

@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.example.project.model.Trip
 
-@Composable
-expect fun NetworkImage(url: String, contentDescription: String?, modifier: Modifier = Modifier)
+//@Composable
+//expect fun NetworkImage(url: String, contentDescription: String?, modifier: Modifier = Modifier)
 
 /**
  * TripCard:
@@ -104,11 +104,11 @@ fun TripCard(
             }
         } else {
             // NetworkImage actual fun only implemented for jvm target
-            NetworkImage(
-                url = trip.imageHeaderUrl ?: "",
-                contentDescription = trip.title,
-                modifier = Modifier.size(200.dp)
-            )
+//            NetworkImage(
+//                url = trip.imageHeaderUrl ?: "",
+//                contentDescription = trip.title,
+//                modifier = Modifier.size(200.dp)
+//            )
 
             // subtle bottom gradient so the text is readable
             Box(

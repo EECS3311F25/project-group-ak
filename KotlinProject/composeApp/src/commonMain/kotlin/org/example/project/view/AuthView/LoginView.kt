@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -15,12 +15,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+
+import org.example.project.AppConstants
 import org.example.project.controller.AuthEvent
 import org.example.project.controller.LoginViewComponent
-
 // Reusable authentication UI components
 import org.example.project.view.AuthView.AuthComponents.AuthButton
 import org.example.project.view.AuthView.AuthComponents.InputField
+
+import com.sunildhiman90.kmauth.core.KMAuthInitializer
+import com.sunildhiman90.kmauth.google.KMAuthGoogle
+import com.sunildhiman90.kmauth.core.KMAuthConfig
+import kotlinx.coroutines.launch
 
 /*
  * LoginView - UI layer for the Login screen
@@ -106,6 +112,27 @@ fun LoginView(component : LoginViewComponent, modifier : Modifier = Modifier)
             onClick = {component.onEvent(AuthEvent.OnLoginClick)},
             enabled = email.isNotBlank() && password.isNotBlank()
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        KMAuthInitializer.initialize(
+            config = KMAuthConfig.forGoogle(
+                AppConstants.WEB_CLIENT_ID))
+        val googleAuthManager = KMAuthGoogle.googleAuthManager
+        val scope = rememberCoroutineScope()
+
+        //  Google signin button
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(
+                onClick = {
+                    scope.launch {
+                        val result = googleAuthManager.signIn()
+                    }
+                    component.onEvent(AuthEvent.OnLoginClick)
+                }) {
+                Text("Continue with Google")
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

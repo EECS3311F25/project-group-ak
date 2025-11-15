@@ -8,8 +8,7 @@ class LoginViewComponent(
     componentContext: ComponentContext,
     private val onNavigateToTripView: () -> Unit,
     private val onNavigateToSignup: () -> Unit,
-) : ComponentContext by componentContext {
-
+): ComponentContext by componentContext {
     private val _email = MutableValue("")
     val email: Value<String> = _email
 
