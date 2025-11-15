@@ -32,12 +32,14 @@ class UserService(private val userRepository: UserRepository) {
         }
         
         // Email validation (basic)
-        if (!user.userEmail.contains("@")) {
+        val email = user.userEmail ?: ""
+        if (!email.contains("@")) {
             return Result.failure(IllegalArgumentException("Invalid email format"))
         }
         
         // Password strength validation
-        if (user.userPassword.length < 8) {
+        val password = user.userPassword ?: ""
+        if (password.length < 8) {
             return Result.failure(IllegalArgumentException("Password must be at least 8 characters"))
         }
         

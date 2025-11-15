@@ -35,4 +35,11 @@ dependencies {
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
     implementation(libs.h2)
+    
+    // Flyway for database migrations
+    implementation("org.flywaydb:flyway-core:10.0.0")
+    implementation("org.flywaydb:flyway-database-postgresql:10.0.0")
+    
+    // Kotlin Coroutines for async database operations
+    implementation(libs.kotlinx.coroutines.core)
 }

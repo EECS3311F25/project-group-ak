@@ -1,6 +1,7 @@
 package org.example.project
 
 import io.ktor.server.application.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.example.project.repository.TripRepositoryImpl
 import org.example.project.routes.tripRoutes

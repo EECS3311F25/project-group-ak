@@ -17,6 +17,7 @@ import org.example.project.userModel.UserRepository
 
 
 fun Application.configureSerialization(repository: UserRepository) {
+    
     install(ContentNegotiation) {
         json()
     }
