@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import org.example.project.view.components.NavBar
 import org.example.project.controller.CalendarViewComponent
 import org.example.project.controller.CalendarViewEvent
-import org.example.project.viewModel.CalendarViewModel
+import org.example.project.viewmodel.CalendarViewModel
 import org.example.project.model.Event
 import org.example.project.model.Trip
 

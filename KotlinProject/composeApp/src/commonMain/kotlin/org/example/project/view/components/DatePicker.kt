@@ -11,8 +11,8 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.example.project.viewModel.TripCreationViewModel
-import org.example.project.viewModel.TripCreationState
+import org.example.project.viewmodel.TripCreationViewModel
+import org.example.project.viewmodel.TripCreationState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

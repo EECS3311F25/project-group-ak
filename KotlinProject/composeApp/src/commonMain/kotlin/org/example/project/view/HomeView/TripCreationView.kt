@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.datetime.LocalDate
 import org.example.project.controller.TripCreationComponent
 import org.example.project.controller.TripCreationEvent
-import org.example.project.viewModel.TripCreationViewModel
+import org.example.project.viewmodel.TripCreationViewModel
 import org.example.project.model.User
 import org.example.project.model.Event
 import org.example.project.model.Duration

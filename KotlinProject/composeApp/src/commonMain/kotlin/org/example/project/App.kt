@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.stack.Children
-import org.example.project.viewModel.HomeViewModel
+import org.example.project.viewmodel.HomeViewModel
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
@@ -23,8 +23,8 @@ import org.example.project.view.TripViewSubPages.AddMember
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
 import org.example.project.view.CalendarView.CalendarView
-import org.example.project.viewModel.TripCreationViewModel
-import org.example.project.viewModel.CalendarViewModel
+import org.example.project.viewmodel.TripCreationViewModel
+import org.example.project.viewmodel.CalendarViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository

@@ -2,7 +2,7 @@ package org.example.project.controller
 
 import com.arkivanov.decompose.ComponentContext
 import org.example.project.model.Trip
-import org.example.project.viewModel.HomeViewModel
+import org.example.project.viewmodel.HomeViewModel
 
 class HomeViewComponent(
     componentContext: ComponentContext,
