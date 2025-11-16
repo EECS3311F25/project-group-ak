@@ -6,7 +6,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-
 /**
  * Event HTTP routes.
  *
@@ -22,13 +21,12 @@ import io.ktor.server.routing.*
  *  PUT    /event/{id}           -> update event
  *  DELETE /event/{id}           -> delete event
  */
-
-fun Application.configureEventSerialization(eventRepository: PostgresEventRepository) {
+fun Application.configureEventRoutes(eventRepository: PostgresEventRepository) {
 
     routing {
         route("/event") {
 
-            //  GET /event/trip/{tripId} - get all events of a trip
+            // GET /event/trip/{tripId} - get all events of a trip
             get("/trip/{tripId}") {
                 val tripIdParam = call.parameters["tripId"]
                 val tripId = tripIdParam?.toIntOrNull()
@@ -41,7 +39,7 @@ fun Application.configureEventSerialization(eventRepository: PostgresEventReposi
                 call.respond(HttpStatusCode.OK, events)
             }
 
-            //  GET /event/{id} - get a single event by ID
+            // GET /event/{id} - get a single event by ID
             get("/{id}") {
                 val idParam = call.parameters["id"]
                 val id = idParam?.toIntOrNull()
@@ -62,13 +60,9 @@ fun Application.configureEventSerialization(eventRepository: PostgresEventReposi
             post {
                 val event = try {
                     call.receive<Event>()
-
-
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid event payload")
                     return@post
-
-
                 }
 
                 // Validate via service
@@ -96,14 +90,12 @@ fun Application.configureEventSerialization(eventRepository: PostgresEventReposi
 
                 val event = try {
                     call.receive<Event>()
-
-
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid event payload")
                     return@put
                 }
 
-                //  Validate via service
+                // Validate via service
                 EventService.validateEventForUpdate(event)
                     .onFailure { error ->
                         call.respond(

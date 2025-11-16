@@ -3,7 +3,6 @@ package org.example.project
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-
 import org.example.project.db.configureDatabases
 import org.example.project.db.configureRouting
 import org.example.project.db.configureSerialization
@@ -19,12 +18,15 @@ fun main() {
     ).start(wait = true)
 }
 
-// references:
-// - https://ktor.io/docs/full-stack-development-with-kotlin-multiplatform.html#create-server
-// - https://ktor.io/docs/server-integrate-database.html#add-routes
-
+// App entry point: only wires serialization, DB, and routing.
+// All concrete routes (user/trip/event) are set up inside db.configureRouting().
 fun Application.module() {
+    // JSON (kotlinx) content negotiation
     configureSerialization()
+
+    // PostgreSQL + Flyway migrations
     configureDatabases()
+
+    // Register all HTTP routes
     configureRouting()
 }

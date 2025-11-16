@@ -1,4 +1,5 @@
 package org.example.project.event
+
 /**
  * Service layer for Event business logic.
  *
@@ -28,7 +29,6 @@ object EventService {
         // Optional: basic date checks
         if (event.eventStartDate.isBlank()) {
             return Result.failure(IllegalArgumentException("Event start date cannot be empty"))
-
         }
         if (event.eventEndDate.isBlank()) {
             return Result.failure(IllegalArgumentException("Event end date cannot be empty"))
@@ -53,7 +53,6 @@ object EventService {
         if (event.eventStartDate.isBlank()) {
             return Result.failure(IllegalArgumentException("Event start date cannot be empty"))
         }
-
         if (event.eventEndDate.isBlank()) {
             return Result.failure(IllegalArgumentException("Event end date cannot be empty"))
         }
