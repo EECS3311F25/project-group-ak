@@ -1,9 +1,7 @@
 package org.example.project.user
 
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.*
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -35,7 +33,7 @@ fun Application.configureUserSerialization(repository: PostgresUserRepository) {
                     call.respond(HttpStatusCode.NotFound)
                     return@get
                 }
-                call.respond(user)
+                call.respond("User retrieved successfully")
             }
 
             post("/register") {
@@ -44,13 +42,15 @@ fun Application.configureUserSerialization(repository: PostgresUserRepository) {
                     repository.addUser(user)
                         .onSuccess {
                             call.respond(
-                                HttpStatusCode.Created
+                                HttpStatusCode.Created,
+                                "User account has successfully been created"
                                 //  .ApiResponse(true, message = "User registered successfully")
                             )
                         }
                         .onFailure { error ->
                             call.respond(
                                 HttpStatusCode.BadRequest,
+                                "User registration failed: ${error.message}"
                                 //  ApiResponse(false, error.message)
                             )
                         }

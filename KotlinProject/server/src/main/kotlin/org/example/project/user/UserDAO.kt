@@ -29,9 +29,9 @@ import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 //  TODO: improve logic of field nullability
 
 object UserTable: IntIdTable("user") {
-    val userName = varchar("userName", 50)
-    val userEmail = varchar("userEmail", 50)
-    val userPassword = varchar("userEmail", 50)
+    val userName = varchar("user_name", 50)
+    val userEmail = varchar("user_email", 50)
+    val userPassword = varchar("user_password", 50)
 }
 
 /**

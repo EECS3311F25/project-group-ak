@@ -1,8 +1,8 @@
 package org.example.project.db
 
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.*
 
 
 fun Application.configureSerialization() {
@@ -10,4 +10,3 @@ fun Application.configureSerialization() {
         json()
     }
 }
-

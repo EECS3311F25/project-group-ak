@@ -22,7 +22,7 @@ object UserService {
             return Result.failure(IllegalArgumentException("Password cannot be empty"))
         }
 
-        // Email validation (basic)
+        //  TODO: require email format to contain a valid mail server and domain
         if (!user.userEmail.contains("@")) {
             return Result.failure(IllegalArgumentException("Invalid email format"))
         }
