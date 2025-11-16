@@ -14,7 +14,7 @@ fun Application.configureTripRoutes(tripService: TripService) {
             get("/user/{userName}") {
                 val userName = call.parameters["userName"]
                 if (userName.isNullOrBlank()) {
-                    call.respond(HttpStatusCode.BadRequest, "userName is required")
+                    call.respond(HttpStatusCode.NotFound, "User not found")
                     return@get
                 }
 
@@ -25,7 +25,7 @@ fun Application.configureTripRoutes(tripService: TripService) {
             get("/{id}") {
                 val id = call.parameters["id"]?.toIntOrNull()
                 if (id == null) {
-                    call.respond(HttpStatusCode.BadRequest, "id must be an integer")
+                    call.respond(HttpStatusCode.BadRequest, "Invalid trip")
                     return@get
                 }
 

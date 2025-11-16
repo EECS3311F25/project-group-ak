@@ -34,4 +34,7 @@ dependencies {
     implementation(libs.flyway.core)
     implementation(libs.postgresql)
     implementation(libs.h2)
+    implementation(libs.logback.classic)
+    implementation(libs.flyway.core)
+    implementation(libs.flyway.database.postgresql)
 }

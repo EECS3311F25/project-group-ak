@@ -20,7 +20,7 @@ fun Application.configureUserSerialization(repository: PostgresUserRepository) {
 
         //  TODO: decide whether there allUsers() should be routed
 
-        //  TODO: decide whether a message should be return with the HTTPS response
+        //  TODO: decide whether a message should be returned with the HTTPS response
         route("/user") {
 
             //  GET "/user/{userName}" - get user by username
