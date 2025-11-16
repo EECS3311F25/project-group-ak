@@ -1,5 +1,6 @@
 package org.example.project.view.CalendarView
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -25,6 +26,7 @@ import org.example.project.model.dataClasses.Event
 fun TimelineView(
     events: List<Event>,
     selectedDate: LocalDate?,
+    component: org.example.project.controller.CalendarViewComponent,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -118,6 +120,7 @@ fun TimelineView(
                             .height(height)
                             .fillMaxWidth()
                             .padding(start = 68.dp, end = 8.dp)
+                            .clickable { component.onEvent(org.example.project.controller.CalendarViewEvent.ClickEditEvent(event.title)) }
                     )
                 }
 

@@ -36,7 +36,6 @@ fun EventCard(
 
     Card(
         modifier = modifier
-            .fillMaxSize()
             .padding(vertical = 2.dp)
             .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant, RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp),
@@ -47,7 +46,6 @@ fun EventCard(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(8.dp)
         ) {

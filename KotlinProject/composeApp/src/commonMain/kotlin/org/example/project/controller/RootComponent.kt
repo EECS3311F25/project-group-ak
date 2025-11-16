@@ -121,6 +121,9 @@ class RootComponent(
                     onNavigateToTripView = { 
                         navigation.pop()
                         navigation.pushNew(Configuration.TripView(config.tripId))
+                    },
+                    onEditEvent = { eventId ->
+                        navigation.pushNew(Configuration.AddEvent(config.tripId, eventId))
                     }
                 ),
                 config.tripId

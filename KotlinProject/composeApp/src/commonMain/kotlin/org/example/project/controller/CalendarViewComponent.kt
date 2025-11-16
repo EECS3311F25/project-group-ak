@@ -6,11 +6,13 @@ import org.example.project.model.dataClasses.Trip
 import kotlinx.datetime.LocalDate
 
 
+
 class CalendarViewComponent(
     componentContext: ComponentContext,
     val tripId: String,
     private val onGoBack: () -> Unit,
-    private val onNavigateToTripView: () -> Unit
+    private val onNavigateToTripView: () -> Unit,
+    private val onEditEvent: (String) -> Unit = {}
 ) : ComponentContext by componentContext {
 
     fun onBack() {
@@ -19,8 +21,10 @@ class CalendarViewComponent(
 
     fun onEvent(event: CalendarViewEvent) {
         when (event) {
-            CalendarViewEvent.Back -> onBack()
-            CalendarViewEvent.NavigateToTrip -> onNavigateToTripView()
+            is CalendarViewEvent.Back -> onBack()
+            is CalendarViewEvent.NavigateToTrip -> onNavigateToTripView()
+            is CalendarViewEvent.ClickEditEvent -> onEditEvent(event.eventId)
+            else -> {}
         }
     }
 }
@@ -28,4 +32,5 @@ class CalendarViewComponent(
 sealed class CalendarViewEvent {
     object Back : CalendarViewEvent()
     object NavigateToTrip : CalendarViewEvent()
+    data class ClickEditEvent(val eventId: String) : CalendarViewEvent()
 }

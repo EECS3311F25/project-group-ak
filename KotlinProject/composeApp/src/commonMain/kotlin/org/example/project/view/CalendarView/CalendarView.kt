@@ -190,6 +190,7 @@ fun CalendarView(
                 TimelineView(
                     events = events,
                     selectedDate = selectedDate,
+                    component = component,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
