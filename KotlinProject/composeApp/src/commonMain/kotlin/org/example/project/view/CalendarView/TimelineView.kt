@@ -119,8 +119,8 @@ fun TimelineView(
                             .offset(y = topOffset)
                             .height(height)
                             .fillMaxWidth()
-                            .padding(start = 68.dp, end = 8.dp)
-                            .clickable { component.onEvent(org.example.project.controller.CalendarViewEvent.ClickEditEvent(event.title)) }
+                            .padding(start = 68.dp, end = 8.dp),
+                        onEdit = { component.onEvent(org.example.project.controller.CalendarViewEvent.ClickEditEvent(event.title)) }
                     )
                 }
 
