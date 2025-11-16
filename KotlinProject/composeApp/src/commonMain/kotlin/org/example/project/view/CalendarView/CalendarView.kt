@@ -191,6 +191,7 @@ fun CalendarView(
                     events = events,
                     selectedDate = selectedDate,
                     component = component,
+                    viewModel = viewModel,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
@@ -219,4 +220,6 @@ fun CalendarView(
             }
         }
     }
+
+    // (Event delete confirmation is now handled in TimelineView via eventIdForDelete)
 }

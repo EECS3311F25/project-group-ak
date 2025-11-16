@@ -1,6 +1,10 @@
 package org.example.project.view.CalendarView
 
-import androidx.compose.foundation.clickable
+import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,8 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Commute
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -21,14 +23,18 @@ import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.example.project.model.dataClasses.Event
+import org.example.project.controller.CalendarViewEvent
 
 @Composable
 fun TimelineView(
     events: List<Event>,
     selectedDate: LocalDate?,
     component: org.example.project.controller.CalendarViewComponent,
+    viewModel: org.example.project.viewmodel.CalendarViewModel,
     modifier: Modifier = Modifier
 ) {
+    var eventIdForDelete by remember { mutableStateOf<String?>(null) }
+
     val listState = rememberLazyListState()
     val pixelsPerHour = 120.dp
     val pixelsPerMinute = pixelsPerHour / 60f
@@ -113,6 +119,7 @@ fun TimelineView(
                     val height = pixelsPerMinute * durationMinutes
 
                     // place event card across the full timeline (leaving time label gutter)
+
                     EventCard(
                         event = event,
                         modifier = Modifier
@@ -120,8 +127,59 @@ fun TimelineView(
                             .height(height)
                             .fillMaxWidth()
                             .padding(start = 68.dp, end = 8.dp),
-                        onEdit = { component.onEvent(org.example.project.controller.CalendarViewEvent.ClickEditEvent(event.title)) }
+                        onEdit = { component.onEvent(CalendarViewEvent.ClickEditEvent(event.title)) },
+                        onDelete = { eventIdForDelete = event.title }
                     )
+
+                    // Delete confirmation dialog
+                    eventIdForDelete?.let { deleteId ->
+                        val deleteEvent = events.find { it.title == deleteId }
+                        if (deleteEvent != null) {
+                            AlertDialog(
+                                onDismissRequest = { eventIdForDelete = null },
+                                title = {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = "Are you sure?",
+                                            style = MaterialTheme.typography.titleLarge
+                                        )
+                                    }
+                                },
+                                text = {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = "This event will be deleted.",
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = { eventIdForDelete = null }) {
+                                        Text("Cancel")
+                                    }
+                                },
+                                confirmButton = {
+                                    TextButton(
+                                        onClick = {
+                                            viewModel.deleteEvent(deleteEvent)
+                                            eventIdForDelete = null
+                                        },
+                                        colors = ButtonDefaults.textButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.error
+                                        )
+                                    ) {
+                                        Text("Delete Event")
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
 
                 // Draw vertical line and commute icons on the right side between consecutive events when there is a gap

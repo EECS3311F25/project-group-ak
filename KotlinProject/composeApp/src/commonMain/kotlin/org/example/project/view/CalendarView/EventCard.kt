@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.zIndex
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -47,7 +48,8 @@ import org.example.project.model.dataClasses.Event
 fun EventCard(
     event: Event,
     modifier: Modifier = Modifier,
-    onEdit: (() -> Unit)? = null
+    onEdit: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null
 ) {
     println("EventCard composing: ${event.title}")
 
@@ -63,12 +65,13 @@ fun EventCard(
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Box(modifier = Modifier.fillMaxSize()){
-            // Options: edit, delete
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Floating options menu in top-right, always clickable
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
+                    .zIndex(1f)
             ) {
                 IconButton(
                     onClick = { showMenu = true },
@@ -113,7 +116,7 @@ fun EventCard(
                     DropdownMenuItem(
                         text = { Text("Delete Event") },
                         onClick = {
-                            // TODO: onDeleteClick()
+                            onDelete?.invoke()
                             showMenu = false
                         },
                         colors = MenuDefaults.itemColors(
@@ -131,8 +134,10 @@ fun EventCard(
                 }
             }
 
+            // Main content column
             Column(
                 modifier = Modifier
+                    .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(8.dp)
             ) {

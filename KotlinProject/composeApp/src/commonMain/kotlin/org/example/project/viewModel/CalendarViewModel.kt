@@ -105,7 +105,6 @@ class CalendarViewModel(
     fun addEvent(event: Event) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            
             try {
                 // Check for conflicts with existing events
                 val conflicts = getConflictingEvents(event)
@@ -113,14 +112,14 @@ class CalendarViewModel(
                     _uiState.update { it.copy(error = "Event conflicts with: ${conflicts.joinToString { it.title }}", isLoading = false) }
                     return@launch
                 }
-                
                 val updatedTrip = _uiState.value.currentTrip.copy(
                     events = _uiState.value.currentTrip.events + event
                 )
                 val result = tripRepository.updateTrip(updatedTrip)
-                
                 result.onSuccess { updated ->
                     _uiState.update { s -> s.copy(currentTrip = updated, events = updated.events) }
+                    // Reload events for the selected date to update UI
+                    _uiState.value.selectedDate?.let { loadEventsForDate(it) }
                 }
                 result.onFailure { throwable ->
                     _uiState.update { s -> s.copy(error = "Failed to add event: ${throwable.message}") }
@@ -144,16 +143,16 @@ class CalendarViewModel(
     fun updateEvent(oldEvent: Event, newEvent: Event) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            
             try {
                 val updatedEvents = _uiState.value.currentTrip.events.map { event ->
                     if (event.title == oldEvent.title && event.duration == oldEvent.duration) newEvent else event
                 }
                 val updatedTrip = _uiState.value.currentTrip.copy(events = updatedEvents)
                 val result = tripRepository.updateTrip(updatedTrip)
-
                 result.onSuccess { updated ->
                     _uiState.update { s -> s.copy(currentTrip = updated, events = updated.events) }
+                    // Reload events for the selected date to update UI
+                    _uiState.value.selectedDate?.let { loadEventsForDate(it) }
                 }
                 result.onFailure { throwable ->
                     _uiState.update { s -> s.copy(error = "Failed to update event: ${throwable.message}") }
@@ -170,16 +169,16 @@ class CalendarViewModel(
     fun deleteEvent(event: Event) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            
             try {
                 val updatedEvents = _uiState.value.currentTrip.events.filter {
                     it.title != event.title || it.duration != event.duration
                 }
                 val updatedTrip = _uiState.value.currentTrip.copy(events = updatedEvents)
                 val result = tripRepository.updateTrip(updatedTrip)
-
                 result.onSuccess { updated ->
                     _uiState.update { s -> s.copy(currentTrip = updated, events = updated.events) }
+                    // Reload events for the selected date to update UI
+                    _uiState.value.selectedDate?.let { loadEventsForDate(it) }
                 }
                 result.onFailure { throwable ->
                     _uiState.update { s -> s.copy(error = "Failed to delete event: ${throwable.message}") }
