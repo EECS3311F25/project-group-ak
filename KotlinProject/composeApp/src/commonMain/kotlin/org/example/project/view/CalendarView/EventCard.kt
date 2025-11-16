@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalTime
-import org.example.project.model.Event
+import org.example.project.model.dataClasses.Event
 
 @Composable
 fun EventCard(

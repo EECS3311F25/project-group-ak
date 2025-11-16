@@ -2,9 +2,20 @@ plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.ktor)
     application
+    java
 }
 
 group = "org.example.project"
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))  // Lock to Java 21 LTS
+    }
+    
+    // Ensure source and target compatibility
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
 version = "1.0.0"
 application {
     mainClass.set("org.example.project.ApplicationKt")

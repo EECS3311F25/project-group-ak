@@ -1,8 +1,8 @@
-package org.example.project.controller
+package org.example.project.controller.HomeController
 
 import com.arkivanov.decompose.ComponentContext
-import org.example.project.model.Trip
-import org.example.project.viewmodel.HomeViewModel
+import org.example.project.viewmodel.home.HomeViewModel
+import org.example.project.model.dataClasses.Trip
 
 class HomeViewComponent(
     componentContext: ComponentContext,
@@ -14,6 +14,7 @@ class HomeViewComponent(
         when (event) {
             is HomeViewEvent.ClickButtonHomeView -> onNavigateToTripView(event.trip)
             is HomeViewEvent.ClickAddTripHomeView -> onNavigateToTripCreation()
+            else -> {}
         }
     }
 
@@ -27,10 +28,5 @@ class HomeViewComponent(
     fun deleteTrip(viewModel: HomeViewModel, tripTitle: String) {
         viewModel.deleteTrip(tripTitle)
     }
-}
-
-sealed interface HomeViewEvent {
-    data class ClickButtonHomeView(val trip: Trip) : HomeViewEvent
-    data object ClickAddTripHomeView : HomeViewEvent
 }
 

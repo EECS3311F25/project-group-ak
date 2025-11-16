@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import org.example.project.controller.AuthEvent
-import org.example.project.controller.LoginViewComponent
+import org.example.project.controller.AuthController.AuthEvent
+import org.example.project.controller.AuthController.LoginViewComponent
 
 // Reusable authentication UI components
 import org.example.project.view.AuthView.AuthComponents.AuthButton

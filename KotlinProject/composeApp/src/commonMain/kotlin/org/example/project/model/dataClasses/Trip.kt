@@ -1,12 +1,14 @@
-package org.example.project.model
+package org.example.project.model.dataClasses
 
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Trip(
+    val id: String,
     val title: String,
     val duration: Duration,
+
     val description: String = "",
     val location: String = "", // TODO: Create Location data class
 

@@ -1,4 +1,4 @@
-package org.example.project.viewmodel
+package org.example.project.viewmodel.home
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
-import org.example.project.model.Trip
-import org.example.project.model.User
+import org.example.project.model.dataClasses.Trip
+import org.example.project.model.dataClasses.User
 
 data class HomeUiState(
     val trips: List<Trip> = emptyList(),

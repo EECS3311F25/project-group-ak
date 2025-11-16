@@ -20,14 +20,13 @@ import org.example.project.view.components.NavBar
 import org.example.project.controller.CalendarViewComponent
 import org.example.project.controller.CalendarViewEvent
 import org.example.project.viewmodel.CalendarViewModel
-import org.example.project.model.Event
-import org.example.project.model.Trip
+import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Trip
 
 @Composable
 fun CalendarView(
     component: CalendarViewComponent,
     viewModel: CalendarViewModel,
-    trip: Trip,
     modifier: Modifier = Modifier
 ) {
     // Collect UI state from ViewModel
@@ -36,18 +35,8 @@ fun CalendarView(
     val selectedDate = uiState.selectedDate
     val isLoading = uiState.isLoading
     val error = uiState.error
+    val trip = uiState.currentTrip
 
-    // Initialize with trip's start date if no date selected
-    // When the `trip` parameter changes (navigating to a different trip), update the ViewModel
-    // so its currentTrip/selectedDate/events reflect the new trip. This handles the case
-    // where the same ViewModel instance is reused across navigations.
-    LaunchedEffect(trip.title) {
-        println("=== CalendarView: trip changed -> updating ViewModel to trip: ${trip.title} ===")
-        viewModel.updateTrip(trip, selectStartDate = true)
-        // ensure selectedDate is set
-        viewModel.selectDate(trip.duration.startDate)
-    }
-    
     println("=== CalendarView State ===")
     println("Events: ${events.size}, Selected: $selectedDate, Loading: $isLoading, Error: $error")
 
@@ -80,7 +69,7 @@ fun CalendarView(
                     }
                     
                     // Horizontal scrollable day selector with center snapping
-                    val tripDays = trip.duration.getAllDates()
+                    val tripDays = trip.duration?.getAllDates() ?: emptyList()
                     val listState = rememberLazyListState()
                     val coroutineScope = rememberCoroutineScope()
                     

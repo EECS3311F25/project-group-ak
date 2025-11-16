@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
-import org.example.project.model.Event
-import org.example.project.model.Trip
+import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Trip
 import org.example.project.data.repository.TripRepository
 
 data class CalendarUiState(
@@ -20,21 +20,51 @@ data class CalendarUiState(
 )
 
 
+
 class CalendarViewModel(
-    private val trip: Trip,
+    private val tripId: String,
     private val tripRepository: TripRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
         CalendarUiState(
-            currentTrip = trip,
+            currentTrip = Trip(
+                id = tripId,
+                title = "",
+                description = "",
+                users = emptyList(),
+                events = emptyList(),
+                duration = org.example.project.model.dataClasses.Duration(
+                    startDate = kotlinx.datetime.LocalDate(2000, 1, 1),
+                    startTime = kotlinx.datetime.LocalTime(0, 0),
+                    endDate = kotlinx.datetime.LocalDate(2000, 1, 1),
+                    endTime = kotlinx.datetime.LocalTime(0, 0)
+                ),
+                createdDate = kotlinx.datetime.LocalDate(2000, 1, 1)
+            ),
             selectedDate = null,
-            events = trip.events,
-            isLoading = false,
+            events = emptyList(),
+            isLoading = true,
             error = null
         )
     )
 
     val uiState: StateFlow<CalendarUiState> = _uiState
+
+    init {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    _uiState.update { it.copy(currentTrip = trip, events = trip.events, isLoading = false) }
+                } else {
+                    _uiState.update { it.copy(error = "Trip not found", isLoading = false) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to load trip: ${e.message}", isLoading = false) }
+            }
+        }
+    }
 
     fun selectDate(date: LocalDate) {
         _uiState.update { it.copy(selectedDate = date) }

@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import org.example.project.model.Event
+import org.example.project.model.dataClasses.Event
 
 @Composable
 fun TimelineView(
@@ -102,7 +102,10 @@ fun TimelineView(
                 }.sortedBy { it.second }
 
                 // Render events as single boxes positioned relative to top of the selected day.
-                eventWithMinutes.forEach { (event, effectiveStartMin, effectiveEndMin) ->
+                eventWithMinutes.forEach { triple ->
+                    val event = triple.first
+                    val effectiveStartMin = triple.second
+                    val effectiveEndMin = triple.third
                     val durationMinutes = (effectiveEndMin - effectiveStartMin).coerceAtLeast(1)
                     val topOffset = pixelsPerMinute * effectiveStartMin
                     val height = pixelsPerMinute * durationMinutes
@@ -126,8 +129,10 @@ fun TimelineView(
                 val lineWidth = 4.dp
                 val lineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                 eventWithMinutes.windowed(2).forEach { pair ->
-                    val (_, _, firstEnd) = pair[0]
-                    val (_, secondStart, _) = pair[1]
+                    val first = pair[0]
+                    val second = pair[1]
+                    val firstEnd = first.third
+                    val secondStart = second.second
                     val gap = secondStart - firstEnd
                     if (gap > minGapToShowIconMinutes) {
                         val lineTop = pixelsPerMinute * firstEnd

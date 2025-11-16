@@ -1,12 +1,14 @@
 package org.example.project.controller
 
 import com.arkivanov.decompose.ComponentContext
-import org.example.project.model.Event
-import org.example.project.model.Trip
+import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Trip
 import kotlinx.datetime.LocalDate
+
 
 class CalendarViewComponent(
     componentContext: ComponentContext,
+    val tripId: String,
     private val onGoBack: () -> Unit,
     private val onNavigateToTripView: () -> Unit
 ) : ComponentContext by componentContext {

@@ -1,0 +1,286 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
+package org.example.project.view.TripView.TripViewSubPages
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.datetime.LocalDate
+import org.example.project.controller.TripController.AddEventComponent
+import org.example.project.controller.TripController.AddEventEvent
+import org.example.project.view.components.DatePickerSection
+import org.example.project.viewmodel.trip.AddEventViewModel
+
+@Composable
+fun AddEvent(
+    component: AddEventComponent,
+    viewModel: AddEventViewModel
+) {
+    val state by viewModel.state.collectAsState()
+    val scrollState = rememberScrollState()
+
+    LaunchedEffect(state.didCreateEvent) {
+        if (state.didCreateEvent) {
+            component.goBack()
+            viewModel.clearCompletion()
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // === TOP BAR ===
+        TopAppBar(
+            title = {
+                Text(
+                    text = if (state.isEditMode) "Edit Event" else "Add New Event",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = {
+                    component.onEvent(AddEventEvent.goBack)
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Go Back"
+                    )
+                }
+            }
+        )
+        // === TITLE FIELD ===
+        OutlinedTextField(
+            value = state.title,
+            onValueChange = viewModel::updateTitle,
+            label = { Text("Event Title *") },
+            placeholder = { Text("Enter event title") },
+            isError = !viewModel.isFieldValid("title") && state.title.isNotEmpty(),
+            supportingText = {
+                viewModel.getFieldError("title")?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // === LOCATION FIELD ===
+        OutlinedTextField(
+            value = state.location,
+            onValueChange = viewModel::updateLocation,
+            label = { Text("Location *") },
+            placeholder = { Text("Enter destination") },
+            isError = !viewModel.isFieldValid("location") && state.location.isNotEmpty(),
+            supportingText = {
+                viewModel.getFieldError("location")?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // === DATE SELECTION ===
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Event Duration *",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                val parsedStartDate = state.durationFields.startDate
+                    .takeIf { it.isNotBlank() }
+                    ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+                val parsedEndDate = state.durationFields.endDate
+                    .takeIf { it.isNotBlank() }
+                    ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+                val tripDuration = state.tripDuration
+
+                DatePickerSection(
+                    startDate = parsedStartDate,
+                    endDate   = parsedEndDate,
+                    minDate = tripDuration?.startDate,
+                    maxDate = tripDuration?.endDate,
+                    onStartDateSelected = { viewModel.updateStartDate(it) },
+                    onEndDateSelected   = { viewModel.updateEndDate(it) }
+                )
+
+                tripDuration?.let {
+                    Text(
+                        text = "Trip window: ${it.startDate} - ${it.endDate}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+
+                viewModel.getFieldError("duration")?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                fun formatTimeInput(raw: String): String {
+                    val digitsOnly = raw.filter(Char::isDigit).take(4)
+                    if (digitsOnly.isEmpty()) return ""
+                    return when {
+                        digitsOnly.length <= 2 -> digitsOnly
+                        else -> {
+                            val minutes = digitsOnly.takeLast(2)
+                            val hours = digitsOnly.dropLast(2)
+                            "${hours}:${minutes}"
+                        }
+                    }
+                }
+
+                val startTimeText = state.durationFields.startTime
+                val endTimeText = state.durationFields.endTime
+                val startTimeError = viewModel.getFieldError("startTime")
+                val endTimeError = viewModel.getFieldError("endTime")
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedTextField(
+                        value = startTimeText,
+                        onValueChange = { input ->
+                            viewModel.updateStartTime(formatTimeInput(input))
+                        },
+                        label = { Text("Start Time *") },
+                        placeholder = { Text("e.g., 09:00") },
+                        isError = false,
+                        supportingText = {
+                            startTimeError?.let { error ->
+                                Text(
+                                    text = error,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    OutlinedTextField(
+                        value = endTimeText,
+                        onValueChange = { input ->
+                            viewModel.updateEndTime(formatTimeInput(input))
+                        },
+                        label = { Text("End Time *") },
+                        placeholder = { Text("e.g., 17:30") },
+                        isError = false,
+                        supportingText = {
+                            endTimeError?.let { error ->
+                                Text(
+                                    text = error,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+        }
+
+        state.errorMessage?.let { error ->
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+
+        Button(
+            onClick = { viewModel.submit() },
+            enabled = !state.isLoading,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(16.dp)
+                )
+            } else {
+                Text(if (state.isEditMode) "Update Event" else "Save Event")
+            }
+        }
+
+        OutlinedButton(
+            onClick = { component.goBack() },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.primary
+            )
+        ) {
+            Text("Cancel")
+        }
+    }
+}

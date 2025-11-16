@@ -1,21 +1,25 @@
-package org.example.project.controller
+package org.example.project.controller.TripController
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.value.MutableValue
-import org.example.project.model.Trip
+import org.example.project.controller.TripController.TripViewEvent
+
 
 class TripViewComponent(
     componentContext: ComponentContext,
     private val onNavigateToAddTripView: () -> Unit,
     private val onGoBack: () -> Unit, // new callback to request pop()
     private val onNavigateToAddMember: () -> Unit,
-    private val onNavigateToCalendar: (Trip) -> Unit
+    private val onNavigateToEditEvent: (String) -> Unit,
+    private val onNavigateToCalendar: () -> Unit
 ) : ComponentContext by componentContext {
+
     fun onEvent(event: TripViewEvent) {
         when (event) {
             TripViewEvent.ClickButtonTripView -> onNavigateToAddTripView()
             TripViewEvent.ClickShare -> onNavigateToAddMember()
-            is TripViewEvent.ClickCalendar -> onNavigateToCalendar(event.trip)
+            is TripViewEvent.ClickEditEvent -> onNavigateToEditEvent(event.eventId)
+            is TripViewEvent.ClickCalendar -> onNavigateToCalendar()
+            else -> {}
         }
     }
 
