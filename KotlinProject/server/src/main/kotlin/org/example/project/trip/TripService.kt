@@ -6,7 +6,6 @@ package org.example.project.trip
  */
 class TripService(private val tripRepository: TripRepository) {
 
-    //  TODO: figure out what these unused functions are for?
     suspend fun allTripsByUsername(userName: String?): List<Trip> {
         return tripRepository.allTripsByUsername(userName)
     }
@@ -17,10 +16,10 @@ class TripService(private val tripRepository: TripRepository) {
 
     suspend fun addTrip(trip: Trip): Result<Trip> {
         // Validation
-        if (trip.tripTitle!!.isBlank()) {
+        if (trip.tripTitle.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Trip title cannot be empty"))
         }
-        if (trip.tripLocation!!.isBlank()) {
+        if (trip.tripLocation.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Trip location cannot be empty"))
         }
 
@@ -35,8 +34,7 @@ class TripService(private val tripRepository: TripRepository) {
     }
 
     suspend fun updateTrip(id: Int, trip: Trip): Result<Boolean> {
-        // Validation
-        if (trip.tripTitle!!.isBlank()) {
+        if (trip.tripTitle.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Trip title cannot be empty"))
         }
 

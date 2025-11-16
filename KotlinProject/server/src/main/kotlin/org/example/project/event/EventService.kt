@@ -2,7 +2,6 @@ package org.example.project.event
 
 class EventService(private val eventRepository: EventRepository) {
 
-    //  TODO: figure out what these unused functions are for?
     suspend fun allEventsByTripId(tripId: Int?): List<Event> {
         return eventRepository.allEventsByTripId(tripId)
     }
@@ -11,7 +10,7 @@ class EventService(private val eventRepository: EventRepository) {
         return eventRepository.getEventById(eventId)
     }
 
-    suspend fun addTrip(event: Event): Result<Event> {
+    suspend fun addEvent(event: Event): Result<Event> {
         if (event.eventTitle.isBlank()) {
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
         }
@@ -19,7 +18,6 @@ class EventService(private val eventRepository: EventRepository) {
             return Result.failure(IllegalArgumentException("Event location cannot be empty"))
         }
 
-        // TODO: Add more validation (date validation, etc.)
 
         return try {
             val createdEvent = eventRepository.addEvent(event)
@@ -30,7 +28,6 @@ class EventService(private val eventRepository: EventRepository) {
     }
 
     suspend fun updateEvent(eventId: Int, event: Event): Result<Boolean> {
-        // Validation
         if (event.eventTitle.isBlank()) {
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
         }
@@ -43,7 +40,7 @@ class EventService(private val eventRepository: EventRepository) {
             if (updated) {
                 Result.success(true)
             } else {
-                Result.failure(NoSuchElementException("Trip with ID $eventId not found"))
+                Result.failure(NoSuchElementException("Event with ID $eventId not found"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -56,7 +53,7 @@ class EventService(private val eventRepository: EventRepository) {
             if (deleted) {
                 Result.success(true)
             } else {
-                Result.failure(NoSuchElementException("Trip with ID $eventId not found"))
+                Result.failure(NoSuchElementException("Event with ID $eventId not found"))
             }
         } catch (e: Exception) {
             Result.failure(e)
