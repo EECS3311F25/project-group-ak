@@ -18,7 +18,6 @@ fun Application.configureUserSerialization(repository: PostgresUserRepository) {
 
         //  TODO: decide whether there allUsers() should be routed
 
-        //  TODO: decide whether a message should be returned with the HTTPS response
         route("/user") {
 
             //  GET "/user/{userName}" - get user by username
@@ -43,21 +42,18 @@ fun Application.configureUserSerialization(repository: PostgresUserRepository) {
                         .onSuccess {
                             call.respond(
                                 HttpStatusCode.Created,
-                                "User account has successfully been created"
-                                //  .ApiResponse(true, message = "User registered successfully")
+                                "User successfully registered"
                             )
                         }
                         .onFailure { error ->
                             call.respond(
                                 HttpStatusCode.BadRequest,
                                 "User registration failed: ${error.message}"
-                                //  ApiResponse(false, error.message)
                             )
                         }
                 } catch (e: Exception) {
                     call.respond(
-                        HttpStatusCode.InternalServerError,
-                        //  ApiResponse(false, "Registration failed: ${e.message}")
+                        HttpStatusCode.InternalServerError
                     )
                 }
             }
@@ -70,19 +66,18 @@ fun Application.configureUserSerialization(repository: PostgresUserRepository) {
                         .onSuccess {
                             call.respond(
                                 HttpStatusCode.OK,
-                                //  ApiResponse(true, "Password updated successfully")
+                                "Password updated successfully"
                             )
                         }
-                        .onFailure { error ->
+                        .onFailure {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                //  ApiResponse(false, error.message)
                             )
                         }
                 } catch (e: Exception) {
                     call.respond(
-                        HttpStatusCode.InternalServerError
-                        //  ApiResponse(false, "Password update failed: ${e.message}")
+                        HttpStatusCode.InternalServerError,
+                        "Password update failed: ${e.message}"
                     )
                 }
             }
@@ -96,12 +91,14 @@ fun Application.configureUserSerialization(repository: PostgresUserRepository) {
                 repository.deleteUserByUsername(userName)
                     .onSuccess {
                         call.respond(
-                            HttpStatusCode.NoContent
+                            HttpStatusCode.NoContent,
+                            "User deleted successfully"
                         )
                     }
                     .onFailure {
                         call.respond(
-                            HttpStatusCode.BadRequest
+                            HttpStatusCode.BadRequest,
+                            "User deletion failed"
                         )
                     }
             }

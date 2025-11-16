@@ -30,10 +30,6 @@ object UserService {
         //  Password strength validation
         verifyUserPassword(user.userPassword)
 
-        // TODO: Hash password before storing
-        // val hashedPassword = hashPassword(user.userPassword)
-        // val userWithHashedPassword = user.copy(userPassword = hashedPassword)
-
         return Result.success(Unit)
     }
 
@@ -46,6 +42,4 @@ object UserService {
         }
         return Result.success(Unit)
     }
-
-    //  TODO: implement password hashing
 }

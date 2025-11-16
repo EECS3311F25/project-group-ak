@@ -1,5 +1,6 @@
 package org.example.project.trip
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
@@ -7,20 +8,20 @@ import kotlinx.serialization.Serializable
 data class Trip (
     //  Trip ID is an automatically generated column (surrogate key)
     //  -   reference: https://www.jetbrains.com/help/exposed/working-with-tables.html#dao-table-def
-    //  @SerialName("trip_title")
+    @SerialName("trip_title")
     val tripTitle: String?,
-    //  @SerialName("trip_description")
+    @SerialName("trip_description")
     val tripDescription: String?,
 
     //  TODO: implement Location data type
     //  TODO: implement Location type's logic + interaction w/ app's map view
-    //  @SerialName("trip_location")
+    @SerialName("trip_location")
     val tripLocation: String?,
 
     //  TODO: implement type for date + time
-    //  @SerialName("trip_start_date")
+    @SerialName("trip_start_date")
     val tripStartDate: String?,
-    //  @SerialName("trip_end_date")
+    @SerialName("trip_end_date")
     val tripEndDate: String?,
 
     //  TODO: implement foreign key UserID (the User that created this trip)

@@ -18,15 +18,13 @@ fun main() {
     ).start(wait = true)
 }
 
-// App entry point: only wires serialization, DB, and routing.
-// All concrete routes (user/trip/event) are set up inside db.configureRouting().
 fun Application.module() {
-    // JSON (kotlinx) content negotiation
+    //  Serializable to JSON - see Serialization.kt
     configureSerialization()
 
-    // PostgreSQL + Flyway migrations
+    //  DB configuration and migration - see DatabaseConnect.kt and Migration.kt
     configureDatabases()
 
-    // Register all HTTP routes
+    //  Register all HTTP routes - see Routing.kt
     configureRouting()
 }
