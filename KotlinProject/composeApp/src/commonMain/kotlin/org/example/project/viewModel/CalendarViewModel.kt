@@ -1,3 +1,4 @@
+
 package org.example.project.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -224,6 +225,31 @@ class CalendarViewModel(
                 events = newTrip.events,
                 error = null
             )
+        }
+    }
+
+    // Update only the time of an event (used for drag-to-change-time)
+    fun updateEventTime(oldEvent: Event, newEvent: Event) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val updatedEvents = _uiState.value.currentTrip.events.map { event ->
+                    if (event.title == oldEvent.title && event.duration == oldEvent.duration) newEvent else event
+                }
+                val updatedTrip = _uiState.value.currentTrip.copy(events = updatedEvents)
+                val result = tripRepository.updateTrip(updatedTrip)
+                result.onSuccess { updated ->
+                    _uiState.update { s -> s.copy(currentTrip = updated) }
+                    _uiState.value.selectedDate?.let { loadEventsForDate(it) }
+                }
+                result.onFailure { throwable ->
+                    _uiState.update { s -> s.copy(error = "Failed to update event time: ${throwable.message}") }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to update event time: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 }
