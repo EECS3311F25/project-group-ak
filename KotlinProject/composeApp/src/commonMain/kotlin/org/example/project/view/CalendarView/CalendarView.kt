@@ -37,6 +37,18 @@ fun CalendarView(
     val error = uiState.error
     val trip = uiState.currentTrip
 
+    // Always refresh trip data and update filtered events when CalendarView is shown or trip/selectedDate changes
+    LaunchedEffect(trip.id, selectedDate) {
+        viewModel.refreshTrip()
+        println("Launched effect 1 triggered")
+    }
+
+    // When trip or selectedDate changes, always re-filter events for the selected date
+    LaunchedEffect(trip, selectedDate) {
+        selectedDate?.let { viewModel.selectDate(it) }
+        println("Launched effect 2 triggered")
+    }
+
     println("=== CalendarView State ===")
     println("Events: ${events.size}, Selected: $selectedDate, Loading: $isLoading, Error: $error")
 

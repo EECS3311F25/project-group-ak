@@ -117,8 +117,8 @@ class CalendarViewModel(
                 )
                 val result = tripRepository.updateTrip(updatedTrip)
                 result.onSuccess { updated ->
-                    _uiState.update { s -> s.copy(currentTrip = updated, events = updated.events) }
-                    // Reload events for the selected date to update UI
+                    // Only update currentTrip, let loadEventsForDate set filtered events
+                    _uiState.update { s -> s.copy(currentTrip = updated) }
                     _uiState.value.selectedDate?.let { loadEventsForDate(it) }
                 }
                 result.onFailure { throwable ->
@@ -150,8 +150,8 @@ class CalendarViewModel(
                 val updatedTrip = _uiState.value.currentTrip.copy(events = updatedEvents)
                 val result = tripRepository.updateTrip(updatedTrip)
                 result.onSuccess { updated ->
-                    _uiState.update { s -> s.copy(currentTrip = updated, events = updated.events) }
-                    // Reload events for the selected date to update UI
+                    // Only update currentTrip, let loadEventsForDate set filtered events
+                    _uiState.update { s -> s.copy(currentTrip = updated) }
                     _uiState.value.selectedDate?.let { loadEventsForDate(it) }
                 }
                 result.onFailure { throwable ->
@@ -176,8 +176,8 @@ class CalendarViewModel(
                 val updatedTrip = _uiState.value.currentTrip.copy(events = updatedEvents)
                 val result = tripRepository.updateTrip(updatedTrip)
                 result.onSuccess { updated ->
-                    _uiState.update { s -> s.copy(currentTrip = updated, events = updated.events) }
-                    // Reload events for the selected date to update UI
+                    // Only update currentTrip, let loadEventsForDate set filtered events
+                    _uiState.update { s -> s.copy(currentTrip = updated) }
                     _uiState.value.selectedDate?.let { loadEventsForDate(it) }
                 }
                 result.onFailure { throwable ->
@@ -196,10 +196,12 @@ class CalendarViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                // TODO: Trip model needs an id field for this to work
-                // For now, just update with current trip data
-                tripRepository.refresh()
-                _uiState.update { it.copy(events = it.currentTrip.events) }
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    _uiState.update { it.copy(currentTrip = trip, events = trip.events) }
+                } else {
+                    _uiState.update { it.copy(error = "Trip not found") }
+                }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = "Failed to refresh trip: ${e.message}") }
             } finally {
