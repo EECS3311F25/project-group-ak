@@ -26,8 +26,7 @@ import io.ktor.server.routing.*
  *  POST   /user/{userName}/trip          -> create trip for that user
  *  PUT    /user/{userName}/trip/{id}     -> update trip
  *  DELETE /user/{userName}/trip/{id}     -> delete trip
- */
- 
+ */ 
 fun Application.configureTripSerialization(tripRepository: PostgresTripRepository) {
 
     routing {

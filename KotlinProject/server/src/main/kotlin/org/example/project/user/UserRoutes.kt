@@ -28,6 +28,7 @@ import io.ktor.server.routing.*
 fun Application.configureUserSerialization(userRepository: PostgresUserRepository) {
 
     routing {
+        
         route("/user") {
 
             // GET /user/{userName}  -> get user by username

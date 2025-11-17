@@ -27,7 +27,6 @@ import io.ktor.server.routing.*
  *  PUT    /user/{userName}/trip/{tripId}/event/{id}     -> update event
  *  DELETE /user/{userName}/trip/{tripId}/event/{id}     -> delete event
  */
- 
 fun Application.configureEventSerialization(eventRepository: PostgresEventRepository) {
 
     routing {
