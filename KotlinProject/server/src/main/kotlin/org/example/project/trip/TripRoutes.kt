@@ -28,19 +28,18 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
     routing {
         route("/trip") {
 
-            // GET /trip/user/{userName} - get all trips owned by a user
+            //  GET /trip/user/{userName} - get all trips associated with a user
             get("/user/{userName}") {
                 val userName = call.parameters["userName"]
                 if (userName.isNullOrBlank()) {
-                    call.respond(HttpStatusCode.BadRequest, "userName is required")
+                    call.respond(HttpStatusCode.BadRequest, "Missing parameter userName")
                     return@get
                 }
-
                 val trips = tripRepository.allTripsByUsername(userName)
                 call.respond(HttpStatusCode.OK, trips)
             }
 
-            // GET /trip/{id} - get a single trip by ID
+            //  GET /trip/{id} - get a single trip by ID
             get("/{id}") {
                 val idParam = call.parameters["id"]
                 val id = idParam?.toIntOrNull()
@@ -57,7 +56,7 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                 }
             }
 
-            // POST /trip - create a new trip
+            //  POST /trip - create a new trip
             post {
                 val trip = try {
                     call.receive<Trip>()
@@ -66,7 +65,7 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                     return@post
                 }
 
-                // Validate via service (no DB access here)
+                //  Validate via service (no DB access here)
                 TripService.validateTripForCreate(trip)
                     .onFailure { error ->
                         call.respond(
@@ -80,7 +79,7 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                 call.respond(HttpStatusCode.Created, created)
             }
 
-            // PUT /trip/{id} - update existing trip
+            //  PUT /trip/{id} - update existing trip
             put("/{id}") {
                 val idParam = call.parameters["id"]
                 val id = idParam?.toIntOrNull()
@@ -96,7 +95,7 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                     return@put
                 }
 
-                // Validate via service
+                //  Validate via service
                 TripService.validateTripForUpdate(trip)
                     .onFailure { error ->
                         call.respond(

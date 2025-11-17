@@ -2,6 +2,7 @@ package org.example.project.user
 
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import java.util.NoSuchElementException
 
 
 /**
@@ -51,12 +52,16 @@ class PostgresUserRepository: UserRepository {
             }
     }
 
-    override suspend fun deleteUserByUsername(userName: String?): Result<Boolean> = runCatching {
-        suspendTransaction {
-            val userDeleted = UserTable.deleteWhere {
-                UserTable.userName eq userName!!
-            }
-            userDeleted == 1
+    override suspend fun deleteUserByUsername(userName: String?): Result<Boolean> = suspendTransaction {
+        val userDeleted = UserTable.deleteWhere {
+            UserTable.userName eq userName!!
+        }
+        if (userDeleted != 1) {
+            Result.failure<Boolean>(NoSuchElementException("User not found)"))
+        }
+        else {
+            Result.success(true)
         }
     }
+
 }

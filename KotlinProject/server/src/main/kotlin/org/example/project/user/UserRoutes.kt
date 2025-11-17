@@ -17,34 +17,33 @@ import io.ktor.server.routing.*
  *  - Application.module() creates PostgresUserRepository
  *  - Application.configureUserSerialization(userRepository)
  *  - These handlers use repository only (validation is in UserService).
+
+ * Endpoints:
+ *  GET    /user/{userName}         -> get user by username
+ *  POST   /user/register           -> create new user
+ *  PUT    /user/{password}         -> update user password
+ *  DELETE /user/{userName}/delete  -> delete user by username
  */
 fun Application.configureUserSerialization(userRepository: PostgresUserRepository) {
 
     routing {
 
-        //  TODO: decide whether allUsers() should be routed or not
-
         route("/user") {
 
-            //  GET "/user/{userName}" - get user by username
+            //  GET "/user/{userName}"  ->  get user by username
             get("/{userName}") {
                 val userName = call.parameters["userName"]
-                if (userName == null) {
-                    call.respond(HttpStatusCode.BadRequest, "Missing userName")
-                    return@get
-                }
-
                 val user = userRepository.getUserByName(userName)
                 if (user == null) {
                     call.respond(HttpStatusCode.NotFound, "User not found")
                     return@get
                 }
 
-                // For now return a simple success message instead of full User JSON
+                //  For now return a simple success message instead of full User JSON
                 call.respond(HttpStatusCode.OK, "User retrieved successfully")
             }
 
-            //  POST "/user/register" - register a new user
+            //  POST "/user/register"   ->  create new user
             post("/register") {
                 try {
                     val user = call.receive<User>()
@@ -59,13 +58,13 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                         .onFailure { error ->
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                "User registration failed: ${error.message}"
+                                "User registration failed"
                             )
                         }
                 } catch (e: Exception) {
                     call.respond(
                         HttpStatusCode.InternalServerError,
-                        "Internal server error during registration"
+                        "Internal server error, registration failed"
                     )
                 }
             }
@@ -82,7 +81,7 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                                 "Password updated successfully"
                             )
                         }
-                        .onFailure {
+                        .onFailure { error ->
                             call.respond(
                                 HttpStatusCode.BadRequest,
                                 "Password update failed"
@@ -96,14 +95,9 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                 }
             }
 
-            // DELETE "/user/{userName}/delete" - delete user by username
+            //  DELETE "/user/{userName}/delete" - delete user by username
             delete("/{userName}/delete") {
                 val userName = call.parameters["userName"]
-                if (userName == null) {
-                    call.respond(HttpStatusCode.BadRequest, "Missing userName")
-                    return@delete
-                }
-
                 userRepository.deleteUserByUsername(userName)
                     .onSuccess {
                         call.respond(
@@ -111,10 +105,10 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                             "User deleted successfully"
                         )
                     }
-                    .onFailure {
+                    .onFailure { error ->
                         call.respond(
-                            HttpStatusCode.BadRequest,
-                            "User deletion failed"
+                            HttpStatusCode.NotFound,
+                            "User does not exist"
                         )
                     }
             }
