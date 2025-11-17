@@ -34,8 +34,7 @@ object TripTable : IntIdTable("trip") {
     val tripStartDate = varchar("trip_start_date", 50) // TODO: implement date type
     val tripEndDate = varchar("trip_end_date", 50) // TODO: implement date type
 
-    // TODO: Add foreign key associated with User table (createdBy)
-    // val createdByUserId = reference("created_by_user_id", UserTable)
+    //  val createdByUserId = reference("created_by_user_id", UserTable)
 }
 
 

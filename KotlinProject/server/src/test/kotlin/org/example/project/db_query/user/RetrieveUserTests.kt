@@ -13,7 +13,7 @@ import org.example.project.module
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class UserRetrieveTests {
+class RetrieveUserTests {
 
     /**
      *  User exists (-> valid)

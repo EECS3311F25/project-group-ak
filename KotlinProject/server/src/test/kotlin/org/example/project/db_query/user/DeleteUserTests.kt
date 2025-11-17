@@ -17,7 +17,7 @@ import org.example.project.module
 import org.example.project.user.User
 
 
-class UserDeleteTests {
+class DeleteUserTests {
 
     /**
      *  User exists (-> valid)

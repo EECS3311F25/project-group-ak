@@ -16,7 +16,7 @@ import org.example.project.module
 import org.example.project.user.User
 
 
-class UserCreateTests {
+class CreateUserTests {
 
     /**
      *  Valid user registration
