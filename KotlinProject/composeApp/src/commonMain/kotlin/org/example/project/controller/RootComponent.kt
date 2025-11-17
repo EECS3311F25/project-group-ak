@@ -16,6 +16,7 @@ import org.example.project.controller.TripController.AddMemberComponent
 import org.example.project.controller.TripController.TripViewComponent
 import org.example.project.data.source.LocalUserDataSource
 import org.example.project.data.repository.UserRepository
+import org.example.project.model.dataClasses.Trip
 
 class RootComponent(
     componentContext: ComponentContext,
@@ -65,6 +66,10 @@ class RootComponent(
                     onGoBack = { navigation.replaceAll(Configuration.HomeView) },
                     onNavigateToEditEvent = { eventId ->
                         navigation.pushNew(Configuration.AddEvent(config.tripId, eventId))
+                    },
+                    onNavigateToCalendar = {
+                        navigation.pop()
+                        navigation.pushNew(Configuration.CalendarView(config.tripId))
                     }
                 ),
                 config.tripId
@@ -107,6 +112,22 @@ class RootComponent(
                     userRepository = userRepository
                 )
             )
+
+            is Configuration.CalendarView -> Child.CalendarView(
+                CalendarViewComponent(
+                    componentContext = context,
+                    tripId = config.tripId,
+                    onGoBack = { navigation.replaceAll(Configuration.HomeView) },
+                    onNavigateToTripView = { 
+                        navigation.pop()
+                        navigation.pushNew(Configuration.TripView(config.tripId))
+                    },
+                    onEditEvent = { eventId ->
+                        navigation.pushNew(Configuration.AddEvent(config.tripId, eventId))
+                    }
+                ),
+                config.tripId
+            )
         }
     }
 
@@ -118,6 +139,7 @@ class RootComponent(
         data class LoginView(val component : LoginViewComponent) : Child()
         data class SignupView(val component : SignupViewComponent) : Child()
         data class AddMember(val component : AddMemberComponent, val tripId: String) : Child()
+    data class CalendarView(val component: CalendarViewComponent, val tripId: String) : Child()
     }
 
     @Serializable
@@ -136,5 +158,7 @@ class RootComponent(
         data class AddMember(val tripId: String) : Configuration()
         @Serializable
         data object TripCreationView : Configuration()
+        @Serializable
+        data class CalendarView(val tripId: String): Configuration()
     }
 }

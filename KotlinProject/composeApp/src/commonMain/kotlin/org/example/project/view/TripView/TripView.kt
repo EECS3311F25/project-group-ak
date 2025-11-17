@@ -3,6 +3,7 @@ package org.example.project.view.TripView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -53,7 +54,6 @@ fun TripView(
         }
     } else {
         val tripData = trip!!
-
         Box(modifier = Modifier.fillMaxSize()) {
             // main scrollable content with bottom padding so it doesn't scroll under the nav bar
             LazyColumn(
@@ -88,20 +88,22 @@ fun TripView(
             // Floating action button anchored above the nav bar
             Box(
                 modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 16.dp, bottom = navBarHeight + 16.dp),
+                    .fillMaxSize()
+                    .padding(end = 16.dp, bottom = navBarHeight + 16.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 FloatingActionButton(
-                onClick = { component.onEvent(TripViewEvent.ClickButtonTripView) },
-                containerColor = SECONDARY,
-                contentColor = PRIMARY,
-                modifier = Modifier.align(Alignment.BottomEnd)
-            ) {
-                Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = null
-                )
+                    onClick = { component.onEvent(TripViewEvent.ClickButtonTripView) },
+                    containerColor = SECONDARY,
+                    contentColor = PRIMARY,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .offset(y = (-12).dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = null
+                    )
                 }
             }
 
@@ -111,11 +113,16 @@ fun TripView(
                     .fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                key(tripData.id) {
+                key(tripData.title) {
                     NavBar(
                         tripTitle = tripData.title,
                         selectedIndex = 0,
-                        onItemSelected = { /* ... */ },
+                        onItemSelected = { index ->
+                            when (index) {
+                                1 -> component.onEvent(TripViewEvent.ClickCalendar(tripData)) // Calendar
+                                // 2 -> Map view (to be implemented later)
+                            }
+                        },
                         onBack = { component.onBack() }
                     )
                 }
