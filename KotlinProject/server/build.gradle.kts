@@ -3,9 +3,20 @@ plugins {
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlinSerialization)
     application
+    java
 }
 
 group = "org.example.project"
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))  // Lock to Java 21 LTS
+    }
+    
+    // Ensure source and target compatibility
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
 version = "1.0.0"
 
 application {
