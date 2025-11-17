@@ -2,7 +2,9 @@ package org.example.project.view.TripView
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -66,7 +68,9 @@ fun TripView(
                     Header(
                         tripTitle = tripData.title,
                         duration = tripData.duration,
-                        onShareClick = { component.onEvent(TripViewEvent.ClickShare) }
+                        imageUrl = tripData.imageHeaderUrl,
+                        onShareClick = { component.onEvent(TripViewEvent.ClickShare) },
+                        onEditTitleClick = { component.onEvent(TripViewEvent.ClickEditTrip) }
                     )
                 }
                 item { ListMembersSection(tripData.users) }
@@ -83,6 +87,7 @@ fun TripView(
                         }
                     )
                 }
+                item { Spacer(modifier = Modifier.height(24.dp)) }
             }
 
             // Floating action button anchored above the nav bar

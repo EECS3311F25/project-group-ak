@@ -45,6 +45,8 @@ data class AddEventUiState(
     val title: String = "",
     /** Event description entered by the user. */
     val description: String = "",
+    /** Optional image URL for the event header. */
+    val imageUrl: String = "",
     /** Event location entered by the user. */
     val location: String = "",
     /** User-entered duration fields (date/time strings). */
@@ -107,6 +109,7 @@ class AddEventViewModel(
                         title = event.title,
                         description = event.description,
                         location = event.location,
+                        imageUrl = event.imageUrl.orEmpty(),
                         durationFields = DurationFields(
                             startDate = event.duration.startDate.toString(),
                             endDate = event.duration.endDate.toString(),
@@ -124,6 +127,9 @@ class AddEventViewModel(
 
     /** Updates the event description field. */
     fun updateDescription(value: String) { _state.value = _state.value.copy(description = value) }
+
+    /** Updates the event image url field. */
+    fun updateImageUrl(value: String) { _state.value = _state.value.copy(imageUrl = value) }
 
     /** Updates the event location field. */
     fun updateLocation(value: String) { _state.value = _state.value.copy(location = value) }
@@ -237,11 +243,14 @@ class AddEventViewModel(
             return
         }
 
+        val normalizedImage = current.imageUrl.trim().ifBlank { null }
+
         val event = Event(
             title = current.title.trim(),
             duration = duration,
             description = current.description.trim(),
-            location = current.location.trim()
+            location = current.location.trim(),
+            imageUrl = normalizedImage
         )
 
         viewModelScope.launch {
@@ -272,6 +281,7 @@ class AddEventViewModel(
                             title = "",
                             description = "",
                             location = "",
+                            imageUrl = "",
                             durationFields = DurationFields(),
                             duration = duration,
                             existingEvents = current.existingEvents + event,

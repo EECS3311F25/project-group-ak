@@ -13,6 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.controller.HomeController.HomeViewComponent
@@ -50,8 +52,24 @@ fun HomeView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
-                    .background(PRIMARY)
             ) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(PRIMARY)
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color(0x99000000)
+                                )
+                            )
+                        )
+                )
                 Column(
                     modifier = Modifier
                         .align(Alignment.Center),

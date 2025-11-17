@@ -20,6 +20,7 @@ import org.example.project.view.HomeView.HomeView
 import org.example.project.view.HomeView.TripCreationView
 import org.example.project.view.TripView.TripViewSubPages.AddEvent
 import org.example.project.view.TripView.TripViewSubPages.AddMember
+import org.example.project.view.TripView.TripViewSubPages.EditTrip
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
 import org.example.project.view.CalendarView.CalendarView
@@ -33,6 +34,7 @@ import org.example.project.data.source.LocalUserDataSource
 import org.example.project.viewmodel.trip.TripViewModel
 import org.example.project.viewmodel.trip.AddMemberViewModel
 import org.example.project.viewmodel.trip.AddEventViewModel
+import org.example.project.viewmodel.trip.EditTripViewModel
 
 @Composable
 /*
@@ -176,6 +178,20 @@ fun App(root: RootComponent) {
                     AddMember(
                         component = instance.component,
                         viewModel = addMemberViewModel
+                    )
+                }
+                is RootComponent.Child.EditTrip -> {
+                    val editTripViewModel: EditTripViewModel = viewModel(
+                        key = "EditTrip-${instance.tripId}"
+                    ) {
+                        EditTripViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository
+                        )
+                    }
+                    EditTrip(
+                        component = instance.component,
+                        viewModel = editTripViewModel
                     )
                 }
                 // =============================================================================================

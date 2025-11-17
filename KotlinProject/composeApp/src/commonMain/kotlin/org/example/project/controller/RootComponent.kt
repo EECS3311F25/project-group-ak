@@ -14,6 +14,7 @@ import org.example.project.controller.HomeController.HomeViewComponent
 import org.example.project.controller.HomeController.TripCreationComponent
 import org.example.project.controller.TripController.AddEventComponent
 import org.example.project.controller.TripController.AddMemberComponent
+import org.example.project.controller.TripController.EditTripComponent
 import org.example.project.controller.TripController.TripViewComponent
 import org.example.project.data.source.LocalUserDataSource
 import org.example.project.data.repository.UserRepository
@@ -71,7 +72,8 @@ class RootComponent(
                     onNavigateToCalendar = {
                         navigation.pop()
                         navigation.pushNew(Configuration.CalendarView(config.tripId))
-                    }
+                    },
+                    onNavigateToEditTrip = { navigation.pushNew(Configuration.EditTrip(config.tripId)) }
                 ),
                 config.tripId
             )
@@ -97,6 +99,13 @@ class RootComponent(
 
             is Configuration.AddMember -> Child.AddMember(
                 component = AddMemberComponent(
+                    componentContext = context,
+                    onGoBack = { navigation.pop() }
+                ),
+                tripId = config.tripId
+            )
+            is Configuration.EditTrip -> Child.EditTrip(
+                component = EditTripComponent(
                     componentContext = context,
                     onGoBack = { navigation.pop() }
                 ),
@@ -145,6 +154,7 @@ class RootComponent(
         data class SignupView(val component : SignupViewComponent) : Child()
         data class AddMember(val component : AddMemberComponent, val tripId: String) : Child()
         data class CalendarView(val component: CalendarViewComponent, val tripId: String) : Child()
+        data class EditTrip(val component : EditTripComponent, val tripId: String) : Child()
     }
 
     @Serializable
@@ -163,6 +173,8 @@ class RootComponent(
         data class AddMember(val tripId: String) : Configuration()
         @Serializable
         data object TripCreationView : Configuration()
+        @Serializable
+        data class EditTrip(val tripId: String) : Configuration()
         @Serializable
         data class CalendarView(val tripId: String): Configuration()
     }

@@ -14,10 +14,12 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import org.example.project.model.PRIMARY
+import org.example.project.view.HomeView.NetworkImage
 
 @Composable
 fun ImageCard(
     painter: Painter = ColorPainter(PRIMARY),
+    imageUrl: String? = null,
     modifier: Modifier,
     content: @Composable BoxScope.() -> Unit = {}
 ) {
@@ -25,13 +27,21 @@ fun ImageCard(
         modifier = modifier,
         contentAlignment = Alignment.BottomStart,
     ){
-        Image(
-            // TODO: This should have a default image instead of a plain color.
-            painter = painter,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        if (!imageUrl.isNullOrBlank()) {
+            NetworkImage(
+                url = imageUrl,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Image(
+                // TODO: This should have a default image instead of a plain color.
+                painter = painter,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()

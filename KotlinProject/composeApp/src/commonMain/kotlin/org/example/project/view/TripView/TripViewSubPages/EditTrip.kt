@@ -4,8 +4,8 @@ package org.example.project.view.TripView.TripViewSubPages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,30 +32,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.datetime.LocalDate
-import org.example.project.controller.TripController.AddEventComponent
-import org.example.project.controller.TripController.AddEventEvent
+import org.example.project.controller.TripController.EditTripComponent
+import org.example.project.viewmodel.trip.EditTripViewModel
 import org.example.project.view.components.DatePickerSection
-import org.example.project.viewmodel.trip.AddEventViewModel
 
 @Composable
-fun AddEvent(
-    component: AddEventComponent,
-    viewModel: AddEventViewModel
+fun EditTrip(
+    component: EditTripComponent,
+    viewModel: EditTripViewModel
 ) {
     val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(state.didCreateEvent) {
-        if (state.didCreateEvent) {
+    LaunchedEffect(state.didUpdate) {
+        if (state.didUpdate) {
             component.goBack()
             viewModel.clearCompletion()
         }
+    }
+
+    if (state.isLoading) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CircularProgressIndicator()
+        }
+        return
     }
 
     Column(
@@ -66,11 +74,10 @@ fun AddEvent(
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // === TOP BAR ===
         TopAppBar(
             title = {
                 Text(
-                    text = if (state.isEditMode) "Edit Event" else "Add New Event",
+                    text = "Edit Trip",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -84,64 +91,40 @@ fun AddEvent(
                 }
             }
         )
+
         OutlinedTextField(
             value = state.title,
-            onValueChange = viewModel::updateTitle,
-            label = { Text("Event Title *") },
-            placeholder = { Text("Enter event title") },
-            isError = !viewModel.isFieldValid("title") && state.title.isNotEmpty(),
-            supportingText = {
-                viewModel.getFieldError("title")?.let { error ->
-                    Text(
-                        text = error,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
+            onValueChange = {
+                viewModel.updateTitle(it)
+                viewModel.clearError()
             },
+            label = { Text("Trip title") },
+            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            colors = addEventTextFieldColors()
+            colors = editTripTextFieldColors()
         )
 
         OutlinedTextField(
             value = state.description,
             onValueChange = viewModel::updateDescription,
-            label = { Text("Description") },
-            placeholder = { Text("What’s happening during this event?") },
+            label = { Text("Trip description") },
+            placeholder = { Text("Share the vibe or plan for this trip") },
             singleLine = false,
             minLines = 3,
             modifier = Modifier.fillMaxWidth(),
-            colors = addEventTextFieldColors()
-        )
-
-        OutlinedTextField(
-            value = state.location,
-            onValueChange = viewModel::updateLocation,
-            label = { Text("Location *") },
-            placeholder = { Text("Enter destination") },
-            isError = !viewModel.isFieldValid("location") && state.location.isNotEmpty(),
-            supportingText = {
-                viewModel.getFieldError("location")?.let { error ->
-                    Text(
-                        text = error,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = addEventTextFieldColors()
+            colors = editTripTextFieldColors()
         )
 
         OutlinedTextField(
             value = state.imageUrl,
             onValueChange = viewModel::updateImageUrl,
             label = { Text("Header image URL") },
-            placeholder = { Text("https://example.com/event.jpg") },
+            placeholder = { Text("https://example.com/image.jpg") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            colors = addEventTextFieldColors()
+            colors = editTripTextFieldColors()
         )
 
-        // === DATE SELECTION ===
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -149,98 +132,69 @@ fun AddEvent(
             )
         ) {
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Event Duration *",
+                    text = "Trip Duration *",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.SemiBold
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                val parsedStartDate = state.durationFields.startDate
-                    .takeIf { it.isNotBlank() }
-                    ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
-                val parsedEndDate = state.durationFields.endDate
-                    .takeIf { it.isNotBlank() }
-                    ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
-                val tripDuration = state.tripDuration
 
                 DatePickerSection(
-                    startDate = parsedStartDate,
-                    endDate   = parsedEndDate,
-                    minDate = tripDuration?.startDate,
-                    maxDate = tripDuration?.endDate,
-                    onStartDateSelected = { viewModel.updateStartDate(it) },
-                    onEndDateSelected   = { viewModel.updateEndDate(it) }
+                    startDate = state.startDate,
+                    endDate = state.endDate,
+                    onStartDateSelected = viewModel::updateStartDate,
+                    onEndDateSelected = viewModel::updateEndDate
                 )
 
-                tripDuration?.let {
-                    Text(
-                        text = "Trip window: ${it.startDate} - ${it.endDate}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-
-                viewModel.getFieldError("duration")?.let { error ->
+                state.dateError?.let { error ->
                     Text(
                         text = error,
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 4.dp)
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                val startTimeText = state.durationFields.startTime
-                val endTimeText = state.durationFields.endTime
-                val startTimeError = viewModel.getFieldError("startTime")
-                val endTimeError = viewModel.getFieldError("endTime")
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     OutlinedTextField(
-                        value = startTimeText,
-                        onValueChange = { input ->
-                            viewModel.updateStartTime(formatTimeInput(input))
-                        },
-                        label = { Text("Start Time *") },
-                        placeholder = { Text("e.g., 09:00") },
-                        isError = false,
+                        value = state.startTime,
+                        onValueChange = { viewModel.updateStartTime(formatTimeInput(it)) },
+                        label = { Text("Start Time") },
+                        placeholder = { Text("HH:MM") },
+                        singleLine = true,
+                        isError = state.startTimeError != null,
                         supportingText = {
-                            startTimeError?.let { error ->
+                            state.startTimeError?.let { error ->
                                 Text(
                                     text = error,
                                     color = MaterialTheme.colorScheme.error
                                 )
                             }
                         },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        colors = editTripTextFieldColors()
                     )
-
                     OutlinedTextField(
-                        value = endTimeText,
-                        onValueChange = { input ->
-                            viewModel.updateEndTime(formatTimeInput(input))
-                        },
-                        label = { Text("End Time *") },
-                        placeholder = { Text("e.g., 17:30") },
-                        isError = false,
+                        value = state.endTime,
+                        onValueChange = { viewModel.updateEndTime(formatTimeInput(it)) },
+                        label = { Text("End Time") },
+                        placeholder = { Text("HH:MM") },
+                        singleLine = true,
+                        isError = state.endTimeError != null,
                         supportingText = {
-                            endTimeError?.let { error ->
+                            state.endTimeError?.let { error ->
                                 Text(
                                     text = error,
                                     color = MaterialTheme.colorScheme.error
                                 )
                             }
                         },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        colors = editTripTextFieldColors()
                     )
                 }
             }
@@ -251,49 +205,45 @@ fun AddEvent(
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.errorContainer
                 ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = error,
                     color = MaterialTheme.colorScheme.onErrorContainer,
-                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(16.dp)
                 )
             }
         }
 
         Button(
-            onClick = { viewModel.submit() },
-            enabled = !state.isLoading,
+            onClick = { viewModel.saveChanges() },
+            enabled = !state.isSaving,
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (state.isLoading) {
+            if (state.isSaving) {
                 CircularProgressIndicator(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     strokeWidth = 2.dp,
                     modifier = Modifier.size(16.dp)
                 )
             } else {
-                Text(if (state.isEditMode) "Update Event" else "Save Event")
+                Text("Save Changes")
             }
         }
 
         OutlinedButton(
             onClick = { component.goBack() },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.primary
-            )
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text("Cancel")
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
 @Composable
-private fun addEventTextFieldColors() = TextFieldDefaults.colors(
+private fun editTripTextFieldColors() = TextFieldDefaults.colors(
     focusedIndicatorColor = MaterialTheme.colorScheme.primary,
     unfocusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
     cursorColor = MaterialTheme.colorScheme.primary,
@@ -315,5 +265,4 @@ private fun formatTimeInput(raw: String): String {
         val hours = digitsOnly.dropLast(2)
         "${hours}:${minutes}"
     }
-    
 }
