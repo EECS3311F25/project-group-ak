@@ -66,7 +66,9 @@ fun TripView(
                     Header(
                         tripTitle = tripData.title,
                         duration = tripData.duration,
-                        onShareClick = { component.onEvent(TripViewEvent.ClickShare) }
+                        imageUrl = tripData.imageHeaderUrl,
+                        onShareClick = { component.onEvent(TripViewEvent.ClickShare) },
+                        onEditTitleClick = { component.onEvent(TripViewEvent.ClickEditTrip) }
                     )
                 }
                 item { ListMembersSection(tripData.users) }

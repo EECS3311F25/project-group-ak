@@ -13,6 +13,7 @@ import org.example.project.controller.HomeController.HomeViewComponent
 import org.example.project.controller.HomeController.TripCreationComponent
 import org.example.project.controller.TripController.AddEventComponent
 import org.example.project.controller.TripController.AddMemberComponent
+import org.example.project.controller.TripController.EditTripComponent
 import org.example.project.controller.TripController.TripViewComponent
 import org.example.project.data.source.LocalUserDataSource
 import org.example.project.data.repository.UserRepository
@@ -65,7 +66,8 @@ class RootComponent(
                     onGoBack = { navigation.replaceAll(Configuration.HomeView) },
                     onNavigateToEditEvent = { eventId ->
                         navigation.pushNew(Configuration.AddEvent(config.tripId, eventId))
-                    }
+                    },
+                    onNavigateToEditTrip = { navigation.pushNew(Configuration.EditTrip(config.tripId)) }
                 ),
                 config.tripId
             )
@@ -95,6 +97,13 @@ class RootComponent(
                 ),
                 tripId = config.tripId
             )
+            is Configuration.EditTrip -> Child.EditTrip(
+                component = EditTripComponent(
+                    componentContext = context,
+                    onGoBack = { navigation.pop() }
+                ),
+                tripId = config.tripId
+            )
 
             is Configuration.TripCreationView -> Child.TripCreationView(
                 TripCreationComponent(
@@ -118,6 +127,7 @@ class RootComponent(
         data class LoginView(val component : LoginViewComponent) : Child()
         data class SignupView(val component : SignupViewComponent) : Child()
         data class AddMember(val component : AddMemberComponent, val tripId: String) : Child()
+        data class EditTrip(val component : EditTripComponent, val tripId: String) : Child()
     }
 
     @Serializable
@@ -136,5 +146,7 @@ class RootComponent(
         data class AddMember(val tripId: String) : Configuration()
         @Serializable
         data object TripCreationView : Configuration()
+        @Serializable
+        data class EditTrip(val tripId: String) : Configuration()
     }
 }

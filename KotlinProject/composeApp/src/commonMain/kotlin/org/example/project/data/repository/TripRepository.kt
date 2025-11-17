@@ -6,8 +6,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.example.project.model.dataClasses.Trip
 import org.example.project.data.source.TripDataSource
+import org.example.project.model.dataClasses.Duration
+import org.example.project.model.dataClasses.Trip
 import org.example.project.model.dataClasses.Event
 
 class TripRepository(
@@ -199,6 +200,28 @@ class TripRepository(
 
     suspend fun updateTripTitle(tripId: String, title: String): Result<Unit> {
         return updateTripField(tripId) { it.copy(title = title) }
+    }
+
+    suspend fun updateTripDuration(tripId: String, duration: Duration): Result<Unit> {
+        return updateTripField(tripId) { it.copy(duration = duration) }
+    }
+
+    suspend fun updateTripDetails(
+        tripId: String,
+        title: String,
+        duration: Duration,
+        imageHeaderUrl: String?,
+        description: String
+    ): Result<Unit> {
+        val normalizedImageUrl = imageHeaderUrl?.takeIf { it.isNotBlank() }
+        return updateTripField(tripId) {
+            it.copy(
+                title = title,
+                duration = duration,
+                imageHeaderUrl = normalizedImageUrl,
+                description = description
+            )
+        }
     }
 
     suspend fun updateTripDescription(tripId: String, description: String): Result<Unit> {

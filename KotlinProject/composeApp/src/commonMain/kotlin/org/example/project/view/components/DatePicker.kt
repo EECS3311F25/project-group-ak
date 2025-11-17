@@ -5,8 +5,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.*
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -128,6 +138,26 @@ fun DatePickerDialog(
         initialSelectedDateMillis = initialSelectedMillis,
         selectableDates = selectableDates
     )
+    val datePickerColors = DatePickerDefaults.colors(
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        headlineContentColor = MaterialTheme.colorScheme.onSurface,
+        weekdayContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        subheadContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        yearContentColor = MaterialTheme.colorScheme.onSurface,
+        currentYearContentColor = MaterialTheme.colorScheme.primary,
+        selectedYearContentColor = MaterialTheme.colorScheme.onPrimary,
+        selectedYearContainerColor = MaterialTheme.colorScheme.primary,
+        dayContentColor = MaterialTheme.colorScheme.onSurface,
+        disabledDayContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+        selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
+        selectedDayContainerColor = MaterialTheme.colorScheme.primary,
+        todayContentColor = MaterialTheme.colorScheme.primary,
+        todayDateBorderColor = MaterialTheme.colorScheme.primary,
+        dayInSelectionRangeContentColor = MaterialTheme.colorScheme.onPrimary,
+        dayInSelectionRangeContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+        dividerColor = MaterialTheme.colorScheme.outline
+    )
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
@@ -151,6 +181,9 @@ fun DatePickerDialog(
         },
         modifier = modifier
     ) {
-        DatePicker(state = datePickerState)
+        DatePicker(
+            state = datePickerState,
+            colors = datePickerColors
+        )
     }
 }
