@@ -128,7 +128,10 @@ fun TimelineView(
                             .fillMaxWidth()
                             .padding(start = 68.dp, end = 8.dp),
                         onEdit = { component.onEvent(CalendarViewEvent.ClickEditEvent(event.title)) },
-                        onDelete = { eventIdForDelete = event.title }
+                        onDelete = { eventIdForDelete = event.title },
+                        onTimeChange = { newEvent ->
+                            viewModel.updateEventTime(event, newEvent)
+                        }
                     )
 
                     // Delete confirmation dialog

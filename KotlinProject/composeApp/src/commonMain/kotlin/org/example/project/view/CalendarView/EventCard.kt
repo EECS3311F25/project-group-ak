@@ -41,6 +41,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.ui.geometry.Offset
 import kotlinx.datetime.LocalTime
 import org.example.project.model.dataClasses.Event
 
@@ -49,19 +53,58 @@ fun EventCard(
     event: Event,
     modifier: Modifier = Modifier,
     onEdit: (() -> Unit)? = null,
-    onDelete: (() -> Unit)? = null
+    onDelete: (() -> Unit)? = null,
+    onTimeChange: ((Event) -> Unit)? = null // <-- Add this callback
 ) {
     println("EventCard composing: ${event.title}")
 
     var showMenu by remember { mutableStateOf(false) }
 
+    // --- Drag-to-change-time logic (minimal conflict: only new lines) ---
+    val density = LocalDensity.current
+    var isDragging by remember { mutableStateOf(false) }
+    var offsetY by remember { mutableStateOf(0f) }
+    val pixelsPer15Min = with(density) { 24.dp.toPx() } // 24dp = 15 min
+
     Card(
         modifier = modifier
             .padding(vertical = 2.dp)
-            .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant, RoundedCornerShape(8.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant, RoundedCornerShape(8.dp))
+            .pointerInput(event.hashCode()) {
+                detectDragGesturesAfterLongPress(
+                    onDragStart = { isDragging = true },
+                    onDragEnd = {
+                        isDragging = false
+                        val intervals = (offsetY / pixelsPer15Min).toInt()
+                        if (intervals != 0 && onTimeChange != null) {
+                            val minutesDelta = intervals * 15
+                            val newStart = event.duration.startTime.plusMinutesSafe(minutesDelta)
+                            val newEnd = event.duration.endTime.plusMinutesSafe(minutesDelta)
+                            val newEvent = event.copy(
+                                duration = event.duration.copy(
+                                    startTime = newStart,
+                                    endTime = newEnd
+                                )
+                            )
+                            onTimeChange(newEvent)
+                        }
+                        offsetY = 0f
+                    },
+                    onDragCancel = {
+                        isDragging = false
+                        offsetY = 0f
+                    },
+                    onDrag = { change: androidx.compose.ui.input.pointer.PointerInputChange, dragAmount: Offset ->
+                        offsetY += dragAmount.y
+                    }
+                )
+            }
+            .graphicsLayer {
+                translationY = if (isDragging) offsetY else 0f
+            },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = if (isDragging) MaterialTheme.colorScheme.secondary.copy(alpha = 0.18f) else MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -179,4 +222,11 @@ fun EventCard(
 
 private fun formatTime(time: LocalTime): String {
     return String.format("%02d:%02d", time.hour, time.minute)
+}
+
+// --- Helper: add minutes to LocalTime, clamped to valid range ---
+private fun LocalTime.plusMinutesSafe(minutes: Int): LocalTime {
+    val total = this.hour * 60 + this.minute + minutes
+    val clamped = total.coerceIn(0, 23 * 60 + 59)
+    return LocalTime(clamped / 60, clamped % 60)
 }
