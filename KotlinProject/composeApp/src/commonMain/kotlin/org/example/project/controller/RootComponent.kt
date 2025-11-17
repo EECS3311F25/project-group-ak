@@ -7,6 +7,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceAll
 import kotlinx.serialization.Serializable
+import kotlinx.datetime.LocalDate
 import org.example.project.controller.AuthController.LoginViewComponent
 import org.example.project.controller.AuthController.SignupViewComponent
 import org.example.project.controller.HomeController.HomeViewComponent
@@ -82,7 +83,8 @@ class RootComponent(
                     onCreateEvent = { navigation.pop() }
                 ),
                 config.tripId,
-                config.eventId
+                config.eventId,
+                config.initialDate
             )
 
             is Configuration.HomeView -> Child.HomeView(
@@ -124,6 +126,9 @@ class RootComponent(
                     },
                     onEditEvent = { eventId ->
                         navigation.pushNew(Configuration.AddEvent(config.tripId, eventId))
+                    },
+                    onAddEvent =  { initialDate ->
+                        navigation.pushNew(Configuration.AddEvent(config.tripId, null, initialDate)) 
                     }
                 ),
                 config.tripId
@@ -133,13 +138,13 @@ class RootComponent(
 
     sealed class Child {
         data class TripView(val component: TripViewComponent, val tripId: String) : Child()
-        data class AddEvent(val component: AddEventComponent, val tripId: String, val eventId: String?) : Child()
+        data class AddEvent(val component: AddEventComponent, val tripId: String, val eventId: String?, val initialDate: LocalDate?) : Child()
         data class HomeView(val component: HomeViewComponent) : Child()
         data class TripCreationView(val component: TripCreationComponent) : Child()
         data class LoginView(val component : LoginViewComponent) : Child()
         data class SignupView(val component : SignupViewComponent) : Child()
         data class AddMember(val component : AddMemberComponent, val tripId: String) : Child()
-    data class CalendarView(val component: CalendarViewComponent, val tripId: String) : Child()
+        data class CalendarView(val component: CalendarViewComponent, val tripId: String) : Child()
     }
 
     @Serializable
@@ -147,7 +152,7 @@ class RootComponent(
         @Serializable
         data class TripView(val tripId: String): Configuration()
         @Serializable
-        data class AddEvent(val tripId: String, val eventId: String? = null) : Configuration()
+        data class AddEvent(val tripId: String, val eventId: String? = null, val initialDate: LocalDate? = null) : Configuration()
         @Serializable
         data object LoginView : Configuration()
         @Serializable

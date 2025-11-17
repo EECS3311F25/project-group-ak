@@ -72,7 +72,8 @@ data class AddEventUiState(
 class AddEventViewModel(
     private val tripId: String,
     private val tripRepository: TripRepository,
-    private val eventId: String? = null
+    private val eventId: String? = null,
+    private val initialDate: LocalDate? = null
 ) : ViewModel() {
 
     /** Holds the mutable state flow of the UI. */
@@ -82,6 +83,15 @@ class AddEventViewModel(
     val state: StateFlow<AddEventUiState> = _state.asStateFlow()
 
     init {
+        // Prefill start/end date if initialDate is provided and not editing
+        if (eventId == null && initialDate != null) {
+            _state.value = _state.value.copy(
+                durationFields = _state.value.durationFields.copy(
+                    startDate = initialDate.toString(),
+                    endDate = initialDate.toString()
+                )
+            )
+        }
         viewModelScope.launch {
             val trip = tripRepository.getTripById(tripId)
             if (trip != null) {
