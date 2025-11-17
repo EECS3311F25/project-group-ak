@@ -154,7 +154,8 @@ fun App(root: RootComponent) {
                         AddEventViewModel(
                             tripId = instance.tripId,
                             tripRepository = tripRepository,
-                            eventId = instance.eventId
+                            eventId = instance.eventId,
+                            initialDate = instance.initialDate
                         )
                     }
                     AddEvent(

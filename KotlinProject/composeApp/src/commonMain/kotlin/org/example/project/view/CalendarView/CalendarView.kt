@@ -6,6 +6,11 @@ import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -40,13 +45,11 @@ fun CalendarView(
     // Always refresh trip data and update filtered events when CalendarView is shown or trip/selectedDate changes
     LaunchedEffect(trip.id, selectedDate) {
         viewModel.refreshTrip()
-        println("Launched effect 1 triggered")
     }
 
     // When trip or selectedDate changes, always re-filter events for the selected date
     LaunchedEffect(trip, selectedDate) {
         selectedDate?.let { viewModel.selectDate(it) }
-        println("Launched effect 2 triggered")
     }
 
     println("=== CalendarView State ===")
@@ -66,21 +69,44 @@ fun CalendarView(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(8.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    containerColor = Color.Transparent
                 )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {    
+                Column(modifier = Modifier.padding(8.dp)) {    
                     selectedDate?.let { date ->
-                        Text(
-                            text = "${date.month} ${date.dayOfMonth}, ${date.year}",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp, top = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ){ 
+                            Text(
+                                text = "${date.month} ${date.dayOfMonth}, ${date.year}",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .padding(top = 16.dp)
+                                    .weight(1f)
+                            )
+                            OutlinedButton(
+                                onClick = { 
+                                    component.onEvent(CalendarViewEvent.ClickAddEvent(date))
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("New Event")
+                            }
+                        }
                     }
                     
-                    // Horizontal scrollable day selector with center snapping
+
+
                     val tripDays = trip.duration?.getAllDates() ?: emptyList()
                     val listState = rememberLazyListState()
                     val coroutineScope = rememberCoroutineScope()
@@ -111,7 +137,7 @@ fun CalendarView(
                         }
                     }
                     
-                    // Top and bottom dividers around the horizontal selector
+                    // Day Selector Row with Top and bottom dividers
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -125,7 +151,7 @@ fun CalendarView(
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(horizontal = 120.dp), // Center padding
+                            contentPadding = PaddingValues(horizontal = 140.dp), // Center padding
                             flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
                         ) {
                             items(tripDays.size) { index ->
