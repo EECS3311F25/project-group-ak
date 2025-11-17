@@ -152,6 +152,50 @@ class LocalTripDataSource : TripDataSource {
                     location = "Paris, France"
                 ),
                 Event(
+                    title = "Coffee & Pastries",
+                    duration = Duration(
+                        startDate = LocalDate(2025, 8, 16),
+                        startTime = LocalTime(15, 15),
+                        endDate = LocalDate(2025, 8, 16),
+                        endTime = LocalTime(16, 0)
+                    ),
+                    description = "Relax with coffee and fresh pastries",
+                    location = "Paris, France"
+                ),
+                Event(
+                    title = "Seine River Walk",
+                    duration = Duration(
+                        startDate = LocalDate(2025, 8, 16),
+                        startTime = LocalTime(16, 30),
+                        endDate = LocalDate(2025, 8, 16),
+                        endTime = LocalTime(17, 30)
+                    ),
+                    description = "Leisurely walk along the Seine",
+                    location = "Paris, France"
+                ),
+                Event(
+                    title = "Dinner at Le Jules",
+                    duration = Duration(
+                        startDate = LocalDate(2025, 8, 16),
+                        startTime = LocalTime(18, 0),
+                        endDate = LocalDate(2025, 8, 16),
+                        endTime = LocalTime(19, 0)
+                    ),
+                    description = "Sit-down dinner with local cuisine",
+                    location = "Paris, France"
+                ),
+                Event(
+                    title = "Clubbing",
+                    duration = Duration(
+                        startDate = LocalDate(2025, 8, 16),
+                        startTime = LocalTime(23, 0),
+                        endDate = LocalDate(2025, 8, 17),
+                        endTime = LocalTime(4, 0)
+                    ),
+                    description = "All night long",
+                    location = "Paris, France"
+                ),
+                Event(
                     title = "Train to Amsterdam",
                     duration = Duration(
                         startDate = LocalDate(2025, 8, 17),

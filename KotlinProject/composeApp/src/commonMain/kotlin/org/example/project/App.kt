@@ -23,7 +23,9 @@ import org.example.project.view.TripView.TripViewSubPages.AddMember
 import org.example.project.view.TripView.TripViewSubPages.EditTrip
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
+import org.example.project.view.CalendarView.CalendarView
 import org.example.project.viewmodel.TripCreationViewModel
+import org.example.project.viewmodel.CalendarViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
@@ -110,6 +112,18 @@ fun App(root: RootComponent) {
                         viewModel = tripCreationViewModel
                     )
                 }
+
+                is RootComponent.Child.CalendarView -> {
+                    val calendarViewModel: CalendarViewModel = viewModel(
+                        key = "CalendarView-${instance.component.tripId}"
+                    ) {
+                        CalendarViewModel(instance.component.tripId, tripRepository)
+                    }
+                    CalendarView(
+                        component = instance.component,
+                        viewModel = calendarViewModel
+                    )
+                }
                 // =============================================================================================
                 // === HOME SCREENS ============================================================================
                 // =============================================================================================
@@ -142,7 +156,8 @@ fun App(root: RootComponent) {
                         AddEventViewModel(
                             tripId = instance.tripId,
                             tripRepository = tripRepository,
-                            eventId = instance.eventId
+                            eventId = instance.eventId,
+                            initialDate = instance.initialDate
                         )
                     }
                     AddEvent(

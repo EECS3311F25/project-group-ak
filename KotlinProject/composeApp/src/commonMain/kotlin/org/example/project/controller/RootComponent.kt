@@ -7,6 +7,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceAll
 import kotlinx.serialization.Serializable
+import kotlinx.datetime.LocalDate
 import org.example.project.controller.AuthController.LoginViewComponent
 import org.example.project.controller.AuthController.SignupViewComponent
 import org.example.project.controller.HomeController.HomeViewComponent
@@ -17,6 +18,7 @@ import org.example.project.controller.TripController.EditTripComponent
 import org.example.project.controller.TripController.TripViewComponent
 import org.example.project.data.source.LocalUserDataSource
 import org.example.project.data.repository.UserRepository
+import org.example.project.model.dataClasses.Trip
 
 class RootComponent(
     componentContext: ComponentContext,
@@ -67,6 +69,10 @@ class RootComponent(
                     onNavigateToEditEvent = { eventId ->
                         navigation.pushNew(Configuration.AddEvent(config.tripId, eventId))
                     },
+                    onNavigateToCalendar = {
+                        navigation.pop()
+                        navigation.pushNew(Configuration.CalendarView(config.tripId))
+                    },
                     onNavigateToEditTrip = { navigation.pushNew(Configuration.EditTrip(config.tripId)) }
                 ),
                 config.tripId
@@ -79,7 +85,8 @@ class RootComponent(
                     onCreateEvent = { navigation.pop() }
                 ),
                 config.tripId,
-                config.eventId
+                config.eventId,
+                config.initialDate
             )
 
             is Configuration.HomeView -> Child.HomeView(
@@ -116,17 +123,37 @@ class RootComponent(
                     userRepository = userRepository
                 )
             )
+
+            is Configuration.CalendarView -> Child.CalendarView(
+                CalendarViewComponent(
+                    componentContext = context,
+                    tripId = config.tripId,
+                    onGoBack = { navigation.replaceAll(Configuration.HomeView) },
+                    onNavigateToTripView = { 
+                        navigation.pop()
+                        navigation.pushNew(Configuration.TripView(config.tripId))
+                    },
+                    onEditEvent = { eventId ->
+                        navigation.pushNew(Configuration.AddEvent(config.tripId, eventId))
+                    },
+                    onAddEvent =  { initialDate ->
+                        navigation.pushNew(Configuration.AddEvent(config.tripId, null, initialDate)) 
+                    }
+                ),
+                config.tripId
+            )
         }
     }
 
     sealed class Child {
         data class TripView(val component: TripViewComponent, val tripId: String) : Child()
-        data class AddEvent(val component: AddEventComponent, val tripId: String, val eventId: String?) : Child()
+        data class AddEvent(val component: AddEventComponent, val tripId: String, val eventId: String?, val initialDate: LocalDate?) : Child()
         data class HomeView(val component: HomeViewComponent) : Child()
         data class TripCreationView(val component: TripCreationComponent) : Child()
         data class LoginView(val component : LoginViewComponent) : Child()
         data class SignupView(val component : SignupViewComponent) : Child()
         data class AddMember(val component : AddMemberComponent, val tripId: String) : Child()
+        data class CalendarView(val component: CalendarViewComponent, val tripId: String) : Child()
         data class EditTrip(val component : EditTripComponent, val tripId: String) : Child()
     }
 
@@ -135,7 +162,7 @@ class RootComponent(
         @Serializable
         data class TripView(val tripId: String): Configuration()
         @Serializable
-        data class AddEvent(val tripId: String, val eventId: String? = null) : Configuration()
+        data class AddEvent(val tripId: String, val eventId: String? = null, val initialDate: LocalDate? = null) : Configuration()
         @Serializable
         data object LoginView : Configuration()
         @Serializable
@@ -148,5 +175,7 @@ class RootComponent(
         data object TripCreationView : Configuration()
         @Serializable
         data class EditTrip(val tripId: String) : Configuration()
+        @Serializable
+        data class CalendarView(val tripId: String): Configuration()
     }
 }

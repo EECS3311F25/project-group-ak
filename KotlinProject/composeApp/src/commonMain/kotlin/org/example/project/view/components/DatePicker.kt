@@ -25,6 +25,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
+import org.example.project.viewmodel.TripCreationViewModel
+import org.example.project.viewmodel.TripCreationState
 import androidx.compose.foundation.layout.padding
 
 @OptIn(ExperimentalMaterial3Api::class)

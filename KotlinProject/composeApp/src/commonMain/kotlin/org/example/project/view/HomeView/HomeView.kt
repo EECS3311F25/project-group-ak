@@ -28,11 +28,12 @@ fun HomeView(
     component: HomeViewComponent,
     viewModel: HomeViewModel
 ) {
-    // 🔥 Collect states from ViewModel
-    val trips by viewModel.trips.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val error by viewModel.error.collectAsState()
-    val currentUser by viewModel.currentUser
+    // Collect UI state from ViewModel
+    val uiState by viewModel.uiState.collectAsState()
+    val trips = uiState.trips
+    val isLoading = uiState.isLoading
+    val error = uiState.errorMessage
+    val currentUser = uiState.currentUser
     
     var tripForOptions by remember { mutableStateOf<Trip?>(null) }
 
