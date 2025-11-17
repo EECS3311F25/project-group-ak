@@ -16,34 +16,38 @@ import io.ktor.server.routing.*
  * Flow:
  *  - Application.module() creates PostgresUserRepository
  *  - Application.configureUserSerialization(userRepository)
- *  - These handlers use repository only (validation is in UserService).
-
+ *  - Handlers use repository only (validation is in UserService).
+ *
  * Endpoints:
  *  GET    /user/{userName}         -> get user by username
  *  POST   /user/register           -> create new user
- *  PUT    /user/{password}         -> update user password
+ *  PUT    /user/password           -> update user password
  *  DELETE /user/{userName}/delete  -> delete user by username
  */
+ 
 fun Application.configureUserSerialization(userRepository: PostgresUserRepository) {
 
     routing {
-
         route("/user") {
 
-            //  GET "/user/{userName}"  ->  get user by username
+            // GET /user/{userName}  -> get user by username
             get("/{userName}") {
                 val userName = call.parameters["userName"]
-                val user = userRepository.getUserByName(userName)
-                if (user == null) {
-                    call.respond(HttpStatusCode.NotFound, "User not found")
+                if (userName.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing userName")
                     return@get
                 }
 
-                //  For now return a simple success message instead of full User JSON
-                call.respond(HttpStatusCode.OK, "User retrieved successfully")
+                val user = userRepository.getUserByName(userName)
+                if (user == null) {
+                    call.respond(HttpStatusCode.NotFound, "User not found")
+                } else {
+                    // For now we just return a simple message (frontend can change later)
+                    call.respond(HttpStatusCode.OK, "User retrieved successfully")
+                }
             }
 
-            //  POST "/user/register"   ->  create new user
+            // POST /user/register  -> create new user
             post("/register") {
                 try {
                     val user = call.receive<User>()
@@ -55,7 +59,7 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                                 "User successfully registered"
                             )
                         }
-                        .onFailure { error ->
+                        .onFailure {
                             call.respond(
                                 HttpStatusCode.BadRequest,
                                 "User registration failed"
@@ -69,7 +73,7 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                 }
             }
 
-            //  PUT "/user/password" - update user password
+            // PUT /user/password  -> update user password
             put("/password") {
                 try {
                     val user = call.receive<User>()
@@ -81,7 +85,7 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                                 "Password updated successfully"
                             )
                         }
-                        .onFailure { error ->
+                        .onFailure {
                             call.respond(
                                 HttpStatusCode.BadRequest,
                                 "Password update failed"
@@ -95,9 +99,14 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                 }
             }
 
-            //  DELETE "/user/{userName}/delete" - delete user by username
+            // DELETE /user/{userName}/delete  -> delete user by username
             delete("/{userName}/delete") {
                 val userName = call.parameters["userName"]
+                if (userName.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing userName")
+                    return@delete
+                }
+
                 userRepository.deleteUserByUsername(userName)
                     .onSuccess {
                         call.respond(
@@ -105,7 +114,7 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                             "User deleted successfully"
                         )
                     }
-                    .onFailure { error ->
+                    .onFailure {
                         call.respond(
                             HttpStatusCode.NotFound,
                             "User does not exist"
