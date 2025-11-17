@@ -75,9 +75,7 @@ fun AddEvent(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    component.onEvent(AddEventEvent.goBack)
-                }) {
+                IconButton(onClick = { component.goBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Go Back"
