@@ -9,19 +9,21 @@ import io.ktor.server.routing.*
 /**
  * Event HTTP routes.
  *
- * Pattern (same as UserRoutes and TripRoutes):
- * - Application.configureEventRoutes(PostgresEventRepository)
- * - Route handlers call EventService for validation
- * - Then call PostgresEventRepository for actual DB operations
+ * Flow:
+ *  - Application.module() creates PostgresEventRepository
+ *  - Application.configureEventSerialization(eventRepository)
+ *  - Handlers:
+ *      - validate input via EventService
+ *      - call PostgresEventRepository for DB CRUD
  *
- * Endpoints (proposal):
- *  GET    /event/trip/{tripId}  -> list events for a trip
+ * Endpoints:
+ *  GET    /event/trip/{tripId}  -> list events for a given trip
  *  GET    /event/{id}           -> get event by id
  *  POST   /event                -> create event
  *  PUT    /event/{id}           -> update event
  *  DELETE /event/{id}           -> delete event
  */
-fun Application.configureEventRoutes(eventRepository: PostgresEventRepository) {
+fun Application.configureEventSerialization(eventRepository: PostgresEventRepository) {
 
     routing {
         route("/event") {

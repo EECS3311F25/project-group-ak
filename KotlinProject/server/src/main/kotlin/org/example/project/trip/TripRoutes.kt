@@ -9,19 +9,21 @@ import io.ktor.server.routing.*
 /**
  * Trip HTTP routes.
  *
- * Pattern (same as UserRoutes):
- * - Application.configureTripRoutes(PostgresTripRepository)
- * - Route handlers call TripService for validation
- * - Then call PostgresTripRepository for actual DB operations
+ * Flow (same pattern as user):
+ *  - Application.module() creates PostgresTripRepository
+ *  - Application.configureTripSerialization(tripRepository)
+ *  - Handlers:
+ *      - validate input via TripService
+ *      - call PostgresTripRepository for DB CRUD
  *
- * Endpoints (proposal):
+ * Endpoints:
  *  GET    /trip/user/{userName}  -> list trips for a user
  *  GET    /trip/{id}             -> get trip by id
  *  POST   /trip                  -> create trip
  *  PUT    /trip/{id}             -> update trip
  *  DELETE /trip/{id}             -> delete trip
  */
-fun Application.configureTripRoutes(tripRepository: PostgresTripRepository) {
+fun Application.configureTripSerialization(tripRepository: PostgresTripRepository) {
 
     routing {
         route("/trip") {
@@ -64,7 +66,7 @@ fun Application.configureTripRoutes(tripRepository: PostgresTripRepository) {
                     return@post
                 }
 
-                // Validate via service
+                // Validate via service (no DB access here)
                 TripService.validateTripForCreate(trip)
                     .onFailure { error ->
                         call.respond(
