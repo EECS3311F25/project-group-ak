@@ -17,8 +17,10 @@ data class Event (
     val eventLocation: String,
 
     //  TODO: implement type for date + time
-    @SerialName("trip_start_date")
-    val eventStartDate: String,
-    @SerialName("trip_end_date")
-    val eventEndDate: String) {
-}
+    @SerialName("trip_duration")
+    val eventDuration: String?,
+
+    //  Foreign key - Trip.id
+    @SerialName("trip_id")
+    val tripId: Int
+)

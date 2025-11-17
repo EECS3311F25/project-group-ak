@@ -1,5 +1,6 @@
 package org.example.project.trip
 
+import org.example.project.user.UserDAO
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 
@@ -23,8 +24,8 @@ class PostgresTripRepository: TripRepository {
             tripTitle = trip.tripTitle!!
             tripDescription = trip.tripDescription!!
             tripLocation = trip.tripLocation!!
-            tripStartDate = trip.tripStartDate!!
-            tripEndDate = trip.tripEndDate!!
+            tripDuration = trip.tripDuration
+            userId = UserDAO[trip.userid]
         }
         daoToTripModel(newTrip)
     }
@@ -34,8 +35,8 @@ class PostgresTripRepository: TripRepository {
             it.tripTitle = trip.tripTitle!!
             it.tripDescription = trip.tripDescription!!
             it.tripLocation = trip.tripLocation!!
-            it.tripStartDate = trip.tripStartDate!!
-            it.tripEndDate = trip.tripEndDate!!
+            it.tripDuration = trip.tripDuration
+            it.userId = UserDAO[trip.userid]
         }
 
         return@suspendTransaction (tripToUpdate != null)

@@ -1,5 +1,6 @@
 package org.example.project.event
 
+import org.example.project.trip.TripDAO
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 
@@ -23,8 +24,8 @@ class PostgresEventRepository: EventRepository {
             eventTitle = event.eventTitle
             eventDescription = event.eventDescription
             eventLocation = event.eventLocation
-            eventStartDate = event.eventStartDate
-            eventEndDate = event.eventEndDate
+            eventDuration = event.eventDuration!!
+            tripId = TripDAO[event.tripId]
         }
         daoToEventModel(newEvent)
     }
@@ -33,8 +34,8 @@ class PostgresEventRepository: EventRepository {
         val eventToUpdate = EventDAO.findSingleByAndUpdate(EventTable.id eq eventId!!) {
             it.eventTitle = event.eventTitle
             it.eventLocation = event.eventLocation
-            it.eventStartDate = event.eventStartDate
-            it.eventEndDate = event.eventEndDate
+            it.eventDuration = event.eventDuration!!
+            it.tripId = TripDAO[event.tripId]
         }
 
         return@suspendTransaction (eventToUpdate != null)
