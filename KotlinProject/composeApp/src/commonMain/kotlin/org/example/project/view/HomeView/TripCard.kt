@@ -1,6 +1,5 @@
 package org.example.project.view.HomeView
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,19 +7,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Landscape
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.*
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.ui.draw.clip
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.example.project.model.Trip
+import org.example.project.model.dataClasses.Trip
 
 @Composable
 expect fun NetworkImage(url: String, contentDescription: String?, modifier: Modifier = Modifier)
@@ -66,8 +67,11 @@ fun TripCard(
     height: Dp = 180.dp,
     cornerRadius: Dp = 12.dp,
     painter: Painter? = null,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {}  // Add delete callback
 ) {
+    var showMenu by remember { mutableStateOf(false) }
+    
     Box(
         modifier = modifier
             .height(height)
@@ -135,6 +139,54 @@ fun TripCard(
                     text = trip.location,
                     color = Color.White.copy(alpha = 0.8f),
                     modifier = Modifier
+                )
+            }
+        }
+
+        // Add MoreVert menu at top right
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(8.dp)
+        ) {
+            IconButton(
+                onClick = { showMenu = true },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Black.copy(alpha = 0.5f),
+                    contentColor = Color.White
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More options"
+                )
+            }
+            
+            val menuShape = RoundedCornerShape(12.dp)
+            val menuBackground = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp)
+
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false },
+                modifier = Modifier.background(menuBackground, menuShape)
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Delete Trip") },
+                    onClick = {
+                        onDeleteClick()
+                        showMenu = false
+                    },
+                    colors = MenuDefaults.itemColors(
+                        textColor = MaterialTheme.colorScheme.onSurface,
+                        leadingIconColor = MaterialTheme.colorScheme.error
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 )
             }
         }

@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import org.example.project.model.User
+import org.example.project.model.dataClasses.User
 
 /**
  * Section listing trip members in a horizontal row.

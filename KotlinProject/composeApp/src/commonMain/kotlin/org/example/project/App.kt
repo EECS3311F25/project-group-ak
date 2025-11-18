@@ -4,8 +4,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import org.example.project.model.LightColorScheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.stack.Children
+import org.example.project.viewmodel.home.HomeViewModel
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
@@ -13,73 +17,24 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import org.example.project.controller.RootComponent
 import org.example.project.view.TripView.TripView
 import org.example.project.view.HomeView.HomeView
-import org.example.project.view.TripViewSubPages.AddTripView
-import org.example.project.view.TripViewSubPages.AddMember
+import org.example.project.view.HomeView.TripCreationView
+import org.example.project.view.TripView.TripViewSubPages.AddEvent
+import org.example.project.view.TripView.TripViewSubPages.AddMember
+import org.example.project.view.TripView.TripViewSubPages.EditTrip
 import org.example.project.view.AuthView.LoginView
 import org.example.project.view.AuthView.SignupView
+import org.example.project.view.CalendarView.CalendarView
+import org.example.project.viewmodel.TripCreationViewModel
+import org.example.project.viewmodel.CalendarViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import kotlinx.datetime.LocalDate
-import org.example.project.model.Event
-import org.example.project.model.Trip
-import org.example.project.model.User
-import org.example.project.model.Duration
-import androidx.compose.runtime.LaunchedEffect //for DEV
-
-
-// TODO: Fetch from API
-val trip = Trip(
-    title = "Summer Getaway",
-    description = "Road trip across Ontario",
-    location = "Toronto to Ottawa",
-    duration = Duration(
-        startDate = LocalDate(2025, 7, 1),
-        startTime = kotlinx.datetime.LocalTime(9, 0),
-        endDate = LocalDate(2025, 7, 10),
-        endTime = kotlinx.datetime.LocalTime(17, 0)
-    ),
-    users = listOf(
-        User(name = "Klodiana"),
-        User(name = "Alex"),
-        User(name = "Sam"),
-        User(name = "Priya"),
-        User(name = "Diego"),
-        User(name = "Mei"),
-        User(name = "Fatima"),
-        User(name = "John"),
-        User(name = "Maria"),
-        User(name = "Chen"),
-        User(name = "Liam"),
-        User(name = "Zoe")
-    ),
-    events = listOf(
-        // TODO: add duration
-        Event(title = "Niagara Falls Stop", Duration(
-            startDate = LocalDate(2025, 7, 1),
-            startTime = kotlinx.datetime.LocalTime(9, 0),
-            endDate = LocalDate(2025, 7, 1),
-            endTime = kotlinx.datetime.LocalTime(17, 0)
-        )),
-        Event(title = "Niagara Boat Tour", Duration(
-            startDate = LocalDate(2025, 7, 1),
-            startTime = kotlinx.datetime.LocalTime(9, 0),
-            endDate = LocalDate(2025, 7, 1),
-            endTime = kotlinx.datetime.LocalTime(17, 0)
-        )),
-        Event(title = "Table Rock Lunch", Duration(
-            startDate = LocalDate(2025, 7, 1),
-            startTime = kotlinx.datetime.LocalTime(9, 0),
-            endDate = LocalDate(2025, 7, 1),
-            endTime = kotlinx.datetime.LocalTime(17, 0)
-        )),
-        Event(title = "Ottawa Parliament Tour", Duration(
-            startDate = LocalDate(2025, 7, 1),
-            startTime = kotlinx.datetime.LocalTime(9, 0),
-            endDate = LocalDate(2025, 7, 1),
-            endTime = kotlinx.datetime.LocalTime(17, 0)
-        ))
-    )
-)
-
+import org.example.project.data.repository.TripRepository
+import org.example.project.data.repository.UserRepository
+import org.example.project.data.source.LocalTripDataSource
+import org.example.project.data.source.LocalUserDataSource
+import org.example.project.viewmodel.trip.TripViewModel
+import org.example.project.viewmodel.trip.AddMemberViewModel
+import org.example.project.viewmodel.trip.AddEventViewModel
+import org.example.project.viewmodel.trip.EditTripViewModel
 
 @Composable
 /*
@@ -100,7 +55,13 @@ val trip = Trip(
  * @param root The RootComponent that manages all navigation
  */ 
 fun App(root: RootComponent) {
-    MaterialTheme {
+    // 🔥 Create shared repository instances at App level
+    val tripRepository = remember { TripRepository(LocalTripDataSource()) }
+    val userRepository = remember { UserRepository(LocalUserDataSource()) }
+    
+    MaterialTheme(
+        colorScheme = LightColorScheme
+    ) {
         // Subscribe to navigation state changes
         val childStack by root.childStack.subscribeAsState()
         
@@ -111,15 +72,134 @@ fun App(root: RootComponent) {
         ) { child ->
             // Render the appropriate view based on current navigation state
             when (val instance = child.instance) {
-                // === AUTHENTICATION SCREENS ===
+
+
+
+                // =============================================================================================
+                // === AUTHENTICATION SCREENS ==================================================================
+                // =============================================================================================
                 // LoginView: Entry point, shows login form
                 is RootComponent.Child.LoginView -> LoginView(instance.component)
                 // SignupView: Registration form, accessible from LoginView
                 is RootComponent.Child.SignupView -> SignupView(instance.component)
-                is RootComponent.Child.TripView -> TripView(instance.component, trip)
-                is RootComponent.Child.AddTripView -> AddTripView(instance.component)
-                is RootComponent.Child.HomeView -> HomeView(instance.component)
-                is RootComponent.Child.AddMember -> AddMember(instance.component)
+                // =============================================================================================
+                // === AUTHENTICATION SCREENS ==================================================================
+                // =============================================================================================
+
+
+
+                // =============================================================================================
+                // === HOME SCREENS ============================================================================
+                // =============================================================================================
+                // 🔥 Create HomeViewModel and pass it to HomeView
+                is RootComponent.Child.HomeView -> {
+                    val homeViewModel: HomeViewModel = viewModel { 
+                        HomeViewModel(tripRepository, userRepository) 
+                    }
+                    HomeView(
+                        component = instance.component,
+                        viewModel = homeViewModel
+                    )
+                }
+                
+                // 🔥 Pass shared repositories to TripCreationView
+                is RootComponent.Child.TripCreationView -> {
+                    val tripCreationViewModel: TripCreationViewModel = viewModel { 
+                        TripCreationViewModel(tripRepository, userRepository) 
+                    }
+                    TripCreationView(
+                        component = instance.component,
+                        viewModel = tripCreationViewModel
+                    )
+                }
+
+                is RootComponent.Child.CalendarView -> {
+                    val calendarViewModel: CalendarViewModel = viewModel(
+                        key = "CalendarView-${instance.component.tripId}"
+                    ) {
+                        CalendarViewModel(instance.component.tripId, tripRepository)
+                    }
+                    CalendarView(
+                        component = instance.component,
+                        viewModel = calendarViewModel
+                    )
+                }
+                // =============================================================================================
+                // === HOME SCREENS ============================================================================
+                // =============================================================================================
+
+
+
+
+                // =============================================================================================
+                // === TRIP SCREENS ============================================================================
+                // =============================================================================================
+                is RootComponent.Child.TripView -> {
+                    val tripViewModel: TripViewModel = viewModel(
+                        key = "TripView=${instance.tripId}"
+                    ) {
+                        TripViewModel(
+                            tripRepository = tripRepository,
+                            tripId = instance.tripId
+                        )
+                    }
+                    TripView(
+                        instance.component,
+                        viewModel = tripViewModel,
+                    )
+                }
+
+                is RootComponent.Child.AddEvent -> {
+                    val addEventViewModel: AddEventViewModel = viewModel(
+                        key = "AddEvent-${instance.tripId}-${instance.eventId ?: "new"}"
+                    ) {
+                        AddEventViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository,
+                            eventId = instance.eventId,
+                            initialDate = instance.initialDate
+                        )
+                    }
+                    AddEvent(
+                        component = instance.component,
+                        viewModel = addEventViewModel
+                    )
+                }
+
+                is RootComponent.Child.AddMember -> {
+                    val addMemberViewModel: AddMemberViewModel = viewModel(
+                        key="AddMember-${instance.tripId}"
+                    ) {
+                        AddMemberViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository
+                        )
+                    }
+                    AddMember(
+                        component = instance.component,
+                        viewModel = addMemberViewModel
+                    )
+                }
+                is RootComponent.Child.EditTrip -> {
+                    val editTripViewModel: EditTripViewModel = viewModel(
+                        key = "EditTrip-${instance.tripId}"
+                    ) {
+                        EditTripViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository
+                        )
+                    }
+                    EditTrip(
+                        component = instance.component,
+                        viewModel = editTripViewModel
+                    )
+                }
+                // =============================================================================================
+                // === TRIP SCREENS ============================================================================
+                // =============================================================================================
+
+
+
             }
         }
     }
@@ -128,15 +208,14 @@ fun App(root: RootComponent) {
 @Composable
 @Preview
 fun App() {
-  
     val root = remember { RootComponent(DefaultComponentContext(LifecycleRegistry())) }
+    
     // DEV USE Temporary: ================================================
     // start the app on HomeView for development.
-    // LaunchedEffect(root) {
-    //     root.navigateToHome()
-    // }
+    LaunchedEffect(root) {
+        root.navigateToHome()
+    }
     //====================================================================
-  
- 
+    
     App(root)
 }

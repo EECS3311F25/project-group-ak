@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.sp
 // Decompose - Subscribe to state changes (connects component state to UI)
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 
-import org.example.project.controller.AuthEvent
-import org.example.project.controller.SignupViewComponent
+import org.example.project.controller.AuthController.AuthEvent
+import org.example.project.controller.AuthController.SignupViewComponent
 import org.example.project.view.AuthView.AuthComponents.AuthButton
 import org.example.project.view.AuthView.AuthComponents.InputField
 
