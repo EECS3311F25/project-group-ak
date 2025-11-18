@@ -43,6 +43,11 @@ git checkout -b name_for_new_branch develop
 2.  Make your changes and test them thoroughly.
 3. Submit a pull request to `develop` with a clear, detailed description of your changes and screenshots if relevant.
 
+# Communication
+
+Our Jira Board: https://team-ak.atlassian.net/jira/software/projects/SCRUM/boards/1?atlOrigin=eyJpIjoiMGI1NWU0N2ZmYzU1NDRjYWFiMzllYzEzYjIxMzYzMGUiLCJwIjoiaiJ9
+Our Discord: https://discord.gg/B75MfygcSU
+
 
 
 
