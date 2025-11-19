@@ -52,6 +52,11 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
+            // Mobile-specific Compass implementations
+            implementation(libs.compass.geocoder.mobile)
+            implementation(libs.compass.geolocation.mobile)
+            implementation(libs.compass.autocomplete.mobile)
+            implementation(libs.compass.permissions.mobile)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -71,6 +76,42 @@ kotlin {
             implementation(libs.decompose.extensions.compose)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.cio)
+            // Geocoding
+            implementation(libs.compass.geocoder)
+
+            // To use geocoding you need to use one or more of the following
+
+            // Optional - Geocoder support for all platforms, but requires an API key from the service
+            implementation(libs.compass.geocoder.web.googlemaps)
+            implementation(libs.compass.geocoder.web.mapbox)
+            implementation(libs.compass.geocoder.web.opencage)
+
+            // Optional - If you want to create your own geocoder implementation
+            implementation(libs.compass.geocoder.web)
+            
+            // Geolocation
+            implementation(libs.compass.geolocation)
+
+            // Autocomplete
+            implementation(libs.compass.autocomplete)
+
+            // Optional - Autocomplete support for all platforms, using services Geocoder APIs
+            implementation(libs.compass.autocomplete.geocoder.googlemaps)
+            implementation(libs.compass.autocomplete.geocoder.mapbox)
+
+            // Optional - If you want to create your own geocoder implementation
+            implementation(libs.compass.autocomplete.web)
+        }
+        iosMain.dependencies {
+            // Mobile-specific Compass implementations
+            implementation(libs.compass.geocoder.mobile)
+            implementation(libs.compass.geolocation.mobile)
+            implementation(libs.compass.autocomplete.mobile)
+            implementation(libs.compass.permissions.mobile)
+        }
+        webMain.dependencies {
+            // Browser-specific Compass implementation
+            implementation(libs.compass.geolocation.browser)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
