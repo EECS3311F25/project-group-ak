@@ -206,5 +206,5 @@ class EditTripViewModel(
     }
 
     private fun formatTime(time: LocalTime): String =
-        "%02d:%02d".format(time.hour, time.minute)
+        "${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}"
 }

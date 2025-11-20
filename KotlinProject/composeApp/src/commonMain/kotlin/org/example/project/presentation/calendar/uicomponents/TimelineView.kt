@@ -71,7 +71,7 @@ fun TimelineView(
                     val hourOffset = pixelsPerHour * hour
                     // Hour label
                     androidx.compose.material3.Text(
-                        text = String.format("%02d:00", hour),
+                        text = "${hour.toString().padStart(2, '0')}:00",
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier
                             .offset(y = hourOffset)
@@ -245,5 +245,5 @@ fun TimelineView(
 }
 
 private fun formatTime(time: LocalTime): String {
-    return String.format("%02d:%02d", time.hour, time.minute)
+    return "${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}"
 }

@@ -221,7 +221,7 @@ fun EventCard(
 }
 
 private fun formatTime(time: LocalTime): String {
-    return String.format("%02d:%02d", time.hour, time.minute)
+    return "${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}"
 }
 
 // --- Helper: add minutes to LocalTime, clamped to valid range ---
