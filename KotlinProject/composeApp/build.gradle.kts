@@ -76,6 +76,7 @@ kotlin {
             implementation(libs.decompose.extensions.compose)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.cio)
+            implementation("io.ktor:ktor-client-content-negotiation:${libs.versions.ktor.get()}")
             // Geocoding
             implementation(libs.compass.geocoder)
 

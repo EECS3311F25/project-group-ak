@@ -1,31 +1,68 @@
 package org.example.project.trip
 
-data class TripDuration(
-    val startDate: String,
-    val startTime: String?,
-    val endDate: String,
-    val endTime: String?
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Duration(
+    val start: String,   
+    val end: String
 )
 
-data class TripUser(
-    val name: String,
-    val pfpUrl: String?
+@Serializable
+data class Location(
+    val latitude: Double,
+    val longitude: Double,
+    val images: List<String> = emptyList()
 )
 
-data class TripEvent(
-    val title: String,
-    val duration: TripDuration,
-    val description: String?,
-    val location: String?
-)
-
-data class Trip(
+@Serializable
+data class Event(
     val id: String,
     val title: String,
-    val duration: TripDuration,
-    val description: String?,
-    val location: String?,
-    val users: List<TripUser>,
-    val events: List<TripEvent>,
-    val imageHeaderUrl: String?
+    val description: String? = null,
+    val location: Location? = null,
+    val duration: Duration
+)
+
+@Serializable
+data class Trip(
+    val id: String,
+    val name: String,
+    val owner: String,           
+    val users: List<String>,     
+    val events: List<Event> = emptyList(),
+    val duration: Duration
+)
+
+
+@Serializable
+data class TripCreateRequest(
+    val name: String,
+    val owner: String,
+    val users: List<String> = emptyList(),
+    val duration: Duration
+)
+
+@Serializable
+data class TripUpdateRequest(
+    val name: String? = null,
+    val users: List<String>? = null,
+    val duration: Duration? = null
+)
+
+// Event
+@Serializable
+data class EventCreateRequest(
+    val title: String,
+    val description: String? = null,
+    val location: Location? = null,
+    val duration: Duration
+)
+
+@Serializable
+data class EventUpdateRequest(
+    val title: String? = null,
+    val description: String? = null,
+    val location: Location? = null,
+    val duration: Duration? = null
 )

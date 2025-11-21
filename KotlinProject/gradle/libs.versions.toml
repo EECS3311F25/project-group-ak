@@ -46,6 +46,9 @@ ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.re
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamel" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core-jvm", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
 compass-autocomplete = { module = "dev.jordond.compass:autocomplete", version.ref = "compass" }
 compass-autocomplete-mobile = { module = "dev.jordond.compass:autocomplete-mobile", version.ref = "compass" }
 compass-autocomplete-web = { module = "dev.jordond.compass:autocomplete-web", version.ref = "compass" }

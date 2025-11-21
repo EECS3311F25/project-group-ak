@@ -212,9 +212,9 @@ fun App() {
     
     // DEV USE Temporary: ================================================
     // start the app on HomeView for development.
-    LaunchedEffect(root) {
-        root.navigateToHome()
-    }
+    // LaunchedEffect(root) {
+    //     root.navigateToHome()
+    // }
     //====================================================================
     
     App(root)

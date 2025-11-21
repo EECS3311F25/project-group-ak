@@ -17,7 +17,7 @@ object TripRepositoryMock {
                 id = "1",
                 name = "Toronto Fall Trip",
                 owner = "kai",
-                users = listOf("kai", "andrew", "toni"),
+                users = listOf("kai", "Clod", "andrew", "toni", ),
                 events = listOf(
                     Event(
                         id = "e1",
