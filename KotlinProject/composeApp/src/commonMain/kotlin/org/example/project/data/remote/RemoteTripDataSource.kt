@@ -1,35 +1,67 @@
-// package org.example.project.data.remote
+package org.example.project.data.remote
 
-// import io.ktor.client.*
-// import io.ktor.client.call.*
-// import io.ktor.client.request.*
-// import io.ktor.http.*
-// import org.example.project.data.source.TripDataSource
-// import org.example.project.model.Trip
 
-// class RemoteTripDataSource(
-//     private val client: HttpClient,
-//     private val baseUrl: String
-// ) : TripDataSource {
-//     // TODO: use actual endpoints from the server
-//     override suspend fun getAllTrips(): List<Trip> =
-//         client.get("$baseUrl/trips").body()
+import io.ktor.client.request.*
+import io.ktor.client.call.*
+import io.ktor.http.*
+import kotlinx.serialization.Serializable
+import org.example.project.data.source.TripDataSource
+import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Trip
 
-//     override suspend fun getTrip(id: String): Trip? =
-//         client.get("$baseUrl/trips/$id").body()
 
-//     override suspend fun createTrip(trip: Trip): Trip =
-//         client.post("$baseUrl/trips") {
-//             contentType(ContentType.Application.Json)
-//             setBody(trip)
-//         }.body()
+@Serializable
+data class TripDto(val id: String, val title: String /* ... */)
 
-//     override suspend fun updateTrip(trip: Trip): Trip =
-//         client.put("$baseUrl/trips/${trip.id}") {
-//             contentType(ContentType.Application.Json)
-//             setBody(trip)
-//         }.body()
+class RemoteTripDataSource : TripDataSource {
+    private val apiBaseUrl = "http://127.0.0.1:8080/"
 
-//     override suspend fun deleteTrip(id: String) =
-//         client.delete("$baseUrl/trips/$id")
-// }
+    suspend fun fetchTrips(): List<TripDto> {
+        return HttpClientProvider.client.get("$apiBaseUrl/trips").body()
+    }
+
+    suspend fun helloWorld(): String {
+        return HttpClientProvider.client.get(apiBaseUrl).body()
+    }
+
+    // TripDataSource interface implementations (scaffolded with TODOs)
+    override suspend fun getAllTrips(): List<Trip> {
+        TODO("Implement remote getAllTrips")
+    }
+
+    override suspend fun getTripById(id: String): Trip? {
+        TODO("Implement remote getTripById")
+    }
+
+    override suspend fun insertTrip(trip: Trip): Trip {
+        TODO("Implement remote insertTrip")
+    }
+
+    override suspend fun updateTrip(trip: Trip): Trip {
+        TODO("Implement remote updateTrip")
+    }
+
+    override suspend fun deleteTrip(tripId: String) {
+        TODO("Implement remote deleteTrip")
+    }
+
+    override suspend fun addEventToTrip(tripId: String, event: Event) {
+        TODO("Implement remote addEventToTrip")
+    }
+
+    override suspend fun deleteEventFromTrip(tripId: String, eventId: String) {
+        TODO("Implement remote deleteEventFromTrip")
+    }
+
+    override suspend fun updateEventInTrip(tripId: String, eventId: String, updated: Event) {
+        TODO("Implement remote updateEventInTrip")
+    }
+
+    override suspend fun addMemberToTrip(tripId: String, userId: String) {
+        TODO("Implement remote addMemberToTrip")
+    }
+
+    override suspend fun removeMemberFromTrip(tripId: String, userId: String) {
+        TODO("Implement remote removeMemberFromTrip")
+    }
+}
