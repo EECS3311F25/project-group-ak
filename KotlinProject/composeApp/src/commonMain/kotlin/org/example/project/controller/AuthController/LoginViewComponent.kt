@@ -1,4 +1,4 @@
-package org.example.project.controller
+package org.example.project.controller.AuthController
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
