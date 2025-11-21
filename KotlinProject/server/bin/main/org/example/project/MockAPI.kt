@@ -439,4 +439,17 @@ fun Route.mockApiRoutes() {
         
         call.respondText(jsonResponse, ContentType.Application.Json)
     }
+
+    get("/user/{id}") {
+        val id = call.parameters["id"]
+        val jsonResponse = """
+            {
+                "name": "User_$id",
+                "id": "$id",
+                "pfpUrl": ""
+            }
+        """.trimIndent()
+        
+        call.respondText(jsonResponse, ContentType.Application.Json)
+    }
 }

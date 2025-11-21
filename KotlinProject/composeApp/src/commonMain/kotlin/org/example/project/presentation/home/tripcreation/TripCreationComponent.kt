@@ -12,8 +12,7 @@ sealed interface TripCreationEvent {
 class TripCreationComponent(
     componentContext: ComponentContext,
     private val onNavigateToTripView: (Trip) -> Unit,
-    private val onNavigateToHomeView: () -> Unit,
-    val userRepository: UserRepository
+    private val onNavigateToHomeView: () -> Unit
 ) : ComponentContext by componentContext {
 
     fun onEvent(event: TripCreationEvent) {
@@ -29,6 +28,4 @@ class TripCreationComponent(
             }
         }
     }
-
-    val users: UserRepository = userRepository
 }

@@ -21,44 +21,48 @@ class RemoteTripDataSource : TripDataSource {
         return HttpClientProvider.client.get(apiBaseUrl).body()
     }
 
-    // TripDataSource interface implementations (scaffolded with TODOs)
+    // TripDataSource interface implementations
     override suspend fun getAllTrips(): List<Trip> {
-        TODO("Implement remote getAllTrips")
+        // Uses the mock endpoint
+        return fetchTrips()
     }
 
     override suspend fun getTripById(id: String): Trip? {
-        TODO("Implement remote getTripById")
+        // Mock: Find trip from the list by ID
+        return fetchTrips().find { it.id == id }
     }
 
     override suspend fun insertTrip(trip: Trip): Trip {
-        TODO("Implement remote insertTrip")
+        // Mock: Just return the trip as if it was successfully created
+        return trip
     }
 
     override suspend fun updateTrip(trip: Trip): Trip {
-        TODO("Implement remote updateTrip")
+        // Mock: Just return the updated trip as if it was successfully saved
+        return trip
     }
 
     override suspend fun deleteTrip(tripId: String) {
-        TODO("Implement remote deleteTrip")
+        // Mock: Simulate successful deletion (no-op)
     }
 
     override suspend fun addEventToTrip(tripId: String, event: Event) {
-        TODO("Implement remote addEventToTrip")
+        // Mock: Simulate successful event addition (no-op)
     }
 
     override suspend fun deleteEventFromTrip(tripId: String, eventId: String) {
-        TODO("Implement remote deleteEventFromTrip")
+        // Mock: Simulate successful event deletion (no-op)
     }
 
     override suspend fun updateEventInTrip(tripId: String, eventId: String, updated: Event) {
-        TODO("Implement remote updateEventInTrip")
+        // Mock: Simulate successful event update (no-op)
     }
 
     override suspend fun addMemberToTrip(tripId: String, userId: String) {
-        TODO("Implement remote addMemberToTrip")
+        // Mock: Simulate successful member addition (no-op)
     }
 
     override suspend fun removeMemberFromTrip(tripId: String, userId: String) {
-        TODO("Implement remote removeMemberFromTrip")
+        // Mock: Simulate successful member removal (no-op)
     }
 }

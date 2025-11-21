@@ -18,7 +18,6 @@ import org.example.project.model.dataClasses.Event
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
 import org.example.project.data.remote.RemoteTripDataSource
-import org.example.project.data.source.LocalUserDataSource
 
 data class TripCreationState(
     val title: String = "",
@@ -36,8 +35,8 @@ data class TripCreationState(
 )
 
 class TripCreationViewModel(
-    private val tripRepository: TripRepository = TripRepository(RemoteTripDataSource()),
-    private val userRepository: UserRepository = UserRepository(LocalUserDataSource()) // Add UserRepository
+    private val tripRepository: TripRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     
     private val _state = MutableStateFlow(TripCreationState())
@@ -196,35 +195,6 @@ class TripCreationViewModel(
     fun updateLocation(newLocation: String) {
         _state.value = _state.value.copy(
             location = newLocation,
-            errorMessage = null
-        )
-        validateForm()
-    }
-    
-    // Events
-    fun addEvent(event: Event) {
-        val currentEvents = _state.value.events.toMutableList()
-        currentEvents.add(event)
-        _state.value = _state.value.copy(
-            events = currentEvents,
-            errorMessage = null
-        )
-        validateForm()
-    }
-    
-    fun removeEvent(event: Event) {
-        val currentEvents = _state.value.events.toMutableList()
-        currentEvents.remove(event)
-        _state.value = _state.value.copy(
-            events = currentEvents,
-            errorMessage = null
-        )
-        validateForm()
-    }
-    
-    fun updateEvents(newEvents: List<Event>) {
-        _state.value = _state.value.copy(
-            events = newEvents,
             errorMessage = null
         )
         validateForm()
