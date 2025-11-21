@@ -1,5 +1,4 @@
 package org.example.project.event
-
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -16,35 +15,56 @@ import io.ktor.server.routing.*
  *      - validate input via EventService
  *      - call PostgresEventRepository for DB CRUD
  *
+ * IMPORTANT:
+ *  - All Event operations are scoped under a specific user AND trip:
+ *      /user/{userName}/trip/{tripId}/event/...
+ *
  * Endpoints:
- *  GET    /event/trip/{tripId}  -> list events for a given trip
- *  GET    /event/{id}           -> get event by id
- *  POST   /event                -> create event
- *  PUT    /event/{id}           -> update event
- *  DELETE /event/{id}           -> delete event
+ *  GET    /user/{userName}/trip/{tripId}/event          -> list events for a given trip
+ *  GET    /user/{userName}/trip/{tripId}/event/{id}     -> get event by id
+ *  POST   /user/{userName}/trip/{tripId}/event          -> create event for that trip
+ *  PUT    /user/{userName}/trip/{tripId}/event/{id}     -> update event
+ *  DELETE /user/{userName}/trip/{tripId}/event/{id}     -> delete event
  */
 fun Application.configureEventSerialization(eventRepository: PostgresEventRepository) {
 
     routing {
-        route("/event") {
+        // All events are under a specific user + trip
+        route("/user/{userName}/trip/{tripId}/event") {
 
-            // GET /event/trip/{tripId} - get all events of a trip
-            get("/trip/{tripId}") {
-                val tripIdParam = call.parameters["tripId"]
-                val tripId = tripIdParam?.toIntOrNull()
+            // GET /user/{userName}/trip/{tripId}/event  -> all events for this trip
+            get {
+                val userName = call.parameters["userName"]
+                val tripId = call.parameters["tripId"]?.toIntOrNull()
+
+                if (userName.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing userName")
+                    return@get
+                }
                 if (tripId == null) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid or missing tripId")
                     return@get
                 }
 
+                // NOTE: repository only filters by tripId for now
                 val events = eventRepository.allEventsByTripId(tripId)
                 call.respond(HttpStatusCode.OK, events)
             }
 
-            // GET /event/{id} - get a single event by ID
+            // GET /user/{userName}/trip/{tripId}/event/{id}  -> single event
             get("/{id}") {
-                val idParam = call.parameters["id"]
-                val id = idParam?.toIntOrNull()
+                val userName = call.parameters["userName"]
+                val tripId = call.parameters["tripId"]?.toIntOrNull()
+                val id = call.parameters["id"]?.toIntOrNull()
+
+                if (userName.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing userName")
+                    return@get
+                }
+                if (tripId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid or missing tripId")
+                    return@get
+                }
                 if (id == null) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid or missing event id")
                     return@get
@@ -54,12 +74,25 @@ fun Application.configureEventSerialization(eventRepository: PostgresEventReposi
                 if (event == null) {
                     call.respond(HttpStatusCode.NotFound, "Event not found")
                 } else {
+                    // NOTE: we are not yet checking that this event actually belongs to tripId
                     call.respond(HttpStatusCode.OK, event)
                 }
             }
 
-            // POST /event - create a new event
+            // POST /user/{userName}/trip/{tripId}/event  -> create new event for this trip
             post {
+                val userName = call.parameters["userName"]
+                val tripId = call.parameters["tripId"]?.toIntOrNull()
+
+                if (userName.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing userName")
+                    return@post
+                }
+                if (tripId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid or missing tripId")
+                    return@post
+                }
+
                 val event = try {
                     call.receive<Event>()
                 } catch (e: Exception) {
@@ -77,14 +110,25 @@ fun Application.configureEventSerialization(eventRepository: PostgresEventReposi
                         return@post
                     }
 
+                // TODO: in PostgresEventRepository.addEvent, link the event to this tripId
                 val created = eventRepository.addEvent(event)
                 call.respond(HttpStatusCode.Created, created)
             }
 
-            // PUT /event/{id} - update existing event
+            // PUT /user/{userName}/trip/{tripId}/event/{id}  -> update event
             put("/{id}") {
-                val idParam = call.parameters["id"]
-                val id = idParam?.toIntOrNull()
+                val userName = call.parameters["userName"]
+                val tripId = call.parameters["tripId"]?.toIntOrNull()
+                val id = call.parameters["id"]?.toIntOrNull()
+
+                if (userName.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing userName")
+                    return@put
+                }
+                if (tripId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid or missing tripId")
+                    return@put
+                }
                 if (id == null) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid or missing event id")
                     return@put
@@ -109,16 +153,27 @@ fun Application.configureEventSerialization(eventRepository: PostgresEventReposi
 
                 val updated = eventRepository.updateEvent(id, event)
                 if (updated) {
+                    // NOTE: still no DB-level check that event belongs to this tripId
                     call.respond(HttpStatusCode.OK, "Event updated successfully")
                 } else {
                     call.respond(HttpStatusCode.NotFound, "Event not found")
                 }
             }
 
-            // DELETE /event/{id} - delete an event
+            // DELETE /user/{userName}/trip/{tripId}/event/{id}  -> delete event
             delete("/{id}") {
-                val idParam = call.parameters["id"]
-                val id = idParam?.toIntOrNull()
+                val userName = call.parameters["userName"]
+                val tripId = call.parameters["tripId"]?.toIntOrNull()
+                val id = call.parameters["id"]?.toIntOrNull()
+
+                if (userName.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing userName")
+                    return@delete
+                }
+                if (tripId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid or missing tripId")
+                    return@delete
+                }
                 if (id == null) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid or missing event id")
                     return@delete

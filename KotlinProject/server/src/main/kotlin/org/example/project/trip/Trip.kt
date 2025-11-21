@@ -3,6 +3,8 @@ package org.example.project.trip
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+import Duration
+
 
 @Serializable
 data class Trip (
@@ -17,12 +19,10 @@ data class Trip (
     //  TODO: implement Location type's logic + interaction w/ app's map view
     @SerialName("trip_location")
     val tripLocation: String?,
+    @SerialName("trip_duration")
+    val tripDuration: Duration,
 
-    //  TODO: implement type for date + time
-    @SerialName("trip_start_date")
-    val tripStartDate: String?,
-    @SerialName("trip_end_date")
-    val tripEndDate: String?,
-
-    //  TODO: implement foreign key UserID (the User that created this trip)
+    //  Foreign key to User table
+    @SerialName("user_id")
+    val userId: Int?,
 )

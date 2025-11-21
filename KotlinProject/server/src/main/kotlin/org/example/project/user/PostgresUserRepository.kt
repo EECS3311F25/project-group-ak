@@ -2,6 +2,7 @@ package org.example.project.user
 
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import java.util.NoSuchElementException
 
 
 /**
@@ -17,9 +18,9 @@ class PostgresUserRepository: UserRepository {
         UserDAO.all().map(::daoToUserModel)
     }
 
-    override suspend fun getUserByName(userName: String?): User? = suspendTransaction {
+    override suspend fun getUserById(userId: Int?): User? = suspendTransaction {
         UserDAO
-            .find { (UserTable.userName eq userName!!) }
+            .find { (UserTable.id eq userId!!) }
             .limit(1)
             .map(::daoToUserModel)
             .firstOrNull()
@@ -40,23 +41,27 @@ class PostgresUserRepository: UserRepository {
             }
     }
 
-    override suspend fun updateUserPassword(userName: String?, newPassword: String?): Result<Boolean> = suspendTransaction {
+    override suspend fun updateUserPassword(userId: Int?, newPassword: String?): Result<Boolean> = suspendTransaction {
 
         UserService.verifyUserPassword(newPassword!!)
             .mapCatching {
-                val userToUpdate = UserDAO.findSingleByAndUpdate(UserTable.userName eq userName!!) {
+                val userToUpdate = UserDAO.findSingleByAndUpdate(UserTable.id eq userId!!) {
                     it.userPassword = newPassword
                 }
                 userToUpdate != null
             }
     }
 
-    override suspend fun deleteUserByUsername(userName: String?): Result<Boolean> = runCatching {
-        suspendTransaction {
-            val userDeleted = UserTable.deleteWhere {
-                UserTable.userName eq userName!!
-            }
-            userDeleted == 1
+    override suspend fun deleteUserByUserId(userId: Int?): Result<Boolean> = suspendTransaction {
+        val userDeleted = UserTable.deleteWhere {
+            UserTable.id eq userId!!
+        }
+        if (userDeleted != 1) {
+            Result.failure<Boolean>(NoSuchElementException("User not found)"))
+        }
+        else {
+            Result.success(true)
         }
     }
+
 }

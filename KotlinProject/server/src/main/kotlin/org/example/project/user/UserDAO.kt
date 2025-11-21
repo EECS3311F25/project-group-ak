@@ -14,18 +14,15 @@ import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 /**
     References:
 -   https://ktor.io/docs/server-integrate-database.html#create-mapping
--   https://www.jetbrains.com/help/exposed/working-with-tables.html#nullable
 
     TL;DR: the DAO API provides abstractions for defining database tables, and performing CRUD ops on them
  */
-
 
 /**
     Table / IntIdTable(db_table_name)
     -   IntIdTable corresponds to a table with an auto column for entry id (i.e surrogate key)
  */
 
-//  TODO: revise UserTable, in correspondence to the database table's entity relations
 //  TODO: improve logic of field nullability
 
 object UserTable: IntIdTable("user") {

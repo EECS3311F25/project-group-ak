@@ -7,10 +7,11 @@ package org.example.project.trip
  */
 interface TripRepository {
     /**
-     * Get all trips associated with a User (via the username)
+     * Get all trips associated with a User
+     * @param userId ID of associated User
      * @return List of all associated trips
      */
-    suspend fun allTripsByUsername(userName: String?): List<Trip>
+    suspend fun allTripsByUserId(userId: Int?): List<Trip>
 
     /**
      * Get a trip by its ID.
@@ -20,24 +21,27 @@ interface TripRepository {
     suspend fun getTripById(tripId: Int?): Trip?
 
     /**
-     * Add a new Trip to the database table.
+     * Add a new Trip to the Trip table, associated with a User in the User table
      * @param trip Trip object to add
+     * @param userId ID of associated User requesting the creation
      * @return Created trip (with a generated surrogate key)
      */
-    suspend fun addTrip(trip: Trip): Trip
+    suspend fun addTrip(userId: Int?, trip: Trip): Trip
 
     /**
-     * Update an existing Trip (in the database table) by its ID
+     * Update an existing Trip (in the database table) by its ID and the associated User's ID
      * @param tripId ID of the Trip to be updated
+     * @param userId ID of the associated User requesting the update
      * @param trip Updated trip data
-     * @return true if updated, false if Trip not found
+     * @return true if updated, false otherwise
      */
-    suspend fun updateTrip(tripId: Int?, trip: Trip): Boolean
+    suspend fun updateTrip(userId: Int?, tripId: Int?, trip: Trip): Boolean
 
     /**
-     * Delete a trip by its ID.
+     * Delete a trip by its ID and the associated User's ID
      * @param tripId ID of the Trip to be deleted
+     * @param userId ID of the associated User requesting the deletion
      * @return true if deleted, false if trip not found
      */
-    suspend fun deleteTripById(tripId: Int): Boolean
+    suspend fun deleteTrip(userId: Int?, tripId: Int): Boolean
 }

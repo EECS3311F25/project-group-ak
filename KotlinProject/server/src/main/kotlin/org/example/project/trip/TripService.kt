@@ -26,12 +26,12 @@ object TripService {
             return Result.failure(IllegalArgumentException("Trip location cannot be empty"))
         }
 
-        // Optional: basic check for dates not being empty
-        if (trip.tripStartDate.isNullOrBlank()) {
-            return Result.failure(IllegalArgumentException("Trip start date cannot be empty"))
-        }
-        if (trip.tripEndDate.isNullOrBlank()) {
-            return Result.failure(IllegalArgumentException("Trip end date cannot be empty"))
+        //  TODO: implement tripDuration verification
+//        if (trip.tripDuration.) {
+//            return Result.failure(IllegalArgumentException("Trip start date cannot be empty"))
+//        }
+        if (trip.userId == null) {
+            return Result.failure(IllegalArgumentException("Trip's associated User ID cannot be empty"))
         }
 
         return Result.success(Unit)
@@ -41,23 +41,24 @@ object TripService {
      * Validate trip data before updating an existing Trip.
      * (Currently same rules as create; can be customized later.)
      */
+    //  TODO: fix to include user ID (or whatever logic you may need
     fun validateTripForUpdate(trip: Trip): Result<Unit> {
-        if (trip.tripTitle.isNullOrBlank()) {
-            return Result.failure(IllegalArgumentException("Trip title cannot be empty"))
-        }
-
-        if (trip.tripLocation.isNullOrBlank()) {
-            return Result.failure(IllegalArgumentException("Trip location cannot be empty"))
-        }
-
-        // Optional: basic check for dates
-        if (trip.tripStartDate.isNullOrBlank()) {
-            return Result.failure(IllegalArgumentException("Trip start date cannot be empty"))
-        }
-        if (trip.tripEndDate.isNullOrBlank()) {
-            return Result.failure(IllegalArgumentException("Trip end date cannot be empty"))
-        }
-
-        return Result.success(Unit)
+//        if (trip.tripTitle.isNullOrBlank()) {
+//            return Result.failure(IllegalArgumentException("Trip title cannot be empty"))
+//        }
+//
+//        if (trip.tripLocation.isNullOrBlank()) {
+//            return Result.failure(IllegalArgumentException("Trip location cannot be empty"))
+//        }
+//
+//        // Optional: basic check for dates
+//        if (trip.tripStartDate.isNullOrBlank()) {
+//            return Result.failure(IllegalArgumentException("Trip start date cannot be empty"))
+//        }
+//        if (trip.tripEndDate.isNullOrBlank()) {
+//            return Result.failure(IllegalArgumentException("Trip end date cannot be empty"))
+//        }
+//
+          return Result.success(Unit)
     }
 }
