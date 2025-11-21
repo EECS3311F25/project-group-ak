@@ -41,6 +41,147 @@ object TripRepositoryMock {
                 duration = Duration("2025-12-10T08:00:00", "2025-12-10T20:00:00")
             )
         )
+        put(
+            "trip_mountain_retreat",
+            Trip(
+                id = "trip_mountain_retreat",
+                name = "Mountain Retreat",
+                owner = "Charlie",
+                users = listOf("Charlie", "Diana"),
+                events = listOf(
+                    Event(
+                        id = "e1001",
+                        title = "Arrival & Check-in",
+                        description = "Check into mountain lodge and settle in",
+                        location = null,
+                        duration = Duration("2025-09-05T15:00:00", "2025-09-05T17:00:00")
+                    ),
+                    Event(
+                        id = "e1002",
+                        title = "Lake Louise Hike",
+                        description = "Morning hike around the stunning turquoise lake",
+                        location = null,
+                        duration = Duration("2025-09-06T08:00:00", "2025-09-06T14:00:00")
+                    ),
+                    Event(
+                        id = "e1003",
+                        title = "Gondola Ride",
+                        description = "Banff Gondola for breathtaking mountain views",
+                        location = null,
+                        duration = Duration("2025-09-07T10:00:00", "2025-09-07T13:00:00")
+                    )
+                ),
+                duration = Duration("2025-09-05T08:00:00", "2025-09-12T16:00:00")
+            )
+        )
+        put(
+            "trip_summer_getaway",
+            Trip(
+                id = "trip_summer_getaway",
+                name = "Summer Getaway",
+                owner = "Klodiana",
+                users = listOf("Klodiana", "Alex"),
+                events = listOf(
+                    Event(
+                        id = "e2001",
+                        title = "Departure from Toronto",
+                        description = "Start our journey from downtown Toronto",
+                        location = null,
+                        duration = Duration("2025-07-01T09:00:00", "2025-07-01T10:00:00")
+                    ),
+                    Event(
+                        id = "e2002",
+                        title = "Niagara Falls Stop",
+                        description = "Visit the famous Niagara Falls and take photos",
+                        location = null,
+                        duration = Duration("2025-07-01T12:00:00", "2025-07-01T16:00:00")
+                    ),
+                    Event(
+                        id = "e2003",
+                        title = "Niagara Boat Tour",
+                        description = "Experience the falls up close on the Maid of the Mist",
+                        location = null,
+                        duration = Duration("2025-07-02T10:00:00", "2025-07-02T11:30:00")
+                    ),
+                    Event(
+                        id = "e2004",
+                        title = "Ottawa Parliament Tour",
+                        description = "Guided tour of Canada's Parliament buildings",
+                        location = null,
+                        duration = Duration("2025-07-04T10:00:00", "2025-07-04T12:00:00")
+                    ),
+                    Event(
+                        id = "e2005",
+                        title = "ByWard Market Dinner",
+                        description = "Farewell dinner at famous ByWard Market",
+                        location = null,
+                        duration = Duration("2025-07-04T18:00:00", "2025-07-04T20:00:00")
+                    )
+                ),
+                duration = Duration("2025-07-01T09:00:00", "2025-07-10T17:00:00")
+            )
+        )
+        put(
+            "trip_european_adventure",
+            Trip(
+                id = "trip_european_adventure",
+                name = "European Adventure",
+                owner = "Alice",
+                users = listOf("Alice", "Bob"),
+                events = listOf(
+                    Event(
+                        id = "e3001",
+                        title = "Eiffel Tower Visit",
+                        description = "Climb the iconic Eiffel Tower and enjoy panoramic views",
+                        location = null,
+                        duration = Duration("2025-08-15T14:00:00", "2025-08-15T17:00:00")
+                    ),
+                    Event(
+                        id = "e3002",
+                        title = "Louvre Museum",
+                        description = "See the Mona Lisa and other masterpieces",
+                        location = null,
+                        duration = Duration("2025-08-16T10:00:00", "2025-08-16T15:00:00")
+                    ),
+                    Event(
+                        id = "e3003",
+                        title = "Seine River Walk",
+                        description = "Leisurely walk along the Seine",
+                        location = null,
+                        duration = Duration("2025-08-16T16:30:00", "2025-08-16T17:30:00")
+                    ),
+                    Event(
+                        id = "e3004",
+                        title = "Canal Tour Amsterdam",
+                        description = "Explore Amsterdam's famous canals by boat",
+                        location = null,
+                        duration = Duration("2025-08-18T11:00:00", "2025-08-18T13:00:00")
+                    ),
+                    Event(
+                        id = "e3005",
+                        title = "Van Gogh Museum",
+                        description = "World's largest collection of Van Gogh artworks",
+                        location = null,
+                        duration = Duration("2025-08-19T10:00:00", "2025-08-19T14:00:00")
+                    ),
+                    Event(
+                        id = "e3006",
+                        title = "Colosseum Tour",
+                        description = "Explore ancient Roman architecture and history",
+                        location = null,
+                        duration = Duration("2025-08-21T09:00:00", "2025-08-21T12:00:00")
+                    ),
+                    Event(
+                        id = "e3007",
+                        title = "Vatican City Visit",
+                        description = "Sistine Chapel and St. Peter's Basilica",
+                        location = null,
+                        duration = Duration("2025-08-22T10:00:00", "2025-08-22T16:00:00")
+                    )
+                ),
+                duration = Duration("2025-08-15T10:00:00", "2025-08-30T18:00:00")
+            )
+        )
     }
 
     /* ----------------- Trip queries ----------------- */

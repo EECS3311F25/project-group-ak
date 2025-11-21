@@ -88,8 +88,13 @@ class AISummaryService(private val config : AIConfig){
 
 
         return """
-            Generate a brief, engaging summary (2-3 sentences) for this trip:
+            Generate a brief, engaging summary (2-3 sentences) for this trip.
             
+            IMPORTANT: Use varied, creative opening phrases. Do NOT always start with "Embark" or similar predictable openings. 
+            Start with different engaging phrases each time (e.g., "Join", "Experience", "Discover", "Explore", "Get ready for", 
+            or any other creative opening that fits the trip).
+            
+            Trip Details:
             Title: ${trip.name}
             Dates: $dateRange
             Owner: ${trip.owner}
@@ -98,7 +103,8 @@ class AISummaryService(private val config : AIConfig){
             Events:
             $eventsText
             
-            Make it sound exciting and capture the essence of the trip. Keep it concise and appealing.
+            Make it sound exciting and capture the essence of the trip. Keep it concise and appealing. 
+            Be creative with your opening to make each summary unique.
         """.trimIndent()
 
     }

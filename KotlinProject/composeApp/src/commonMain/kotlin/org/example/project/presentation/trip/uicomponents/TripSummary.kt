@@ -62,7 +62,7 @@ fun TripSummarySection(
                 TextButton(onClick = onRetryClick) {
                     Text("Retry", color = Color.White)
                 }
-            } else if (!isGenerating && aiSummary == null && tripSummary.isNullOrBlank()) {
+            } else if (!isGenerating && aiSummary == null) {
                 TextButton(onClick = onGenerateClick) {
                     Text("Generate", color = Color.White)
                 }

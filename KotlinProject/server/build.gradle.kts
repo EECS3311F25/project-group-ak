@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
     implementation("io.ktor:ktor-server-content-negotiation-jvm:${libs.versions.ktor.get()}")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:${libs.versions.ktor.get()}")
     
     // AI Summary Dependencies
     implementation("io.ktor:ktor-client-core-jvm:${libs.versions.ktor.get()}")

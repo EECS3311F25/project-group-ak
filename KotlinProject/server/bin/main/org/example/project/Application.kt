@@ -59,7 +59,7 @@ fun Application.module(){
 
         tripRoutes()
         configureAISummaryRoutes(aiSummaryService)
-    }
+            }
 
 
 
