@@ -1,4 +1,4 @@
-package org.example.project.view
+package org.example.project.presentation
 
 import androidx.compose.runtime.*
 import androidx.compose.material3.*

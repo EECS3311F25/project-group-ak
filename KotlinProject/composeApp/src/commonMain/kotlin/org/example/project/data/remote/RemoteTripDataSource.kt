@@ -9,15 +9,12 @@ import org.example.project.data.source.TripDataSource
 import org.example.project.model.dataClasses.Event
 import org.example.project.model.dataClasses.Trip
 
-
-@Serializable
-data class TripDto(val id: String, val title: String /* ... */)
-
 class RemoteTripDataSource : TripDataSource {
-    private val apiBaseUrl = "http://127.0.0.1:8080/"
+    private val apiBaseUrl = "http://localhost:8080"
 
-    suspend fun fetchTrips(): List<TripDto> {
-        return HttpClientProvider.client.get("$apiBaseUrl/trips").body()
+    // USES MOCK ENDPOINTS
+    suspend fun fetchTrips(): List<Trip> {
+        return HttpClientProvider.client.get("$apiBaseUrl/mocktrips").body()
     }
 
     suspend fun helloWorld(): String {

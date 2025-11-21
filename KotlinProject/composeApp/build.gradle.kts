@@ -36,13 +36,29 @@ kotlin {
     jvm()
     
     js {
-        browser()
+        browser {
+            runTask {
+                devServerProperty.set(
+                    devServerProperty.get().copy(
+                        open = false
+                    )
+                )
+            }
+        }
         binaries.executable()
     }
     
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        browser()
+        browser {
+            runTask {
+                devServerProperty.set(
+                    devServerProperty.get().copy(
+                        open = false
+                    )
+                )
+            }
+        }
         binaries.executable()
     }
     
@@ -52,6 +68,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
+            implementation(libs.ktor.client.okhttp)
             // Mobile-specific Compass implementations
             implementation(libs.compass.geocoder.mobile)
             implementation(libs.compass.geolocation.mobile)
@@ -75,7 +92,8 @@ kotlin {
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.contentnegotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
             // Geocoding
             implementation(libs.compass.geocoder)
 
@@ -103,6 +121,7 @@ kotlin {
             implementation(libs.compass.autocomplete.web)
         }
         iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
             // Mobile-specific Compass implementations
             implementation(libs.compass.geocoder.mobile)
             implementation(libs.compass.geolocation.mobile)
@@ -110,6 +129,7 @@ kotlin {
             implementation(libs.compass.permissions.mobile)
         }
         webMain.dependencies {
+            implementation(libs.ktor.client.js)
             // Browser-specific Compass implementation
             implementation(libs.compass.geolocation.browser)
         }
@@ -120,6 +140,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.kamel.image)
+            implementation(libs.ktor.client.okhttp)
             implementation(libs.ktor.client.cio)
             implementation("ch.qos.logback:logback-classic:1.5.18")  //SLF4J provider error for networkImage
         }

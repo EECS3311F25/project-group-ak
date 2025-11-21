@@ -17,7 +17,7 @@ import org.example.project.model.dataClasses.User
 import org.example.project.model.dataClasses.Event
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
-import org.example.project.data.source.LocalTripDataSource
+import org.example.project.data.remote.RemoteTripDataSource
 import org.example.project.data.source.LocalUserDataSource
 
 data class TripCreationState(
@@ -36,7 +36,7 @@ data class TripCreationState(
 )
 
 class TripCreationViewModel(
-    private val tripRepository: TripRepository = TripRepository(LocalTripDataSource()),
+    private val tripRepository: TripRepository = TripRepository(RemoteTripDataSource()),
     private val userRepository: UserRepository = UserRepository(LocalUserDataSource()) // Add UserRepository
 ) : ViewModel() {
     
