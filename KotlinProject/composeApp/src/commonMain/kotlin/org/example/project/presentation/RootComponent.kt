@@ -17,6 +17,8 @@ import org.example.project.presentation.trip.addevent.AddEventComponent
 import org.example.project.presentation.trip.addmember.AddMemberComponent
 import org.example.project.presentation.trip.edittrip.EditTripComponent
 import org.example.project.presentation.calendar.CalendarViewComponent
+import org.example.project.presentation.calendar.navigation.NavigationViewComponent
+import org.example.project.presentation.map.MapMarker
 import org.example.project.model.dataClasses.Trip
 
 class RootComponent(
@@ -134,9 +136,33 @@ class RootComponent(
                     },
                     onAddEvent =  { initialDate ->
                         navigation.pushNew(Configuration.AddEvent(config.tripId, null, initialDate)) 
+                    },
+                    onNavigateToNavigation = { startLat, startLng, startTitle, endLat, endLng, endTitle ->
+                        navigation.pushNew(Configuration.NavigationView(
+                            startLat, startLng, startTitle, endLat, endLng, endTitle
+                        ))
                     }
                 ),
                 config.tripId
+            )
+            
+            is Configuration.NavigationView -> Child.NavigationView(
+                component = NavigationViewComponent(
+                    componentContext = context,
+                    onGoBack = { navigation.pop() }
+                ),
+                startLocation = MapMarker(
+                    latitude = config.startLat,
+                    longitude = config.startLng,
+                    title = config.startTitle,
+                    description = "Start"
+                ),
+                endLocation = MapMarker(
+                    latitude = config.endLat,
+                    longitude = config.endLng,
+                    title = config.endTitle,
+                    description = "Destination"
+                )
             )
         }
     }
@@ -151,6 +177,11 @@ class RootComponent(
         data class AddMember(val component : AddMemberComponent, val tripId: String) : Child()
         data class CalendarView(val component: CalendarViewComponent, val tripId: String) : Child()
         data class EditTrip(val component : EditTripComponent, val tripId: String) : Child()
+        data class NavigationView(
+            val component: NavigationViewComponent,
+            val startLocation: MapMarker,
+            val endLocation: MapMarker
+        ) : Child()
     }
 
     @Serializable
@@ -173,5 +204,14 @@ class RootComponent(
         data class EditTrip(val tripId: String) : Configuration()
         @Serializable
         data class CalendarView(val tripId: String): Configuration()
+        @Serializable
+        data class NavigationView(
+            val startLat: Double,
+            val startLng: Double,
+            val startTitle: String,
+            val endLat: Double,
+            val endLng: Double,
+            val endTitle: String
+        ): Configuration()
     }
 }
