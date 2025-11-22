@@ -25,10 +25,9 @@ Table / IntIdTable(db_table_name)
 -   IntIdTable corresponds to a table with an auto column for entry id (i.e surrogate key)
  */
 
-//  TODO: revise UserTable, in correspondence to the database table's entity relations
 //  TODO: improve logic of field nullability
 
-object EventTable : IntIdTable("event") {
+object EventTable : IntIdTable("events") {
     val eventTitle = varchar("event_title", 100)
     val eventDescription = varchar("event_description", 500)
     val eventLocation = varchar("event_location", 255)

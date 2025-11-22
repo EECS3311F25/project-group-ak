@@ -32,7 +32,7 @@ import org.example.project.user.UserTable
 
 //  TODO: improve logic of field nullability
 
-object TripTable : IntIdTable("trip") {
+object TripTable : IntIdTable("trips") {
     val tripTitle = varchar("trip_title", 100)
     val tripDescription = varchar("trip_description", 150)
     val tripLocation = varchar("trip_location", 255)
