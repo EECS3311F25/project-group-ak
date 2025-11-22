@@ -1,5 +1,6 @@
 package org.example.project.db_query.user
 
+import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.*
 import io.ktor.client.statement.HttpResponse
@@ -14,6 +15,7 @@ import io.ktor.server.testing.testApplication
 
 import org.example.project.module
 import org.example.project.user.User
+import org.example.project.user.UserRetrieveResponse
 
 
 class CreateUserTests {
@@ -38,10 +40,14 @@ class CreateUserTests {
             contentType(ContentType.Application.Json)
             setBody(User("user1", "user1@gmail.com", "password1"))
         }
-        println(response.bodyAsText())
-
         assertEquals(HttpStatusCode.Created, response.status)
-        assertEquals("User successfully registered", response.bodyAsText())
+
+        val responseBody = response.body<UserRetrieveResponse>()
+        assertEquals("User registered successfully", responseBody.message)
+
+        val responseData = responseBody.data
+        assertEquals("user1", responseData.userName)
+        assertEquals("user1@gmail.com", responseData.userEmail)
     }
 
     /**
@@ -64,10 +70,14 @@ class CreateUserTests {
             contentType(ContentType.Application.Json)
             setBody(User("user2", "user2@gmail.com", "password2"))
         }
-        println(response.bodyAsText())
-
         assertEquals(HttpStatusCode.Created, response.status)
-        assertEquals("User successfully registered", response.bodyAsText())
+
+        val responseBody = response.body<UserRetrieveResponse>()
+        assertEquals("User registered successfully", responseBody.message)
+
+        val responseData = responseBody.data
+        assertEquals("user2", responseData.userName)
+        assertEquals("user2@gmail.com", responseData.userEmail)
     }
 
     /**

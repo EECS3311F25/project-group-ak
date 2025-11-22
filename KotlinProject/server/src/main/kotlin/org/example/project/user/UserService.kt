@@ -12,22 +12,22 @@ object UserService {
     /**
         Validating an account creation
      */
-    fun verifyUserRegistration(user: User): Result<Unit> {
-        if (user.userName.isNullOrBlank()) {
+    fun verifyUserRegistration(userDto: UserCreateDto): Result<Unit> {
+        if (userDto.userName.isBlank()) {
             return Result.failure(IllegalArgumentException("Username cannot be empty"))
         }
-        if (user.userEmail.isNullOrBlank()) {
+        if (userDto.userEmail.isBlank()) {
             return Result.failure(IllegalArgumentException("Email cannot be empty"))
         }
-        if (user.userPassword.isNullOrBlank()) {
+        if (userDto.userPassword.isBlank()) {
             return Result.failure(IllegalArgumentException("Password cannot be empty"))
         }
         //  TODO: require email format to contain a valid mail server and domain
-        if (!user.userEmail.contains("@")) {
+        if (!userDto.userEmail.contains("@")) {
             return Result.failure(IllegalArgumentException("Invalid email format"))
         }
         //  Password strength validation
-        verifyUserPassword(user.userPassword).getOrElse {
+        verifyUserPassword(userDto.userPassword).getOrElse {
             return Result.failure(it)
         }
 

@@ -1,6 +1,7 @@
 package org.example.project.db_query.user
 
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
@@ -35,7 +36,7 @@ class UpdateUserTests {
             }
         }
 
-        val response: HttpResponse = client.put("/user/password") {
+        val response: HttpResponse = client.put("/user/1") {
             contentType(ContentType.Application.Json)
             setBody(User("user1", "user1@gmail.com", "newPassword1"))
         }
@@ -59,7 +60,7 @@ class UpdateUserTests {
             }
         }
 
-        val response: HttpResponse = client.put("/user/password") {
+        val response: HttpResponse = client.put("/user/1") {
             contentType(ContentType.Application.Json)
             setBody(User("user2", "user2@gmail.com", "newPassword2"))
         }
@@ -83,7 +84,7 @@ class UpdateUserTests {
             }
         }
 
-        val response: HttpResponse = client.put("/user/password") {
+        val response: HttpResponse = client.put("/user/1") {
             contentType(ContentType.Application.Json)
             setBody(User("user1", "user1@gmail.com", "weakpsw"))
         }

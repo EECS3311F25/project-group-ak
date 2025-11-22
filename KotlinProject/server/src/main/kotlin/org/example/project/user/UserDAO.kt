@@ -25,7 +25,7 @@ import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 
 //  TODO: improve logic of field nullability
 
-object UserTable: IntIdTable("user") {
+object UserTable: IntIdTable("users") {
     val userName = varchar("user_name", 50)
     val userEmail = varchar("user_email", 50)
     val userPassword = varchar("user_password", 50)
@@ -46,6 +46,12 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
     withContext(Dispatchers.IO) {
         suspendTransaction(statement = block)
     }
+
+fun UserDAO.toResponseDto() = UserResponseDto(
+    id = id.value,
+    userName = userName,
+    userEmail = userEmail
+)
 
 fun daoToUserModel(dao: UserDAO) = User(
     dao.userName,

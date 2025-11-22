@@ -2,9 +2,9 @@ package org.example.project.user
 
 
 interface UserRepository {
-    suspend fun allUsers(): List<User>
-    suspend fun addUser(user: User?): Result<User>
-    suspend fun getUserById(userId: Int?): User?
+    suspend fun allUsers(): List<UserResponseDto>
+    suspend fun addUser(userDto: UserCreateDto): Result<UserResponseDto>
+    suspend fun getUserById(userId: Int?): UserResponseDto?
     suspend fun updateUserPassword(userId: Int?, newPassword: String?): Result<Boolean>
-    suspend fun deleteUserByUserId(userId: Int?): Result<Boolean>
+    suspend fun deleteUserById(userId: Int?): Result<Boolean>
 }
