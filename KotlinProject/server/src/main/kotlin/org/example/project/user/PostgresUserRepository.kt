@@ -14,30 +14,29 @@ import java.util.NoSuchElementException
 
 class PostgresUserRepository: UserRepository {
 
-    override suspend fun allUsers(): List<User> = suspendTransaction {
-        UserDAO.all().map(::daoToUserModel)
+    override suspend fun allUsers(): List<UserResponseDto> = suspendTransaction {
+        UserDAO.all().map { it.toResponseDto() }
     }
 
-    override suspend fun getUserById(userId: Int?): User? = suspendTransaction {
-        UserDAO
-            .find { (UserTable.id eq userId!!) }
+    override suspend fun getUserById(userId: Int?): UserResponseDto? = suspendTransaction {
+        userId ?: return@suspendTransaction null
+
+        UserDAO.find { UserTable.id eq userId }
             .limit(1)
-            .map(::daoToUserModel)
+            .map { it.toResponseDto() }
             .firstOrNull()
     }
 
-    override suspend fun addUser(user: User?): Result<User> = suspendTransaction {
-        /**
-         *  check user account details' validity (e.g appropriate password strength)
-         */
-        UserService.verifyUserRegistration(user!!)
+    // 3️⃣ Add user, input as UserCreateDto, output as UserResponseDto
+    override suspend fun addUser(userDto: UserCreateDto): Result<UserResponseDto> = suspendTransaction {
+        UserService.verifyUserRegistration(userDto)
             .mapCatching {
                 val newUser = UserDAO.new {
-                    userName = user.userName!!
-                    userEmail = user.userEmail!!
-                    userPassword = user.userPassword!!
+                    userName = userDto.userName
+                    userEmail = userDto.userEmail
+                    userPassword = userDto.userPassword
                 }
-                daoToUserModel(newUser)
+                newUser.toResponseDto()
             }
     }
 
@@ -52,7 +51,7 @@ class PostgresUserRepository: UserRepository {
             }
     }
 
-    override suspend fun deleteUserByUserId(userId: Int?): Result<Boolean> = suspendTransaction {
+    override suspend fun deleteUserById(userId: Int?): Result<Boolean> = suspendTransaction {
         val userDeleted = UserTable.deleteWhere {
             UserTable.id eq userId!!
         }
@@ -63,5 +62,4 @@ class PostgresUserRepository: UserRepository {
             Result.success(true)
         }
     }
-
 }

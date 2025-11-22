@@ -6,7 +6,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-//  TODO: write HTTPS routing in this module
 //  docs: https://ktor.io/docs/server-integrate-database.html#switch-repo
 //  example: https://github.com/ktorio/ktor-documentation/blob/3.3.2/codeSnippets/snippets/tutorial-server-db-integration/src/main/kotlin/com/example/Serialization.kt
 
@@ -19,7 +18,7 @@ import io.ktor.server.routing.*
  *  - These handlers use repository only (validation is in UserService).
 
  * Endpoints:
- *  GET    /user/{id}         -> get user by user ID
+ *  GET    /user         -> get user by user ID
  *  POST   /user/register           -> create new user
  *  PUT    /user/{id}/password         -> update user password
  *  DELETE /user/{id}/delete  -> delete user by username
@@ -38,38 +37,35 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
                     call.respond(HttpStatusCode.NotFound, "User not found")
                     return@get
                 }
-
-                call.respond(HttpStatusCode.OK, "User retrieved successfully")
+                call.respond(HttpStatusCode.OK,
+                    UserRetrieveResponse("User retrieved successfully", user))
             }
 
             //  POST "/user/register"   ->  create new user
             post("/register") {
                 try {
-                    val user = call.receive<User>()
+                    val userDto = call.receive<UserCreateDto>()
+                    val addResult = userRepository.addUser(userDto)
+                    val user = addResult.getOrNull()
 
-                    userRepository.addUser(user)
-                        .onSuccess {
-                            call.respond(
-                                HttpStatusCode.Created,
-                                "User successfully registered"
-                            )
-                        }
-                        .onFailure { error ->
-                            call.respond(
-                                HttpStatusCode.BadRequest,
-                                "User registration failed"
-                            )
-                        }
+                    if (user != null) {
+                        call.respond(
+                            HttpStatusCode.Created,
+                            UserRetrieveResponse("User registered successfully", user)
+                        )
+                    }
+                    else {
+                        call.respond(HttpStatusCode.BadRequest, "User registration failed")
+                    }
                 } catch (e: Exception) {
                     call.respond(
-                        HttpStatusCode.InternalServerError,
-                        "Internal server error, registration failed"
+                        HttpStatusCode.InternalServerError, "Internal server error, registration failed"
                     )
                 }
             }
 
-            //  PUT "/user/password" - update user password
-            put("/{id}/password") {
+            //  PUT "/user/{id}" - update user password
+            put("/{id}") {
                 try {
                     val user = call.receive<User>()
                     val userId = call.parameters["id"]?.toIntOrNull()
@@ -98,7 +94,7 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
             //  DELETE "/user/{id}/delete" - delete user by username
             delete("/{id}/delete") {
                 val userId = call.parameters["id"]?.toIntOrNull()
-                userRepository.deleteUserByUserId(userId)
+                userRepository.deleteUserById(userId)
                     .onSuccess {
                         call.respond(
                             HttpStatusCode.NoContent,

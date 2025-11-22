@@ -1,5 +1,6 @@
 package org.example.project.db_query.user
 
+import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
@@ -10,6 +11,7 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
 import org.example.project.module
+import org.example.project.user.UserRetrieveResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +19,7 @@ class RetrieveUserTests {
 
     /**
      *  User exists (-> valid)
-     *  @result Get account without any errors and exceptions + returns OK status code
+     *  @result Get account respond without any errors and exceptions + returns OK status code
      */
     @Test
     fun userRetrieve_TestSuccess_1() = testApplication {
@@ -31,16 +33,23 @@ class RetrieveUserTests {
             }
         }
 
-        val response: HttpResponse = client.get("/user/user1") {
+        val response: HttpResponse = client.get("/user/1") {
             contentType(ContentType.Application.Json)
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("User retrieved successfully", response.bodyAsText())
+
+        val responseBody = response.body<UserRetrieveResponse>()
+
+        assertEquals("User retrieved successfully", responseBody.message)
+
+        val responseData = responseBody.data
+        assertEquals("user1", responseData.userName)
+        assertEquals("user1@gmail.com", responseData.userEmail)
     }
 
     /**
      *  User exists (-> valid)
-     *  @result Get account without any errors and exceptions + returns OK status code
+     *  @result Get account respond without any errors and exceptions + returns OK status code
      */
     @Test
     fun userRetrieve_TestSuccess_2() = testApplication {
@@ -54,11 +63,18 @@ class RetrieveUserTests {
             }
         }
 
-        val response: HttpResponse = client.get("/user/user2") {
+        val response: HttpResponse = client.get("/user/2") {
             contentType(ContentType.Application.Json)
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("User retrieved successfully", response.bodyAsText())
+
+        val responseBody = response.body<UserRetrieveResponse>()
+
+        assertEquals("User retrieved successfully", responseBody.message)
+
+        val responseData = responseBody.data
+        assertEquals("user2", responseData.userName)
+        assertEquals("user2@gmail.com", responseData.userEmail)
     }
 
     /**
@@ -77,7 +93,7 @@ class RetrieveUserTests {
             }
         }
 
-        val response: HttpResponse = client.get("/user/user3") {
+        val response: HttpResponse = client.get("/user/3") {
             contentType(ContentType.Application.Json)
         }
         assertEquals(HttpStatusCode.NotFound, response.status)
