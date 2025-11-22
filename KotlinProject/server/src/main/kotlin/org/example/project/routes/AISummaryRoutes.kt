@@ -6,14 +6,17 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.example.project.dto.ErrorResponse
 import org.example.project.dto.TripSummaryResponse
+import org.example.project.repository.TripRepository
 import org.example.project.service.AIServiceException
 import org.example.project.service.AISummaryService
-import org.example.project.trip.TripRepositoryMock
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-fun Application.configureAISummaryRoutes(aiSummaryService: AISummaryService) {
+fun Application.configureAISummaryRoutes(
+    aiSummaryService: AISummaryService,
+    tripRepository: TripRepository
+) {
     val logger = LoggerFactory.getLogger("AISummaryRoutes")
 
     routing {
@@ -33,7 +36,7 @@ fun Application.configureAISummaryRoutes(aiSummaryService: AISummaryService) {
                 }
 
                 try {
-                    val trip = TripRepositoryMock.getById(tripId)
+                    val trip = tripRepository.getById(tripId)
                     if (trip == null) {
                         call.respond(
                             HttpStatusCode.NotFound,

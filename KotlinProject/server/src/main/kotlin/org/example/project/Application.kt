@@ -13,6 +13,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
 import org.example.project.config.AIConfig
+import org.example.project.repository.TripRepositoryImpl
 import org.example.project.routes.configureAISummaryRoutes
 import org.example.project.service.AISummaryService
 import org.example.project.trip.tripRoutes
@@ -47,6 +48,8 @@ fun Application.module(){
     val aiConfig = AIConfig()
     val aiSummaryService = AISummaryService(aiConfig)
 
+    // Initialize trip repository (uses PostgreSQL when database is set up)
+    val tripRepository = TripRepositoryImpl()
 
     // register shutdown hook to close HTTP client
     monitor.subscribe(ApplicationStopped) {
@@ -58,7 +61,7 @@ fun Application.module(){
         get("/health") { call.respondText("Healthy") }
 
         tripRoutes()
-        configureAISummaryRoutes(aiSummaryService)
+        configureAISummaryRoutes(aiSummaryService, tripRepository)
             }
 
 
