@@ -33,16 +33,9 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:${libs.versions.ktor.get()}")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:${libs.versions.ktor.get()}")
-    
-    // AI Summary Dependencies
-    implementation("io.ktor:ktor-client-core-jvm:${libs.versions.ktor.get()}")
-    implementation("io.ktor:ktor-client-cio:${libs.versions.ktor.get()}")
-    implementation("io.ktor:ktor-client-content-negotiation-jvm:${libs.versions.ktor.get()}")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:${libs.versions.ktor.get()}")
-    implementation(libs.kotlinx.serialization.json)
-    
+    implementation(libs.ktor.server.cors)
+    implementation(libs.ktor.server.contentnegotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
 

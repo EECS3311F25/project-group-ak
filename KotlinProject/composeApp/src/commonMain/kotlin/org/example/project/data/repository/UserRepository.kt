@@ -4,10 +4,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.example.project.model.dataClasses.User
-import org.example.project.data.source.UserDataSource
+import org.example.project.data.remote.RemoteUserDataSource
 
 class UserRepository(
-    private val userDataSource: UserDataSource
+    private val remoteUserDataSource: RemoteUserDataSource
 ) {
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
@@ -16,18 +16,18 @@ class UserRepository(
     val allUsers: StateFlow<List<User>> = _allUsers.asStateFlow()
     
     suspend fun getCurrentUser(): User {
-        val user = userDataSource.getCurrentUser()
+        val user = remoteUserDataSource.getCurrentUser()
         _currentUser.value = user
         return user
     }
     
     suspend fun getAllUsers(): List<User> {
-        val users = userDataSource.getAllUsers()
+        val users = remoteUserDataSource.getAllUsers()
         _allUsers.value = users
         return users
     }
     
     suspend fun getUserById(id: String): User? {
-        return userDataSource.getUserById(id)
+        return remoteUserDataSource.getUserById(id)
     }
 }
