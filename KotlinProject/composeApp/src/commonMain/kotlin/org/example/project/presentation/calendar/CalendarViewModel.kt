@@ -197,13 +197,28 @@ class CalendarViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
+                println("=== CalendarViewModel.refreshTrip ===")
+                println("Loading trip with ID: $tripId")
                 val trip = tripRepository.getTripById(tripId)
                 if (trip != null) {
-                    _uiState.update { it.copy(currentTrip = trip, events = trip.events) }
+                    println("Loaded trip: ${trip.title}")
+                    println("Trip has ${trip.events.size} events:")
+                    trip.events.forEach { event ->
+                        println("  - ${event.title} (${event.duration.startDate} to ${event.duration.endDate})")
+                    }
+                    // 🔥 DON'T set events here - let selectDate() filter them
+                    _uiState.update { it.copy(currentTrip = trip) }
+                    // 🔥 Re-filter events for the currently selected date
+                    _uiState.value.selectedDate?.let { selectedDate ->
+                        loadEventsForDate(selectedDate)
+                    }
                 } else {
+                    println("ERROR: Trip not found with ID: $tripId")
                     _uiState.update { it.copy(error = "Trip not found") }
                 }
             } catch (e: Exception) {
+                println("ERROR refreshing trip: ${e.message}")
+                e.printStackTrace()
                 _uiState.update { it.copy(error = "Failed to refresh trip: ${e.message}") }
             } finally {
                 _uiState.update { it.copy(isLoading = false) }

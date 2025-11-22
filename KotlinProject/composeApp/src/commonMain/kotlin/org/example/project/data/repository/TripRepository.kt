@@ -25,7 +25,7 @@ class TripRepository(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
     
-    // Local cache for created/updated trips (until real backend persistence exists)
+    //Local cache for created/updated trips (until real backend persistence exists)
     private val localCreatedTrips = mutableMapOf<String, Trip>()
     
     // Load initial data
@@ -87,10 +87,8 @@ class TripRepository(
         
         return try {
             val updatedTrip = remoteDataSource.updateTrip(trip)
-            // 🔥 Update local cache if it exists there
-            if (localCreatedTrips.containsKey(updatedTrip.id)) {
-                localCreatedTrips[updatedTrip.id] = updatedTrip
-            }
+            // 🔥 ALWAYS update local cache (whether it was created locally or fetched from remote)
+            localCreatedTrips[updatedTrip.id] = updatedTrip
             refreshTrips()
             _isLoading.value = false
             Result.success(updatedTrip)
@@ -161,11 +159,9 @@ class TripRepository(
             }
             remoteDataSource.addEventToTrip(tripId, event)
             
-            // 🔥 Update local cache if trip exists there
-            if (localCreatedTrips.containsKey(tripId)) {
-                val updatedTrip = trip.copy(events = trip.events + event)
-                localCreatedTrips[tripId] = updatedTrip
-            }
+            // 🔥 ALWAYS update local cache with the modified trip
+            val updatedTrip = trip.copy(events = trip.events + event)
+            localCreatedTrips[tripId] = updatedTrip
             
             refreshTrips()
             _isLoading.value = false
@@ -183,12 +179,11 @@ class TripRepository(
         return try {
             remoteDataSource.deleteEventFromTrip(tripId, eventId)
             
-            // 🔥 Update local cache if trip exists there
-            if (localCreatedTrips.containsKey(tripId)) {
-                val trip = localCreatedTrips[tripId]!!
-                val updatedTrip = trip.copy(events = trip.events.filter { it.id != eventId })
-                localCreatedTrips[tripId] = updatedTrip
-            }
+            // 🔥 ALWAYS update local cache - get trip, update it, cache it
+            val trip = localCreatedTrips[tripId] ?: remoteDataSource.getTripById(tripId)
+                ?: throw IllegalArgumentException("Trip not found")
+            val updatedTrip = trip.copy(events = trip.events.filter { it.id != eventId })
+            localCreatedTrips[tripId] = updatedTrip
             
             refreshTrips()
             _isLoading.value = false
@@ -206,13 +201,12 @@ class TripRepository(
         return try {
             remoteDataSource.updateEventInTrip(tripId, eventId, updated)
             
-            // 🔥 Update local cache if trip exists there
-            if (localCreatedTrips.containsKey(tripId)) {
-                val trip = localCreatedTrips[tripId]!!
-                val updatedEvents = trip.events.map { if (it.id == eventId) updated else it }
-                val updatedTrip = trip.copy(events = updatedEvents)
-                localCreatedTrips[tripId] = updatedTrip
-            }
+            // 🔥 ALWAYS update local cache - get trip, update it, cache it
+            val trip = localCreatedTrips[tripId] ?: remoteDataSource.getTripById(tripId)
+                ?: throw IllegalArgumentException("Trip not found")
+            val updatedEvents = trip.events.map { if (it.id == eventId) updated else it }
+            val updatedTrip = trip.copy(events = updatedEvents)
+            localCreatedTrips[tripId] = updatedTrip
             
             refreshTrips()
             _isLoading.value = false
