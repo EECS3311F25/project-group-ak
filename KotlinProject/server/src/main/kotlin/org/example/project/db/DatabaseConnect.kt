@@ -1,6 +1,7 @@
 package org.example.project.db
 
 import io.ktor.server.application.*
+import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.v1.jdbc.Database
 
 

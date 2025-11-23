@@ -1,21 +1,26 @@
 package org.example.project.db_query.trip
 
+import Duration
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
+import kotlinx.datetime.LocalTime
 import org.example.project.module
-import org.example.project.user.User
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+import org.example.project.trip.Trip
+import org.example.project.trip.TripCreateDto
+import org.example.project.trip.TripRetrieveResponse
 
 class CreateTripTests {
     /**
@@ -23,7 +28,7 @@ class CreateTripTests {
      *  @result Trip associated with account will be created without any errors and exceptions + returns Created status code
      */
     @Test
-    fun userCreate_TestSuccess_1() = testApplication {
+    fun tripCreate_TestSuccess_1() = testApplication {
         application {
             module()
         }
@@ -34,13 +39,35 @@ class CreateTripTests {
             }
         }
 
-        val response: HttpResponse = client.post("/user/register") {
+        val response: HttpResponse = client.post("/user/1/trip") {
             contentType(ContentType.Application.Json)
-            setBody(User("user1", "user1@gmail.com", "password1"))
+            setBody(TripCreateDto(
+                    "Trip 1",
+                    "Trip Description 1",
+                    "Trip Location 1",
+                    Duration(
+                        startDate = LocalDate(2026, Month.FEBRUARY, 21),
+                        startTime = LocalTime(hour = 8, minute = 30, second = 15),
+                        endDate = LocalDate(2026, Month.FEBRUARY, 28),
+                        endTime = LocalTime(hour = 8, minute = 30, second = 15)),
+                    1
+                )
+            )
         }
-        println(response.bodyAsText())
-
         assertEquals(HttpStatusCode.Created, response.status)
-        assertEquals("User successfully registered", response.bodyAsText())
+
+        val responseBody = response.body<TripRetrieveResponse>()
+        assertEquals("Trip created successfully", responseBody.message)
+
+        val responseData = responseBody.data
+        assertEquals("Trip 1", responseData.tripTitle)
+        assertEquals("Trip Description 1", responseData.tripDescription)
+        assertEquals("Trip Location 1", responseData.tripLocation)
+        assertEquals(Duration(
+            startDate = LocalDate(2026, Month.FEBRUARY, 21),
+            startTime = LocalTime(hour = 8, minute = 30, second = 15),
+            endDate = LocalDate(2026, Month.FEBRUARY, 28),
+            endTime = LocalTime(hour = 8, minute = 30, second = 15)),
+        responseData.tripDuration)
     }
 }

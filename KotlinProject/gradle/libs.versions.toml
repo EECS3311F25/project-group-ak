@@ -13,6 +13,8 @@ composeHotReload = "1.0.0-rc03"
 composeMultiplatform = "1.9.3"
 decompose = "3.4.0"
 flywayCore = "11.17.0"
+flywayCoreVersion = "10.15.0"
+flywaydbFlywayCore = "10.10.0"
 junit = "4.13.2"
 kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
@@ -29,8 +31,11 @@ material3 = "1.4.0"
 
 exposed = "1.0.0-rc-3"
 h2 = "2.4.240"
+postgresqlVersion = "42.7.3"
 
 [libraries]
+flyway-core-v10100 = { module = "org.flywaydb:flyway-core", version.ref = "flywaydbFlywayCore" }
+flyway-core-v10150 = { module = "org.flywaydb:flyway-core", version.ref = "flywayCoreVersion" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -87,6 +92,7 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+flyway = { id = "org.flywaydb.flyway", version = "11.17.1" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
