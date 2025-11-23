@@ -18,9 +18,3 @@ data class UserRetrieveResponse(
     val message: String,
     val data: UserResponseDto
 )
-
-fun UserCreateDto.toDao(): UserDAO = UserDAO.new {
-    userName = this@toDao.userName
-    userEmail = this@toDao.userEmail
-    userPassword = this@toDao.userPassword
-}

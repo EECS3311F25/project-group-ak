@@ -14,6 +14,7 @@ import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 
 import org.example.project.user.UserDAO
 import org.example.project.user.UserTable
+import kotlin.Int
 
 
 /**
@@ -48,9 +49,9 @@ object TripTable : IntIdTable("trips") {
 class TripDAO(tripId: EntityID<Int>) : IntEntity(tripId) {
     companion object : IntEntityClass<TripDAO>(TripTable)
 
-    var tripTitle by TripTable.tripTitle
-    var tripDescription by TripTable.tripDescription
-    var tripLocation by TripTable.tripLocation
+    var tripTitle: String by TripTable.tripTitle
+    var tripDescription: String by TripTable.tripDescription
+    var tripLocation: String by TripTable.tripLocation
     var stringTripDuration by TripTable.tripDuration
     var tripDuration: Duration
         get() = Json.decodeFromString(stringTripDuration)
@@ -63,6 +64,17 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
     withContext(Dispatchers.IO) {
         suspendTransaction(statement = block)
     }
+
+//  TODO: implement Location data type
+//  TODO: implement Location type's logic + interaction w/ app's map view
+fun TripDAO.toResponseDto() = TripResponseDto(
+    id.value,
+    tripTitle,
+    tripDescription,
+    tripLocation,
+    tripDuration,
+    userId.id.value
+)
 
 fun daoToTripModel(dao: TripDAO) = Trip(
     dao.tripTitle,

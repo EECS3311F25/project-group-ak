@@ -41,7 +41,6 @@ class PostgresUserRepository: UserRepository {
     }
 
     override suspend fun updateUserPassword(userId: Int?, newPassword: String?): Result<Boolean> = suspendTransaction {
-
         UserService.verifyUserPassword(newPassword!!)
             .mapCatching {
                 val userToUpdate = UserDAO.findSingleByAndUpdate(UserTable.id eq userId!!) {

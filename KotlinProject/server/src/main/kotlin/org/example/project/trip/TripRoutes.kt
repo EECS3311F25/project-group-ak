@@ -3,8 +3,10 @@ package org.example.project.trip
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
+import io.ktor.server.response.respond
 import io.ktor.server.routing.*
+import org.example.project.user.UserCreateDto
+import org.example.project.user.UserRetrieveResponse
 
 /**
  * Trip HTTP routes.
@@ -42,7 +44,8 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                 //  Repository currently ignores userId in DB layer,
                 //  but route design is already user-scoped for future extension.
                 val trips = tripRepository.allTripsByUserId(userId)
-                call.respond(HttpStatusCode.OK, trips)
+                call.respond(HttpStatusCode.OK,
+                    TripListResponse("Trips retrieved for user $userId", trips))
             }
 
             //  GET /user/{userId}/trip/{id}  -> single trip by id
@@ -63,95 +66,104 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                 if (trip == null) {
                     call.respond(HttpStatusCode.NotFound, "Trip not found")
                 } else {
-                    call.respond(HttpStatusCode.OK, trip)
+                    call.respond(
+                        HttpStatusCode.OK,
+                        TripRetrieveResponse("Trip retrieved successfully", trip)
+                    )
                 }
             }
 
-            // POST /user/{userId}/trip  -> create new trip for user of ID user_id
+            //  POST /user/{userId}/trip  -> create new trip for user of ID user_id
             post {
                 val userId = call.parameters["userId"]?.toIntOrNull()
                 if (userId == null) {
                     call.respond(HttpStatusCode.BadRequest, "Missing user ID")
                     return@post
                 }
-                val trip = try {
-                    call.receive<Trip>()
+                try {
+                    //  Validate Trip creation DTO
+                    val tripDto = call.receive<TripCreateDto>()
+
+                    val addResult = tripRepository.addTrip(userId, tripDto)
+                    val trip = addResult.getOrNull()
+
+                    if (trip != null) {
+                        call.respond(
+                            HttpStatusCode.Created,
+                            TripRetrieveResponse("Trip created successfully", trip)
+                        )
+                    } else {
+                        println("Trip creation failed, trip is null")
+                        call.respond(HttpStatusCode.BadRequest, "Trip creation failed")
+                    }
+
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
                     return@post
                 }
-
-                //  Validate via service (no DB access here)
-                TripService.validateTripForCreate(trip)
-                    .onFailure { error ->
-                        call.respond(
-                            HttpStatusCode.BadRequest,
-                            error.message ?: "Trip validation failed"
-                        )
-                        return@post
-                    }
-
-                val created = tripRepository.addTrip(userId, trip)
-                call.respond(HttpStatusCode.Created, created)
             }
 
             // PUT /user/{userId}/trip/{id}  -> update existing trip
             put("/{id}") {
-                val userId = call.parameters["userId"]?.toIntOrNull()
-                if (userId == null) {
-                    call.respond(HttpStatusCode.BadRequest, "Missing user ID")
-                    return@put
-                }
-                val trip = try {
-                    call.receive<Trip>()
-                } catch (e: Exception) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
-                    return@put
-                }
-                val tripId = call.parameters["id"]?.toIntOrNull()
-                if (tripId == null) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid or missing trip id")
-                    return@put
-                }
-
-                //  Validate via service
-                TripService.validateTripForUpdate(trip)
-                    .onFailure { error ->
-                        call.respond(
-                            HttpStatusCode.BadRequest,
-                            error.message ?: "Trip validation failed"
-                        )
+                try {
+                    val userId = call.parameters["userId"]?.toIntOrNull()
+                    if (userId == null) {
+                        call.respond(HttpStatusCode.BadRequest, "Missing user ID")
                         return@put
                     }
+                    val tripId = call.parameters["id"]?.toIntOrNull()
+                    if (tripId == null) {
+                        call.respond(HttpStatusCode.BadRequest, "Invalid or missing trip ID")
+                        return@put
+                    }
+                    val trip = call.receive<Trip>()
+                    TripService.validateTripForUpdate(trip)
+                        .onFailure { error ->
+                            call.respond(
+                                HttpStatusCode.BadRequest,
+                                error.message ?: "Trip validation failed"
+                            )
+                            return@put
+                        }
 
-                val updated = tripRepository.updateTrip(userId, tripId, trip)
-                if (updated) {
-                    // NOTE: still no DB-level user ownership check
-                    call.respond(HttpStatusCode.OK, "Trip updated successfully")
-                } else {
-                    call.respond(HttpStatusCode.NotFound, "Trip not found")
+                    tripRepository.updateTrip(userId, tripId, trip)
+                        .onSuccess {
+                            call.respond(HttpStatusCode.OK, "Trip updated successfully")
+                        }
+                        .onFailure {
+                            call.respond(HttpStatusCode.NotFound, "Trip not found")
+                        }
+                } catch(e: Exception) {
+                call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
+                return@put
                 }
             }
 
-            // DELETE /user/{userName}/trip/{id}  -> delete trip
+            //  DELETE /user/{userName}/trip/{id}  -> delete trip
             delete("/{id}") {
                 val userId = call.parameters["userId"]?.toIntOrNull()
                 if (userId == null) {
                     call.respond(HttpStatusCode.BadRequest, "Missing user ID")
                     return@delete
                 }
-                val tripId = call.parameters["tripId"]?.toIntOrNull()
+                val tripId = call.parameters["id"]?.toIntOrNull()
                 if (tripId == null) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid or missing trip id")
                     return@delete
                 }
-
-                val deleted = tripRepository.deleteTrip(userId, tripId)
-                if (deleted) {
-                    call.respond(HttpStatusCode.NoContent)
-                } else {
-                    call.respond(HttpStatusCode.NotFound, "Trip not found")
-                }
+                tripRepository.deleteTrip(userId, tripId)
+                    .onSuccess {
+                        call.respond(
+                            HttpStatusCode.NoContent,
+                            "Trip deleted successfully"
+                        )
+                    }
+                    .onFailure { error ->
+                        call.respond(
+                            HttpStatusCode.NotFound,
+                            "Trip does not exist"
+                        )
+                    }
             }
         }
     }

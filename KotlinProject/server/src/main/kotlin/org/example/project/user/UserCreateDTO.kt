@@ -13,3 +13,9 @@ data class UserCreateDto(
     @SerialName("user_password")
     val userPassword: String
 )
+
+fun UserCreateDto.toDao(): UserDAO = UserDAO.new {
+    userName = this@toDao.userName
+    userEmail = this@toDao.userEmail
+    userPassword = this@toDao.userPassword
+}
