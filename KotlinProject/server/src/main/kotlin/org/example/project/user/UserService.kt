@@ -12,7 +12,7 @@ object UserService {
     /**
         Validating an account creation
      */
-    fun verifyUserRegistration(userDto: UserCreateDto): Result<Unit> {
+    fun verifyUserRegistration(userDto: UserCreateRequest): Result<Unit> {
         if (userDto.userName.isBlank()) {
             return Result.failure(IllegalArgumentException("Username cannot be empty"))
         }

@@ -14,11 +14,11 @@ import java.util.NoSuchElementException
 
 class PostgresUserRepository: UserRepository {
 
-    override suspend fun allUsers(): List<UserResponseDto> = suspendTransaction {
+    override suspend fun allUsers(): List<UserResponse> = suspendTransaction {
         UserDAO.all().map { it.toResponseDto() }
     }
 
-    override suspend fun getUserById(userId: Int?): UserResponseDto? = suspendTransaction {
+    override suspend fun getUserById(userId: Int?): UserResponse? = suspendTransaction {
         userId ?: return@suspendTransaction null
 
         UserDAO.find { UserTable.id eq userId }
@@ -28,7 +28,7 @@ class PostgresUserRepository: UserRepository {
     }
 
     // 3️⃣ Add user, input as UserCreateDto, output as UserResponseDto
-    override suspend fun addUser(userDto: UserCreateDto): Result<UserResponseDto> = suspendTransaction {
+    override suspend fun addUser(userDto: UserCreateRequest): Result<UserResponse> = suspendTransaction {
         UserService.verifyUserRegistration(userDto)
             .mapCatching {
                 val newUser = UserDAO.new {

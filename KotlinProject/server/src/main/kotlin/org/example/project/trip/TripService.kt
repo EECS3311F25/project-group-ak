@@ -21,7 +21,7 @@ object TripService {
     /**
      * Validate trip data before creating a new Trip.
      */
-    fun validateTripForCreate(tripDto: TripCreateDto): Result<Unit> {
+    fun validateTripForCreate(tripDto: TripCreateRequest): Result<Unit> {
         if (tripDto.tripTitle.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Trip title cannot be empty"))
         }

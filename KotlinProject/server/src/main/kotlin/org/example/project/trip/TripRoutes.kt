@@ -5,8 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
-import org.example.project.user.UserCreateDto
-import org.example.project.user.UserRetrieveResponse
+
 
 /**
  * Trip HTTP routes.
@@ -43,26 +42,24 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
 
                 //  Repository currently ignores userId in DB layer,
                 //  but route design is already user-scoped for future extension.
-                val trips = tripRepository.allTripsByUserId(userId)
+                val trips = tripRepository.allTripsByUser(userId)
                 call.respond(HttpStatusCode.OK,
                     TripListResponse("Trips retrieved for user $userId", trips))
             }
 
             //  GET /user/{userId}/trip/{id}  -> single trip by id
             get("/{id}") {
-                // TODO: depending on frontend interaction, decide whether getTripById should require associated User ID
-//                val userId = call.parameters["userId"]?.toIntOrNull()
-//                if (userId == null) {
-//                    call.respond(HttpStatusCode.BadRequest, "Missing user ID")
-//                    return@get
-//                }
+                val userId = call.parameters["userId"]?.toIntOrNull()
+                if (userId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing user ID")
+                    return@get
+                }
                 val tripId = call.parameters["id"]?.toIntOrNull()
                 if (tripId == null) {
                     call.respond(HttpStatusCode.BadRequest, "Missing trip id")
                     return@get
                 }
-
-                val trip = tripRepository.getTripById(tripId)
+                val trip = tripRepository.getTrip(tripId)
                 if (trip == null) {
                     call.respond(HttpStatusCode.NotFound, "Trip not found")
                 } else {
@@ -81,9 +78,7 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                     return@post
                 }
                 try {
-                    //  Validate Trip creation DTO
-                    val tripDto = call.receive<TripCreateDto>()
-
+                    val tripDto = call.receive<TripCreateRequest>()
                     val addResult = tripRepository.addTrip(userId, tripDto)
                     val trip = addResult.getOrNull()
 
@@ -96,7 +91,6 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                         println("Trip creation failed, trip is null")
                         call.respond(HttpStatusCode.BadRequest, "Trip creation failed")
                     }
-
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
                     return@post
@@ -113,7 +107,7 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                     }
                     val tripId = call.parameters["id"]?.toIntOrNull()
                     if (tripId == null) {
-                        call.respond(HttpStatusCode.BadRequest, "Invalid or missing trip ID")
+                        call.respond(HttpStatusCode.BadRequest, "Missing trip ID")
                         return@put
                     }
                     val trip = call.receive<Trip>()
@@ -125,8 +119,7 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                             )
                             return@put
                         }
-
-                    tripRepository.updateTrip(userId, tripId, trip)
+                    tripRepository.updateTrip(tripId, trip)
                         .onSuccess {
                             call.respond(HttpStatusCode.OK, "Trip updated successfully")
                         }
@@ -134,12 +127,12 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                             call.respond(HttpStatusCode.NotFound, "Trip not found")
                         }
                 } catch(e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
-                return@put
+                    call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
+                    return@put
                 }
             }
 
-            //  DELETE /user/{userName}/trip/{id}  -> delete trip
+            //  DELETE /user/{userId}/trip/{id}  -> delete trip
             delete("/{id}") {
                 val userId = call.parameters["userId"]?.toIntOrNull()
                 if (userId == null) {
@@ -151,7 +144,7 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                     call.respond(HttpStatusCode.BadRequest, "Invalid or missing trip id")
                     return@delete
                 }
-                tripRepository.deleteTrip(userId, tripId)
+                tripRepository.deleteTrip(tripId)
                     .onSuccess {
                         call.respond(
                             HttpStatusCode.NoContent,

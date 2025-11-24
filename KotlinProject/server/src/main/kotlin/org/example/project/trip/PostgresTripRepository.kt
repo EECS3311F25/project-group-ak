@@ -1,10 +1,7 @@
 package org.example.project.trip
 
 import org.example.project.user.UserDAO
-import org.example.project.user.UserService
-import org.example.project.user.UserTable
 import org.example.project.user.suspendTransaction
-import org.example.project.user.toResponseDto
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
@@ -13,23 +10,23 @@ import java.util.NoSuchElementException
 
 class PostgresTripRepository: TripRepository {
 
-    override suspend fun allTripsByUserId(userId: Int?): List<TripResponseDto> = suspendTransaction {
+    override suspend fun allTripsByUser(userId: Int?): List<TripResponse> = suspendTransaction {
         TripDAO
             .find { TripTable.userId eq userId }
             .map { it.toResponseDto() }
     }
 
     //  TODO: depending on frontend interaction, decide whether getTripById should require associated User ID
-    override suspend fun getTripById(tripId: Int?): TripResponseDto? = suspendTransaction {
+    override suspend fun getTrip(tripId: Int?): TripResponse? = suspendTransaction {
         tripId ?: return@suspendTransaction null
         TripDAO
-            .find { (TripTable.id eq tripId) }
+            .find { TripTable.id eq tripId }
             .limit(1)
             .map { it.toResponseDto() }
             .firstOrNull()
     }
 
-    override suspend fun addTrip(userId: Int?, tripDto: TripCreateDto): Result<TripResponseDto> = suspendTransaction {
+    override suspend fun addTrip(userId: Int?, tripDto: TripCreateRequest): Result<TripResponse> = suspendTransaction {
         TripService.validateTripForCreate(tripDto)
             .mapCatching {
                 val newTrip = TripDAO.new {
@@ -43,11 +40,11 @@ class PostgresTripRepository: TripRepository {
             }
     }
 
-    override suspend fun updateTrip(userId: Int?, tripId: Int?, trip: Trip): Result<Boolean> = suspendTransaction {
+    override suspend fun updateTrip(tripId: Int?, trip: Trip): Result<Boolean> = suspendTransaction {
         TripService.validateTripForUpdate(trip)
             .mapCatching {
                 val tripToUpdate = TripDAO
-                    .findSingleByAndUpdate((TripTable.id eq tripId!!) and (TripTable.userId eq userId!!)) {
+                    .findSingleByAndUpdate(TripTable.id eq tripId!!) {
                         it.tripTitle = trip.tripTitle!!
                         it.tripDescription = trip.tripDescription!!
                         it.tripLocation = trip.tripLocation!!
@@ -57,10 +54,8 @@ class PostgresTripRepository: TripRepository {
             }
     }
 
-    override suspend fun deleteTrip(userId: Int?, tripId: Int): Result<Boolean> = suspendTransaction {
-        val tripDeleted = TripTable.deleteWhere {
-            (TripTable.id eq tripId) and (TripTable.userId eq userId)
-        }
+    override suspend fun deleteTrip(tripId: Int): Result<Boolean> = suspendTransaction {
+        val tripDeleted = TripTable.deleteWhere { (TripTable.id eq tripId) }
         if (tripDeleted != 1) {
             Result.failure<Boolean>(NoSuchElementException("Trip not found)"))
         } else {

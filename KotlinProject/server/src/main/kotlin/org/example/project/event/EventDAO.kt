@@ -4,12 +4,8 @@ import Duration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import org.example.project.trip.Trip
 import org.example.project.trip.TripDAO
-import org.example.project.trip.TripResponseDto
 import org.example.project.trip.TripTable
-import org.example.project.user.UserDAO
-import org.example.project.user.UserTable
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.Transaction
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
@@ -67,7 +63,7 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
         suspendTransaction(statement = block)
     }
 
-fun EventDAO.toResponseDto() = EventResponseDto(
+fun EventDAO.toResponseDto() = EventResponse(
     id.value,
     eventTitle,
     eventDescription,

@@ -47,7 +47,7 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
         suspendTransaction(statement = block)
     }
 
-fun UserDAO.toResponseDto() = UserResponseDto(id.value, userName, userEmail)
+fun UserDAO.toResponseDto() = UserResponse(id.value, userName, userEmail)
 
 fun daoToUserModel(dao: UserDAO) = User(
     dao.userName,

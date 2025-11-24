@@ -44,7 +44,7 @@ fun Application.configureUserSerialization(userRepository: PostgresUserRepositor
             //  POST "/user/register"   ->  create new user
             post("/register") {
                 try {
-                    val userDto = call.receive<UserCreateDto>()
+                    val userDto = call.receive<UserCreateRequest>()
                     val addResult = userRepository.addUser(userDto)
                     val user = addResult.getOrNull()
 

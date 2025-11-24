@@ -67,7 +67,7 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
 
 //  TODO: implement Location data type
 //  TODO: implement Location type's logic + interaction w/ app's map view
-fun TripDAO.toResponseDto() = TripResponseDto(
+fun TripDAO.toResponseDto() = TripResponse(
     id.value,
     tripTitle,
     tripDescription,

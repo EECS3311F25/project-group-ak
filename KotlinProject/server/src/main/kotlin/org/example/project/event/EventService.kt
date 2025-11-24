@@ -1,7 +1,5 @@
 package org.example.project.event
 
-import org.example.project.trip.Trip
-import org.example.project.trip.TripCreateDto
 
 /**
  * Service layer for Event business logic.
@@ -20,7 +18,7 @@ object EventService {
     /**
      * Validate event data before creating a new Event.
      */
-    fun validateEventForCreate(eventDto: EventCreateDto): Result<Unit> {
+    fun validateEventForCreate(eventDto: EventCreateRequest): Result<Unit> {
         if (eventDto.eventTitle.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
         }

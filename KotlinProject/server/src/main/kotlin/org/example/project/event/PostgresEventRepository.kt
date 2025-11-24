@@ -1,13 +1,7 @@
 package org.example.project.event
 
-import org.example.project.trip.Trip
 import org.example.project.trip.TripDAO
-import org.example.project.trip.TripResponseDto
-import org.example.project.trip.TripService
-import org.example.project.trip.TripTable
-import org.example.project.trip.toResponseDto
 import org.example.project.user.suspendTransaction
-import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import java.util.NoSuchElementException
@@ -15,13 +9,13 @@ import java.util.NoSuchElementException
 
 class PostgresEventRepository: EventRepository {
 
-    override suspend fun allEventsByTripId(tripId: Int?): List<EventResponseDto> = suspendTransaction {
+    override suspend fun allEventsByTrip(tripId: Int?): List<EventResponse> = suspendTransaction {
         EventDAO
             .find { EventTable.tripId eq tripId }
             .map { it.toResponseDto() }
     }
 
-    override suspend fun getEventById(eventId: Int?): EventResponseDto? = suspendTransaction {
+    override suspend fun getEvent(eventId: Int?): EventResponse? = suspendTransaction {
         eventId ?: return@suspendTransaction null
         EventDAO
             .find { (EventTable.id eq eventId) }
@@ -30,7 +24,7 @@ class PostgresEventRepository: EventRepository {
             .firstOrNull()
     }
 
-    override suspend fun addEvent(tripId: Int?, eventDto: EventCreateDto): Result<EventResponseDto> = suspendTransaction {
+    override suspend fun addEvent(tripId: Int?, eventDto: EventCreateRequest): Result<EventResponse> = suspendTransaction {
         EventService.validateEventForCreate(eventDto)
             .mapCatching {
                 val newEvent = EventDAO.new {
@@ -44,11 +38,11 @@ class PostgresEventRepository: EventRepository {
             }
     }
 
-    override suspend fun updateEvent(tripId: Int?, eventId: Int?, event: Event): Result<Boolean> = suspendTransaction {
+    override suspend fun updateEvent(eventId: Int?, event: Event): Result<Boolean> = suspendTransaction {
         EventService.validateEventForUpdate(event)
             .mapCatching {
                 val eventToUpdate = EventDAO
-                    .findSingleByAndUpdate((EventTable.id eq eventId!!) and (EventTable.tripId eq tripId!!)) {
+                    .findSingleByAndUpdate(EventTable.id eq eventId!!) {
                         it.eventTitle = event.eventTitle
                         it.eventDescription = event.eventDescription
                         it.eventLocation = event.eventLocation
@@ -58,10 +52,8 @@ class PostgresEventRepository: EventRepository {
             }
     }
 
-    override suspend fun deleteEvent(tripId: Int?, eventId: Int): Result<Boolean> = suspendTransaction {
-        val eventsDeleted = EventTable.deleteWhere {
-            (EventTable.id eq eventId) and (EventTable.tripId eq tripId)
-        }
+    override suspend fun deleteEvent(eventId: Int): Result<Boolean> = suspendTransaction {
+        val eventsDeleted = EventTable.deleteWhere { EventTable.id eq eventId }
         if (eventsDeleted != 1) {
             Result.failure<Boolean>(NoSuchElementException("Event not found)"))
         } else {
