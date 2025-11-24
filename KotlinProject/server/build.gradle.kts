@@ -36,6 +36,10 @@ dependencies {
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.contentnegotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+    // Ktor Client for AI service calls
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.contentnegotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
 

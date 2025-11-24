@@ -2,13 +2,16 @@ package org.example.project.routes
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.example.project.dto.ErrorResponse
+import org.example.project.dto.TripSummaryRequest
 import org.example.project.dto.TripSummaryResponse
 import org.example.project.repository.TripRepository
 import org.example.project.service.AIServiceException
 import org.example.project.service.AISummaryService
+import org.example.project.trip.Trip
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -36,7 +39,16 @@ fun Application.configureAISummaryRoutes(
                 }
 
                 try {
-                    val trip = tripRepository.getById(tripId)
+                    // Step 1: Try to get trip from request body (if provided - for localCreatedTrips)
+                    val request = try {
+                        call.receive<TripSummaryRequest>()
+                    } catch (e: Exception) {
+                        null // Request body not provided or invalid, will lookup by ID
+                    }
+                    
+                    // Step 2: Use trip from request body if provided, otherwise lookup from repository
+                    val trip: Trip? = request?.trip ?: tripRepository.getById(tripId)
+                    
                     if (trip == null) {
                         call.respond(
                             HttpStatusCode.NotFound,

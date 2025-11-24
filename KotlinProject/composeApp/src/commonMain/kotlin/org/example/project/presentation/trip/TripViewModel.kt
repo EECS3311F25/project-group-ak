@@ -13,6 +13,7 @@ import org.example.project.model.dataClasses.Event
 // imports for AI Summary Work
 import org.example.project.data.api.HttpClientFactory
 import org.example.project.data.api.TripApiService
+import org.example.project.data.api.TripConverter
 
 
 class TripViewModel(
@@ -40,15 +41,28 @@ class TripViewModel(
             val currentTrip = _trip.value ?: return@launch
             _isGeneratingSummary.value = true
             _summaryError.value = null
+            _aiSummary.value = null // Clear old summary when regenerating
+            
+            // Step 1: Check if trip is in localCreatedTrips (newly created trip)
+            val localTrip = tripRepository.getLocalCreatedTrip(currentTrip.id)
+            val tripData = if (localTrip != null) {
+                // Convert frontend Trip to backend Trip format
+                org.example.project.data.api.TripConverter.toBackendTrip(localTrip)
+            } else {
+                null // Trip exists in backend, let backend look it up
+            }
             
             val apiService = TripApiService(HttpClientFactory.create())
-            val result = apiService.generateTripSummary(currentTrip.id)
+            val result = apiService.generateTripSummary(currentTrip.id, tripData)
             
             _isGeneratingSummary.value = false
             
             result.onSuccess { response ->
+                println("✅ AI Summary generated successfully: ${response.summary.take(50)}...")
                 _aiSummary.value = response.summary
+                println("✅ _aiSummary.value is now: ${_aiSummary.value?.take(50)}...")
             }.onFailure { error ->
+                println("❌ AI Summary failed: ${error.message}")
                 _summaryError.value = error.message ?: "Failed to generate summary"
             }
         }

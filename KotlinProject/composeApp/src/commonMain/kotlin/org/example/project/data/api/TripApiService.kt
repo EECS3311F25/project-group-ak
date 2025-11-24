@@ -16,6 +16,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import org.example.project.data.api.dto.TripSummaryRequest
 import org.example.project.data.api.dto.TripSummaryResponse
 import org.example.project.data.api.dto.ErrorResponse
 
@@ -25,10 +26,12 @@ class TripApiService(
     private val baseUrl : String = "http://localhost:8080"
 ) {
     // suspend function can pause the function without breaking the threads
-    suspend fun generateTripSummary(tripId:String) : Result<TripSummaryResponse>{
+    suspend fun generateTripSummary(tripId: String, tripData: org.example.project.data.api.dto.BackendTrip? = null) : Result<TripSummaryResponse>{
         return try {
+            val request = TripSummaryRequest(tripId = tripId, trip = tripData)
             val httpResponse: HttpResponse = client.post("$baseUrl/api/trips/$tripId/summary"){
                 contentType(ContentType.Application.Json)
+                setBody(request)
             }
             
             if (httpResponse.status == HttpStatusCode.OK) {

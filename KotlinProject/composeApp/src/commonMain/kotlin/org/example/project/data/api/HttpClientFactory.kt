@@ -15,25 +15,14 @@ kotlinx.serialization - it's tell Ktor that developer wants to use Kotlin's defa
 
 
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
+import org.example.project.data.remote.HttpClientProvider
 
-
-object  HttpClientFactory{
+object HttpClientFactory {
     private val baseUrl = "http://localhost:8080" // TODO: Move to config
 
-    fun create() : HttpClient {
-        return HttpClient(CIO){
-            install(ContentNegotiation){
-                json(Json{
-                    ignoreUnknownKeys= true
-                    isLenient= true
-                    prettyPrint=false
-                })
-            }
-        }
+    fun create(): HttpClient {
+        // Use HttpClientProvider which handles platform-specific engines (Js for web, OkHttp for JVM, etc.)
+        return HttpClientProvider.client
     }
 
 

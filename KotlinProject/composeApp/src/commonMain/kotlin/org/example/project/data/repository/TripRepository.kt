@@ -62,6 +62,14 @@ class TripRepository(
         }
     }
     
+    /**
+     * Check if a trip is in localCreatedTrips (temporary cache for new trips)
+     * Returns the trip if found, null otherwise
+     */
+    fun getLocalCreatedTrip(id: String): Trip? {
+        return localCreatedTrips[id]
+    }
+    
     suspend fun createTrip(trip: Trip): Result<Trip> {
         _isLoading.value = true
         _error.value = null
