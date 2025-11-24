@@ -1,6 +1,5 @@
 --  Database schema for Navi travel app
 
--- Drop V2 tables, migrate -> V3
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS trips;
 DROP TABLE IF EXISTS users;
@@ -18,7 +17,7 @@ CREATE TABLE IF NOT EXISTS trips (
     id SERIAL PRIMARY KEY,
     trip_title VARCHAR(100) NOT NULL,
     trip_location VARCHAR(255) NOT NULL,
-    trip_duration VARCHAR(400) NOT NULL,
+    trip_duration VARCHAR(200) NOT NULL,
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -29,7 +28,7 @@ CREATE TABLE IF NOT EXISTS events (
     event_title VARCHAR(100) NOT NULL,
     event_description VARCHAR(500),
     event_location VARCHAR(255) NOT NULL,
-    trip_duration VARCHAR(400) NOT NULL,
+    trip_duration VARCHAR(200) NOT NULL,
     trip_id INT NOT NULL,
     FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
 );

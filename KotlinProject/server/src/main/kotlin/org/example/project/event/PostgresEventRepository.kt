@@ -1,49 +1,71 @@
 package org.example.project.event
 
+import org.example.project.trip.Trip
+import org.example.project.trip.TripDAO
+import org.example.project.trip.TripResponseDto
+import org.example.project.trip.TripService
+import org.example.project.trip.TripTable
+import org.example.project.trip.toResponseDto
+import org.example.project.user.suspendTransaction
+import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import java.util.NoSuchElementException
 
 
 class PostgresEventRepository: EventRepository {
 
-    override suspend fun allEventsByTripId(tripId: Int?): List<Event> = suspendTransaction {
-        EventDAO.all().map(::daoToEventModel)
+    override suspend fun allEventsByTripId(tripId: Int?): List<EventResponseDto> = suspendTransaction {
+        EventDAO
+            .find { EventTable.tripId eq tripId }
+            .map { it.toResponseDto() }
     }
 
-    override suspend fun getEventById(eventId: Int?): Event? = suspendTransaction {
+    override suspend fun getEventById(eventId: Int?): EventResponseDto? = suspendTransaction {
+        eventId ?: return@suspendTransaction null
         EventDAO
             .find { (EventTable.id eq eventId) }
             .limit(1)
-            .map(::daoToEventModel)
+            .map { it.toResponseDto() }
             .firstOrNull()
     }
 
-    override suspend fun addEvent(event: Event): Event = suspendTransaction {
-        val newEvent = EventDAO.new {
-            eventTitle = event.eventTitle
-            eventDescription = event.eventDescription
-            eventLocation = event.eventLocation
-            eventStartDate = event.eventStartDate
-            eventEndDate = event.eventEndDate
-        }
-        daoToEventModel(newEvent)
+    override suspend fun addEvent(tripId: Int?, eventDto: EventCreateDto): Result<EventResponseDto> = suspendTransaction {
+        EventService.validateEventForCreate(eventDto)
+            .mapCatching {
+                val newEvent = EventDAO.new {
+                    eventTitle = eventDto.eventTitle!!
+                    eventDescription = eventDto.eventDescription!!
+                    eventLocation = eventDto.eventLocation!!
+                    eventDuration = eventDto.eventDuration
+                    this.tripId = TripDAO[tripId!!]
+                }
+                newEvent.toResponseDto()
+            }
     }
 
-    override suspend fun updateEvent(eventId: Int?, event: Event): Boolean = suspendTransaction {
-        val eventToUpdate = EventDAO.findSingleByAndUpdate(EventTable.id eq eventId!!) {
-            it.eventTitle = event.eventTitle
-            it.eventLocation = event.eventLocation
-            it.eventStartDate = event.eventStartDate
-            it.eventEndDate = event.eventEndDate
-        }
-
-        return@suspendTransaction (eventToUpdate != null)
+    override suspend fun updateEvent(tripId: Int?, eventId: Int?, event: Event): Result<Boolean> = suspendTransaction {
+        EventService.validateEventForUpdate(event)
+            .mapCatching {
+                val eventToUpdate = EventDAO
+                    .findSingleByAndUpdate((EventTable.id eq eventId!!) and (EventTable.tripId eq tripId!!)) {
+                        it.eventTitle = event.eventTitle
+                        it.eventDescription = event.eventDescription
+                        it.eventLocation = event.eventLocation
+                        it.eventDuration = event.eventDuration
+                    }
+                eventToUpdate != null
+            }
     }
 
-    override suspend fun deleteEventById(eventId: Int): Boolean = suspendTransaction {
-        val rowsDeleted = EventTable.deleteWhere {
-            EventTable.id eq eventId
+    override suspend fun deleteEvent(tripId: Int?, eventId: Int): Result<Boolean> = suspendTransaction {
+        val eventsDeleted = EventTable.deleteWhere {
+            (EventTable.id eq eventId) and (EventTable.tripId eq tripId)
         }
-        rowsDeleted == 1
+        if (eventsDeleted != 1) {
+            Result.failure<Boolean>(NoSuchElementException("Event not found)"))
+        } else {
+            Result.success(true)
+        }
     }
 }

@@ -37,7 +37,7 @@ object TripTable : IntIdTable("trips") {
     val tripTitle = varchar("trip_title", 100)
     val tripDescription = varchar("trip_description", 150)
     val tripLocation = varchar("trip_location", 255)
-    val tripDuration = varchar("trip_duration", 50)
+    val tripDuration = varchar("trip_duration", 200)
 
     val userId = reference("user_id", UserTable, onDelete = ReferenceOption.CASCADE)
 }
