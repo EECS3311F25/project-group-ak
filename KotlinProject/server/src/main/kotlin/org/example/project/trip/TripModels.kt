@@ -2,6 +2,8 @@ package org.example.project.trip
 
 import kotlinx.serialization.Serializable
 
+//  TODO: reorganize this along with the DAOs and DTOs
+
 @Serializable
 data class Duration(
     val start: String,   

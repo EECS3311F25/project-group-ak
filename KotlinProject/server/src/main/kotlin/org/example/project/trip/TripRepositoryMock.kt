@@ -3,6 +3,8 @@ package org.example.project.trip
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
+//  TODO: remove after migrating to PostgreSQL local-hosted DB
+
 object TripRepositoryMock {
 
     // In-memory store
