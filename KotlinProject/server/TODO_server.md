@@ -12,6 +12,10 @@
     Will the frontend or backend write the entry inserts?
     What should be implemented for efficient dev + testing (e.g util methods for insert, wipe)?
 
+##   HIGH PRIORITY: do something about src/main/kotlin/.../trip/TripModels.kt
+    It seems to have a lot of relevant DAOs and DTOs... which Toni has rewritten in his previous pushes.
+    Sort out whether everything there is needed, and whether they can be discarded / reorganized.
+
 ##   Modify /server to meet frontend needs
     This is especially true for the eventual map view integration
 
