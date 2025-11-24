@@ -15,7 +15,7 @@ object Migrations {
     fun runMigrations(config: DatabaseConfig) {
         val flyway = Flyway.configure()
             .dataSource(config.jdbcUrl, config.username, config.password)
-            .locations("classpath:db")
+            .locations("classpath:db_working")
             .load()
 
         try {

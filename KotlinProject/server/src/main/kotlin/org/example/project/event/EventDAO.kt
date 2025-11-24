@@ -1,8 +1,16 @@
 package org.example.project.event
 
+import Duration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import org.example.project.trip.Trip
+import org.example.project.trip.TripDAO
+import org.example.project.trip.TripResponseDto
 import org.example.project.trip.TripTable
+import org.example.project.user.UserDAO
+import org.example.project.user.UserTable
+import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.Transaction
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.IntEntity
@@ -31,15 +39,14 @@ object EventTable : IntIdTable("events") {
     val eventTitle = varchar("event_title", 100)
     val eventDescription = varchar("event_description", 500)
     val eventLocation = varchar("event_location", 255)
-    val eventStartDate = varchar("trip_start_date", 50) // TODO: Change to proper date type
-    val eventEndDate = varchar("trip_end_date", 50) // TODO: Change to proper date type
+    val eventDuration = varchar("event_duration", 200)
 
     //  Foreign key to Trip table
-    val tripId = reference("trip_id", TripTable)
+    val tripId = reference("trip_id", TripTable, onDelete = ReferenceOption.CASCADE)
 }
 
 /**
-Entity object maps Trip type's fields to columns in the database's Trip table
+Entity object maps Event type's fields to columns in the database's Event table
  */
 class EventDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<EventDAO>(EventTable)
@@ -47,11 +54,12 @@ class EventDAO(id: EntityID<Int>) : IntEntity(id) {
     var eventTitle by EventTable.eventTitle
     var eventDescription by EventTable.eventDescription
     var eventLocation by EventTable.eventLocation
-    var eventStartDate by EventTable.eventStartDate   // TODO: implement date type
-    var eventEndDate by EventTable.eventEndDate   // TODO: implement date type
+    var stringEventDuration by EventTable.eventDuration
+    var eventDuration: Duration
+        get() = Json.decodeFromString(stringEventDuration)
+        set(value) { stringEventDuration = Json.encodeToString(value) }
 
-    // TODO: Add foreign key associated with Trip table (createdBy)
-    // val createdByTripId = reference("created_by_trip_id", TripTable)
+    var tripId by TripDAO referencedOn EventTable.tripId
 }
 
 suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
@@ -59,10 +67,19 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
         suspendTransaction(statement = block)
     }
 
+fun EventDAO.toResponseDto() = EventResponseDto(
+    id.value,
+    eventTitle,
+    eventDescription,
+    eventLocation,
+    eventDuration,
+    tripId.id.value
+)
+
 fun daoToEventModel(dao: EventDAO) = Event(
     eventTitle = dao.eventTitle,
     eventDescription = dao.eventDescription,
     eventLocation = dao.eventLocation,
-    eventStartDate = dao.eventStartDate,
-    eventEndDate = dao.eventEndDate
+    dao.eventDuration,
+    dao.tripId.id.value
 )

@@ -1,41 +1,47 @@
 package org.example.project.event
 
 import org.example.project.trip.Trip
+import org.example.project.trip.TripCreateDto
+import org.example.project.trip.TripResponseDto
 
 interface EventRepository {
 
     /**
-     * Get all Events associated with a Trip (via its ID)
-     * @return List of all associated Events
+     * Get all events associated with a Trip
+     * @param tripId ID of associated Trip
+     * @return List of all associated events
      */
-    suspend fun allEventsByTripId(tripId: Int?): List<Event>
+    suspend fun allEventsByTripId(tripId: Int?): List<EventResponseDto>
 
     /**
-     * Get an Event by its ID.
+     * Get an event by its ID.
      * @param eventId event ID
      * @return Event if found, null otherwise
      */
-    suspend fun getEventById(eventId: Int?): Event?
+    suspend fun getEventById(eventId: Int?): EventResponseDto?
 
     /**
-     * Add a new Event to the database table.
-     * @param event Event object to add
+     * Add a new Event to the Event table, associated with a Trip in the Trip table.
+     * @param eventDto object to add
+     * @param tripId ID of the associated Trip requesting the creation
      * @return Created Event (with a generated surrogate key)
      */
-    suspend fun addEvent(event: Event): Event
+    suspend fun addEvent(tripId: Int?, eventDto: EventCreateDto): Result<EventResponseDto>
 
     /**
-     * Update an existing Event (in the database table) by its ID
+     * Update an existing Event (in the database table) by its ID and the associated Trip's ID
      * @param eventId ID of the Event to be updated
+     * @param tripId ID of the associated Trip requesting the update
      * @param event Updated event data
-     * @return true if updated, false if Event not found
+     * @return true if updated, false otherwise
      */
-    suspend fun updateEvent(eventId: Int?, event: Event): Boolean
+    suspend fun updateEvent(tripId: Int?, eventId: Int?, event: Event): Result<Boolean>
 
     /**
-     * Delete an Event (from the database table) by its ID.
+     * Delete an event by its ID and the associated Trip's ID
      * @param eventId ID of the Event to be deleted
-     * @return true if deleted, false if event not found
+     * @param tripId ID of the associated Trip requesting the deletion
+     * @return true if deleted, false if trip not found
      */
-    suspend fun deleteEventById(eventId: Int): Boolean
+    suspend fun deleteEvent(tripId: Int?, eventId: Int): Result<Boolean>
 }

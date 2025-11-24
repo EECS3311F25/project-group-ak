@@ -1,5 +1,8 @@
 package org.example.project.event
 
+import org.example.project.trip.Trip
+import org.example.project.trip.TripCreateDto
+
 /**
  * Service layer for Event business logic.
  *
@@ -17,22 +20,17 @@ object EventService {
     /**
      * Validate event data before creating a new Event.
      */
-    fun validateEventForCreate(event: Event): Result<Unit> {
-        if (event.eventTitle.isBlank()) {
+    fun validateEventForCreate(eventDto: EventCreateDto): Result<Unit> {
+        if (eventDto.eventTitle.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
         }
-
-        if (event.eventLocation.isBlank()) {
+        if (eventDto.eventDescription.isNullOrBlank()) {
+            return Result.failure(IllegalArgumentException("Event description cannot be empty"))
+        }
+        if (eventDto.eventLocation.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Event location cannot be empty"))
         }
-
-        // Optional: basic date checks
-        if (event.eventStartDate.isBlank()) {
-            return Result.failure(IllegalArgumentException("Event start date cannot be empty"))
-        }
-        if (event.eventEndDate.isBlank()) {
-            return Result.failure(IllegalArgumentException("Event end date cannot be empty"))
-        }
+        //  TODO: implement verification for Duration's fields
 
         return Result.success(Unit)
     }
@@ -50,12 +48,13 @@ object EventService {
             return Result.failure(IllegalArgumentException("Event location cannot be empty"))
         }
 
-        if (event.eventStartDate.isBlank()) {
-            return Result.failure(IllegalArgumentException("Event start date cannot be empty"))
+        if (event.eventDescription.isBlank()) {
+            return Result.failure(IllegalArgumentException("Event description cannot be empty"))
         }
-        if (event.eventEndDate.isBlank()) {
-            return Result.failure(IllegalArgumentException("Event end date cannot be empty"))
+        if (event.eventLocation.isBlank()) {
+            return Result.failure(IllegalArgumentException("Event location cannot be empty"))
         }
+        //  TODO: implement verification for Duration's fields
 
         return Result.success(Unit)
     }
