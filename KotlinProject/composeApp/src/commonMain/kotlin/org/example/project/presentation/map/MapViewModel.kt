@@ -90,7 +90,8 @@ class MapViewModel(
                 latitude = location.latitude,
                 longitude = location.longitude,
                 title = event.title,
-                description = event.description
+                description = event.description,
+                address = location.address ?: location.title ?: ""
             )
         }
     }

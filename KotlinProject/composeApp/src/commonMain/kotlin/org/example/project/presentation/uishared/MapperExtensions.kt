@@ -7,11 +7,12 @@ import org.example.project.model.dataClasses.Location
  */
 
 /**
- * Converts a Location to a MapMarker for display on the map
+ * Converts a Location to a MapMarker for display on the map, for now it's the same
  */
 fun Location.toMapMarker(title: String, description: String? = null) = MapMarker(
     latitude = latitude,
     longitude = longitude,
     title = title,
-    description = description ?: address
+    description = description ?: address,
+    address = address ?: ""
 )

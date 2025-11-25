@@ -1,14 +1,33 @@
 package org.example.project.presentation.calendar.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.example.project.presentation.uishared.MapWindow
 import org.example.project.presentation.uishared.MapMarker
 import kotlin.math.*
+
+// Expect function for platform-specific bottom sheet rendering
+@Composable
+expect fun RenderBottomSheetOverlay(
+    startTitle: String,
+    startAddress: String,
+    endTitle: String,
+    endAddress: String,
+    distance: Double,
+    drivingDuration: Double,
+    walkingDuration: Double,
+    isExpanded: Boolean,
+    onExpandToggle: () -> Unit,
+    onCleanup: () -> Unit
+)
 
 /**
  * Navigation view to display route between two locations
@@ -24,6 +43,11 @@ fun NavigationView(
     endLocation: MapMarker,
     modifier: Modifier = Modifier
 ) {
+    var routeDistance by remember { mutableStateOf<Double?>(null) }
+    var routeDrivingDuration by remember { mutableStateOf<Double?>(null) }
+    var routeWalkingDuration by remember { mutableStateOf<Double?>(null) }
+    var isBottomSheetExpanded by remember { mutableStateOf(false) }
+    
     // Calculate center point between the two locations
     val centerLat = (startLocation.latitude + endLocation.latitude) / 2
     val centerLng = (startLocation.longitude + endLocation.longitude) / 2
@@ -42,37 +66,67 @@ fun NavigationView(
         else -> 14.0
     }
     
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Header with close button
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    Box(modifier = modifier.fillMaxSize()) {
+        // Map and header - background layer
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Navigation",
-                style = MaterialTheme.typography.headlineMedium,
-            )
-            IconButton(onClick = { component.onEvent(NavigationViewEvent.Close) }) {
-                Text("✕", style = MaterialTheme.typography.headlineSmall)
+            // Header with close button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .background(Color.White),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { component.onEvent(NavigationViewEvent.Close) }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Go back"
+                    )
+                }
+                Text(
+                    text = "Navigation",
+                    style = MaterialTheme.typography.headlineMedium,
+                )
+                Spacer(modifier = Modifier.width(48.dp)) // Balance the layout
             }
+            
+            // Map showing both locations
+            MapWindow(
+                latitude = centerLat,
+                longitude = centerLng,
+                zoom = zoom,
+                markers = listOf(startLocation, endLocation),
+                routeEndpoints = Pair(startLocation, endLocation),
+                onRouteCalculated = { distance, drivingDuration, walkingDuration ->
+                    routeDistance = distance
+                    routeDrivingDuration = drivingDuration
+                    routeWalkingDuration = walkingDuration
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
         }
         
-        // Map showing both locations
-        MapWindow(
-            latitude = centerLat,
-            longitude = centerLng,
-            zoom = zoom,
-            markers = listOf(startLocation, endLocation),
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        )
+        // Collapsible bottom sheet - overlay layer (rendered after map, so appears on top)
+        if (routeDistance != null && routeDrivingDuration != null && routeWalkingDuration != null) {
+            RenderBottomSheetOverlay(
+                startTitle = startLocation.title,
+                startAddress = startLocation.address,
+                endTitle = endLocation.title,
+                endAddress = endLocation.address,
+                distance = routeDistance!!,
+                drivingDuration = routeDrivingDuration!!,
+                walkingDuration = routeWalkingDuration!!,
+                isExpanded = isBottomSheetExpanded,
+                onExpandToggle = { isBottomSheetExpanded = !isBottomSheetExpanded },
+                onCleanup = { }
+            )
+        }
     }
 }

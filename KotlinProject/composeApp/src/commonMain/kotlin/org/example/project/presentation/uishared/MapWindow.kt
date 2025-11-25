@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
  * @param longitude Center longitude
  * @param zoom Zoom level (0-22, where 0 is world view)
  * @param markers List of map markers to display
+ * @param routeEndpoints Optional pair of markers to show route between (if null, no route is shown)
+ * @param onRouteCalculated Callback with distance (km), driving duration (minutes), and walking duration (minutes) when route is calculated
  * @param modifier Compose modifier
  */
 @Composable
@@ -18,6 +20,8 @@ expect fun MapWindow(
     longitude: Double,
     zoom: Double = 12.0,
     markers: List<MapMarker> = emptyList(),
+    routeEndpoints: Pair<MapMarker, MapMarker>? = null,
+    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)? = null,
     modifier: Modifier = Modifier
 )
 
@@ -28,5 +32,6 @@ data class MapMarker(
     val latitude: Double,
     val longitude: Double,
     val title: String,
-    val description: String? = null
+    val description: String? = null,
+    val address: String
 )

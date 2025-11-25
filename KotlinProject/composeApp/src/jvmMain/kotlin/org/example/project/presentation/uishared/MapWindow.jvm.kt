@@ -1,4 +1,4 @@
-package org.example.project.presentation.map
+package org.example.project.presentation.uishared
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,12 +21,14 @@ actual fun MapWindow(
     longitude: Double,
     zoom: Double,
     markers: List<MapMarker>,
+    routeEndpoints: Pair<MapMarker, MapMarker>?,
+    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)?,
     modifier: Modifier
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("Map Window\nLat: $latitude, Lng: $longitude\nMarkers: ${markers.size}")
+        Text("Map Window\nLat: $latitude, Lng: $longitude\nMarkers: ${markers.size}\nRoute: ${routeEndpoints != null}")
     }
 }
