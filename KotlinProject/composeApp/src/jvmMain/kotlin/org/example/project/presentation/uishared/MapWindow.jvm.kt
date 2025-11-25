@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
  * - Alternative mapping libraries
  */
 @Composable
-actual fun MapView(
+actual fun MapWindow(
     latitude: Double,
     longitude: Double,
     zoom: Double,
@@ -27,6 +27,6 @@ actual fun MapView(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("Map View\nLat: $latitude, Lng: $longitude\nMarkers: ${markers.size}")
+        Text("Map Window\nLat: $latitude, Lng: $longitude\nMarkers: ${markers.size}")
     }
 }

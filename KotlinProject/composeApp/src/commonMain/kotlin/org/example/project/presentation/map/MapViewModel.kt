@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.example.project.data.repository.TripRepository
 import org.example.project.model.dataClasses.Event
+import org.example.project.presentation.uishared.MapWindow
+import org.example.project.presentation.uishared.MapMarker
 
 data class MapUiState(
     val centerLatitude: Double = 43.6532, // Default: Toronto
@@ -82,38 +84,14 @@ class MapViewModel(
      * TODO: Implement proper geocoding or add lat/lng to Event model
      */
     private fun parseLocationToMarker(event: Event): MapMarker? {
-        // For now, return null - you need to implement location parsing
-        // Options:
-        // 1. Add latitude/longitude fields to Event data class
-        // 2. Use geocoding API to convert location string to coordinates
-        // 3. Manually map known locations
-        
-        return when (event.location?.lowercase()) {
-            "toronto, on", "toronto" -> MapMarker(
-                latitude = 43.6532,
-                longitude = -79.3832,
+        // If event has Location object with coordinates, use it directly
+        return event.location?.let { location ->
+            MapMarker(
+                latitude = location.latitude,
+                longitude = location.longitude,
                 title = event.title,
                 description = event.description
             )
-            "niagara falls, on", "niagara falls" -> MapMarker(
-                latitude = 43.0896,
-                longitude = -79.0849,
-                title = event.title,
-                description = event.description
-            )
-            "kingston, on", "kingston" -> MapMarker(
-                latitude = 44.2312,
-                longitude = -76.4860,
-                title = event.title,
-                description = event.description
-            )
-            "ottawa, on", "ottawa" -> MapMarker(
-                latitude = 45.4215,
-                longitude = -75.6972,
-                title = event.title,
-                description = event.description
-            )
-            else -> null
         }
     }
     

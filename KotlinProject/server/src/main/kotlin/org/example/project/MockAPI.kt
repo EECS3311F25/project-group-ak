@@ -36,7 +36,12 @@ fun Route.mockApiRoutes() {
           "endTime": "10:00"
         },
         "description": "Start our journey from downtown Toronto",
-        "location": "Toronto, ON",
+        "location": {
+          "latitude": 43.6532,
+          "longitude": -79.3832,
+          "address": "Toronto, ON",
+          "title": "Downtown Toronto"
+        },
         "imageUrl": null
       },
       {
@@ -49,7 +54,12 @@ fun Route.mockApiRoutes() {
           "endTime": "16:00"
         },
         "description": "Visit the famous Niagara Falls and take photos",
-        "location": "Niagara Falls, ON",
+        "location": {
+          "latitude": 43.0896,
+          "longitude": -79.0849,
+          "address": "Niagara Falls, ON",
+          "title": "Niagara Falls"
+        },
         "imageUrl": null
       },
       {
@@ -62,7 +72,12 @@ fun Route.mockApiRoutes() {
           "endTime": "11:30"
         },
         "description": "Experience the falls up close on the Maid of the Mist",
-        "location": "Niagara Falls, ON",
+        "location": {
+          "latitude": 43.0882,
+          "longitude": -79.0748,
+          "address": "Niagara Falls, ON",
+          "title": "Maid of the Mist Dock"
+        },
         "imageUrl": null
       },
       {
@@ -75,7 +90,12 @@ fun Route.mockApiRoutes() {
           "endTime": "14:00"
         },
         "description": "Traditional Canadian lunch with a view",
-        "location": "Table Rock, Niagara Falls",
+        "location": {
+          "latitude": 43.0780,
+          "longitude": -79.0744,
+          "address": "Table Rock, Niagara Falls",
+          "title": "Table Rock Welcome Centre"
+        },
         "imageUrl": null
       },
       {
@@ -88,7 +108,12 @@ fun Route.mockApiRoutes() {
           "endTime": "12:00"
         },
         "description": "Scenic drive along Lake Ontario",
-        "location": "Highway 401",
+        "location": {
+          "latitude": 43.6532,
+          "longitude": -79.3832,
+          "address": "Highway 401",
+          "title": "Highway 401 East"
+        },
         "imageUrl": null
       },
       {
@@ -101,7 +126,12 @@ fun Route.mockApiRoutes() {
           "endTime": "17:00"
         },
         "description": "Browse local crafts and food vendors",
-        "location": "Kingston, ON",
+        "location": {
+          "latitude": 44.2312,
+          "longitude": -76.4860,
+          "address": "Kingston, ON",
+          "title": "Market Square"
+        },
         "imageUrl": null
       },
       {
@@ -114,7 +144,12 @@ fun Route.mockApiRoutes() {
           "endTime": "12:00"
         },
         "description": "Guided tour of Canada's Parliament buildings",
-        "location": "Parliament Hill, Ottawa",
+        "location": {
+          "latitude": 45.4215,
+          "longitude": -75.6972,
+          "address": "Parliament Hill, Ottawa",
+          "title": "Parliament Hill"
+        },
         "imageUrl": null
       },
       {
@@ -127,7 +162,12 @@ fun Route.mockApiRoutes() {
           "endTime": "20:00"
         },
         "description": "Farewell dinner at famous ByWard Market",
-        "location": "ByWard Market, Ottawa",
+        "location": {
+          "latitude": 45.4270,
+          "longitude": -75.6920,
+          "address": "ByWard Market, Ottawa",
+          "title": "ByWard Market"
+        },
         "imageUrl": null
       }
     ],
@@ -160,7 +200,12 @@ fun Route.mockApiRoutes() {
           "endTime": "17:00"
         },
         "description": "Climb the iconic Eiffel Tower and enjoy panoramic views",
-        "location": "Paris, France",
+        "location": {
+          "latitude": 48.8584,
+          "longitude": 2.2945,
+          "address": "Paris, France",
+          "title": "Eiffel Tower"
+        },
         "imageUrl": null
       },
       {
@@ -173,7 +218,12 @@ fun Route.mockApiRoutes() {
           "endTime": "15:00"
         },
         "description": "See the Mona Lisa and other masterpieces",
-        "location": "Paris, France",
+        "location": {
+          "latitude": 48.8606,
+          "longitude": 2.3376,
+          "address": "Paris, France",
+          "title": "Louvre Museum"
+        },
         "imageUrl": null
       },
       {
@@ -186,7 +236,12 @@ fun Route.mockApiRoutes() {
           "endTime": "16:00"
         },
         "description": "Relax with coffee and fresh pastries",
-        "location": "Paris, France",
+        "location": {
+          "latitude": 48.8566,
+          "longitude": 2.3522,
+          "address": "Paris, France",
+          "title": "Café de Flore"
+        },
         "imageUrl": null
       },
       {
@@ -199,7 +254,12 @@ fun Route.mockApiRoutes() {
           "endTime": "17:30"
         },
         "description": "Leisurely walk along the Seine",
-        "location": "Paris, France",
+        "location": {
+          "latitude": 48.8534,
+          "longitude": 2.3488,
+          "address": "Paris, France",
+          "title": "Seine Riverbank"
+        },
         "imageUrl": null
       },
       {
@@ -212,7 +272,12 @@ fun Route.mockApiRoutes() {
           "endTime": "19:00"
         },
         "description": "Sit-down dinner with local cuisine",
-        "location": "Paris, France",
+        "location": {
+          "latitude": 48.8600,
+          "longitude": 2.3266,
+          "address": "Paris, France",
+          "title": "Le Jules Verne"
+        },
         "imageUrl": null
       },
       {
@@ -225,7 +290,12 @@ fun Route.mockApiRoutes() {
           "endTime": "04:00"
         },
         "description": "All night long",
-        "location": "Paris, France",
+        "location": {
+          "latitude": 48.8738,
+          "longitude": 2.3540,
+          "address": "Paris, France",
+          "title": "Rex Club"
+        },
         "imageUrl": null
       },
       {
@@ -238,7 +308,12 @@ fun Route.mockApiRoutes() {
           "endTime": "13:00"
         },
         "description": "High-speed train through European countryside",
-        "location": "Paris to Amsterdam",
+        "location": {
+          "latitude": 48.8440,
+          "longitude": 2.3744,
+          "address": "Paris to Amsterdam",
+          "title": "Gare du Nord"
+        },
         "imageUrl": null
       },
       {
@@ -251,7 +326,12 @@ fun Route.mockApiRoutes() {
           "endTime": "13:00"
         },
         "description": "Explore Amsterdam's famous canals by boat",
-        "location": "Amsterdam, Netherlands",
+        "location": {
+          "latitude": 52.3676,
+          "longitude": 4.9041,
+          "address": "Amsterdam, Netherlands",
+          "title": "Amsterdam Canal Ring"
+        },
         "imageUrl": null
       },
       {
@@ -264,7 +344,12 @@ fun Route.mockApiRoutes() {
           "endTime": "14:00"
         },
         "description": "World's largest collection of Van Gogh artworks",
-        "location": "Amsterdam, Netherlands",
+        "location": {
+          "latitude": 52.3580,
+          "longitude": 4.8811,
+          "address": "Amsterdam, Netherlands",
+          "title": "Van Gogh Museum"
+        },
         "imageUrl": null
       },
       {
@@ -277,7 +362,12 @@ fun Route.mockApiRoutes() {
           "endTime": "12:00"
         },
         "description": "Morning flight to the Eternal City",
-        "location": "Amsterdam to Rome",
+        "location": {
+          "latitude": 52.3105,
+          "longitude": 4.7683,
+          "address": "Amsterdam to Rome",
+          "title": "Amsterdam Schiphol Airport"
+        },
         "imageUrl": null
       },
       {
@@ -290,7 +380,12 @@ fun Route.mockApiRoutes() {
           "endTime": "12:00"
         },
         "description": "Explore ancient Roman architecture and history",
-        "location": "Rome, Italy",
+        "location": {
+          "latitude": 41.8902,
+          "longitude": 12.4922,
+          "address": "Rome, Italy",
+          "title": "Colosseum"
+        },
         "imageUrl": null
       },
       {
@@ -303,7 +398,12 @@ fun Route.mockApiRoutes() {
           "endTime": "16:00"
         },
         "description": "Sistine Chapel and St. Peter's Basilica",
-        "location": "Vatican City",
+        "location": {
+          "latitude": 41.9029,
+          "longitude": 12.4534,
+          "address": "Vatican City",
+          "title": "Vatican Museums"
+        },
         "imageUrl": null
       }
     ],
@@ -336,7 +436,12 @@ fun Route.mockApiRoutes() {
           "endTime": "17:00"
         },
         "description": "Check into mountain lodge and settle in",
-        "location": "Banff Lodge",
+        "location": {
+          "latitude": 51.1784,
+          "longitude": -115.5708,
+          "address": "Banff Lodge",
+          "title": "Banff Mountain Lodge"
+        },
         "imageUrl": null
       },
       {
@@ -349,7 +454,12 @@ fun Route.mockApiRoutes() {
           "endTime": "14:00"
         },
         "description": "Morning hike around the stunning turquoise lake",
-        "location": "Lake Louise, Banff",
+        "location": {
+          "latitude": 51.4254,
+          "longitude": -116.1773,
+          "address": "Lake Louise, Banff",
+          "title": "Lake Louise"
+        },
         "imageUrl": null
       },
       {
@@ -362,7 +472,12 @@ fun Route.mockApiRoutes() {
           "endTime": "13:00"
         },
         "description": "Banff Gondola for breathtaking mountain views",
-        "location": "Sulphur Mountain, Banff",
+        "location": {
+          "latitude": 51.1486,
+          "longitude": -115.5610,
+          "address": "Sulphur Mountain, Banff",
+          "title": "Banff Gondola"
+        },
         "imageUrl": null
       },
       {
@@ -375,7 +490,12 @@ fun Route.mockApiRoutes() {
           "endTime": "19:00"
         },
         "description": "Soak in natural hot springs after hiking",
-        "location": "Banff Upper Hot Springs",
+        "location": {
+          "latitude": 51.1559,
+          "longitude": -115.5585,
+          "address": "Banff Upper Hot Springs",
+          "title": "Banff Upper Hot Springs"
+        },
         "imageUrl": null
       },
       {
@@ -388,7 +508,12 @@ fun Route.mockApiRoutes() {
           "endTime": "13:00"
         },
         "description": "Easy walk to see beautiful waterfalls and canyon",
-        "location": "Johnston Canyon, Banff",
+        "location": {
+          "latitude": 51.2441,
+          "longitude": -115.8393,
+          "address": "Johnston Canyon, Banff",
+          "title": "Johnston Canyon"
+        },
         "imageUrl": null
       },
       {
@@ -401,7 +526,12 @@ fun Route.mockApiRoutes() {
           "endTime": "10:00"
         },
         "description": "Early morning visit to catch the perfect sunrise",
-        "location": "Moraine Lake, Banff",
+        "location": {
+          "latitude": 51.3333,
+          "longitude": -116.1833,
+          "address": "Moraine Lake, Banff",
+          "title": "Moraine Lake"
+        },
         "imageUrl": null
       },
       {
@@ -414,7 +544,12 @@ fun Route.mockApiRoutes() {
           "endTime": "12:00"
         },
         "description": "Guided tour to spot elk, bears, and mountain goats",
-        "location": "Bow Valley, Banff",
+        "location": {
+          "latitude": 51.2000,
+          "longitude": -115.6000,
+          "address": "Bow Valley, Banff",
+          "title": "Bow Valley Parkway"
+        },
         "imageUrl": null
       },
       {
@@ -427,7 +562,12 @@ fun Route.mockApiRoutes() {
           "endTime": "21:00"
         },
         "description": "Final dinner with mountain views and local cuisine",
-        "location": "Banff Town",
+        "location": {
+          "latitude": 51.1783,
+          "longitude": -115.5717,
+          "address": "Banff Town",
+          "title": "Banff Avenue"
+        },
         "imageUrl": null
       }
     ],

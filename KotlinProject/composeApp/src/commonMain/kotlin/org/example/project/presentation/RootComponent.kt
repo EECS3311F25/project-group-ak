@@ -18,7 +18,9 @@ import org.example.project.presentation.trip.addmember.AddMemberComponent
 import org.example.project.presentation.trip.edittrip.EditTripComponent
 import org.example.project.presentation.calendar.CalendarViewComponent
 import org.example.project.presentation.calendar.navigation.NavigationViewComponent
-import org.example.project.presentation.map.MapMarker
+import org.example.project.presentation.uishared.MapMarker
+import org.example.project.presentation.uishared.toMapMarker
+import org.example.project.model.dataClasses.Location
 import org.example.project.model.dataClasses.Trip
 
 class RootComponent(
@@ -137,9 +139,9 @@ class RootComponent(
                     onAddEvent =  { initialDate ->
                         navigation.pushNew(Configuration.AddEvent(config.tripId, null, initialDate)) 
                     },
-                    onNavigateToNavigation = { startLat, startLng, startTitle, endLat, endLng, endTitle ->
+                    onNavigateToNavigation = { startLocation, endLocation, startTitle, endTitle ->
                         navigation.pushNew(Configuration.NavigationView(
-                            startLat, startLng, startTitle, endLat, endLng, endTitle
+                            startLocation, endLocation, startTitle, endTitle
                         ))
                     }
                 ),
@@ -151,15 +153,11 @@ class RootComponent(
                     componentContext = context,
                     onGoBack = { navigation.pop() }
                 ),
-                startLocation = MapMarker(
-                    latitude = config.startLat,
-                    longitude = config.startLng,
+                startLocation = config.startLocation.toMapMarker(
                     title = config.startTitle,
                     description = "Start"
                 ),
-                endLocation = MapMarker(
-                    latitude = config.endLat,
-                    longitude = config.endLng,
+                endLocation = config.endLocation.toMapMarker(
                     title = config.endTitle,
                     description = "Destination"
                 )
@@ -206,11 +204,9 @@ class RootComponent(
         data class CalendarView(val tripId: String): Configuration()
         @Serializable
         data class NavigationView(
-            val startLat: Double,
-            val startLng: Double,
+            val startLocation: Location,
+            val endLocation: Location,
             val startTitle: String,
-            val endLat: Double,
-            val endLng: Double,
             val endTitle: String
         ): Configuration()
     }

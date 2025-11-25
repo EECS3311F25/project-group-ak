@@ -6,8 +6,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.example.project.presentation.map.MapView
-import org.example.project.presentation.map.MapMarker
+import org.example.project.presentation.uishared.MapWindow
+import org.example.project.presentation.uishared.MapMarker
 import kotlin.math.*
 
 /**
@@ -65,7 +65,7 @@ fun NavigationView(
         }
         
         // Map showing both locations
-        MapView(
+        MapWindow(
             latitude = centerLat,
             longitude = centerLng,
             zoom = zoom,

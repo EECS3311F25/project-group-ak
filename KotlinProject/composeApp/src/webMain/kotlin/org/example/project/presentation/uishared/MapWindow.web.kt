@@ -1,4 +1,4 @@
-package org.example.project.presentation.map
+package org.example.project.presentation.uishared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,7 +20,7 @@ import org.w3c.dom.HTMLDivElement
  * into a Compose for Web application.
  */
 @Composable
-actual fun MapView(
+actual fun MapWindow(
     latitude: Double,
     longitude: Double,
     zoom: Double,

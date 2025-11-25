@@ -2,6 +2,7 @@ package org.example.project.presentation.calendar
 
 import com.arkivanov.decompose.ComponentContext
 import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Location
 import org.example.project.model.dataClasses.Trip
 import kotlinx.datetime.LocalDate
 
@@ -14,7 +15,7 @@ class CalendarViewComponent(
     private val onNavigateToTripView: () -> Unit,
     private val onEditEvent: (String) -> Unit = {},
     private val onAddEvent: (LocalDate) -> Unit = {},
-    private val onNavigateToNavigation: (Double, Double, String, Double, Double, String) -> Unit = { _, _, _, _, _, _ -> }
+    private val onNavigateToNavigation: (Location, Location, String, String) -> Unit = { _, _, _, _ -> }
 ) : ComponentContext by componentContext {
 
     fun onBack() {
@@ -28,8 +29,10 @@ class CalendarViewComponent(
             is CalendarViewEvent.ClickEditEvent -> onEditEvent(event.eventId)
             is CalendarViewEvent.ClickAddEvent -> onAddEvent(event.initialDate)
             is CalendarViewEvent.ShowNavigation -> onNavigateToNavigation(
-                event.startLat, event.startLng, event.startTitle,
-                event.endLat, event.endLng, event.endTitle
+                event.startLocation,
+                event.endLocation,
+                event.startTitle,
+                event.endTitle
             )
         }
     }
@@ -41,11 +44,9 @@ sealed class CalendarViewEvent {
     data class ClickEditEvent(val eventId: String) : CalendarViewEvent()
     data class ClickAddEvent(val initialDate: LocalDate) : CalendarViewEvent()
     data class ShowNavigation(
-        val startLat: Double,
-        val startLng: Double,
+        val startLocation: Location,
+        val endLocation: Location,
         val startTitle: String,
-        val endLat: Double,
-        val endLng: Double,
         val endTitle: String
     ) : CalendarViewEvent()
 }
