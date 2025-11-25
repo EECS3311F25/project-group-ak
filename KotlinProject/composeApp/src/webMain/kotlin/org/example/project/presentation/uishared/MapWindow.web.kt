@@ -72,11 +72,11 @@ actual fun MapWindow(
         container.id = mapId
         container.style.apply {
             position = "fixed"
-            top = "${rect.top + 70}px"  // ComposeTarget top + space for title
+            top = "${rect.top}px"
             left = "${rect.left}px"
             width = "${rect.width}px"
-            height = "${rect.height - 70}px"  // Remaining height after title
-            zIndex = "1"  // Lower z-index so Compose overlays can appear on top
+            height = "${rect.height}px"
+            zIndex = "1"
         }
         
         document.body?.appendChild(container)

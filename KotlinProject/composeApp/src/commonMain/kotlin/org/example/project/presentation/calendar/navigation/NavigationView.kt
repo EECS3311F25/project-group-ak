@@ -1,15 +1,8 @@
 package org.example.project.presentation.calendar.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import org.example.project.presentation.uishared.MapWindow
 import org.example.project.presentation.uishared.MapMarker
 import kotlin.math.*
@@ -67,51 +60,26 @@ fun NavigationView(
     }
     
     Box(modifier = modifier.fillMaxSize()) {
-        // Map and header - background layer
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Header with close button
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .background(Color.White),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { component.onEvent(NavigationViewEvent.Close) }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Go back"
-                    )
-                }
-                Text(
-                    text = "Navigation",
-                    style = MaterialTheme.typography.headlineMedium,
-                )
-                Spacer(modifier = Modifier.width(48.dp)) // Balance the layout
-            }
-            
-            // Map showing both locations
-            MapWindow(
-                latitude = centerLat,
-                longitude = centerLng,
-                zoom = zoom,
-                markers = listOf(startLocation, endLocation),
-                routeEndpoints = Pair(startLocation, endLocation),
-                onRouteCalculated = { distance, drivingDuration, walkingDuration ->
-                    routeDistance = distance
-                    routeDrivingDuration = drivingDuration
-                    routeWalkingDuration = walkingDuration
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            )
-        }
+        // Map - full screen
+        MapWindow(
+            latitude = centerLat,
+            longitude = centerLng,
+            zoom = zoom,
+            markers = listOf(startLocation, endLocation),
+            routeEndpoints = Pair(startLocation, endLocation),
+            onRouteCalculated = { distance, drivingDuration, walkingDuration ->
+                routeDistance = distance
+                routeDrivingDuration = drivingDuration
+                routeWalkingDuration = walkingDuration
+            },
+            modifier = Modifier.fillMaxSize()
+        )
+        
+        // Back button - DOM-based overlay for web, Compose for JVM
+        RenderBackButtonOverlay(
+            onBack = { component.onEvent(NavigationViewEvent.Close) },
+            onCleanup = { }
+        )
         
         // Collapsible bottom sheet - overlay layer (rendered after map, so appears on top)
         if (routeDistance != null && routeDrivingDuration != null && routeWalkingDuration != null) {
