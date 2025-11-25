@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 import io.ktor.server.testing.testApplication
 
 import org.example.project.module
-import org.example.project.user.User
+import org.example.project.user.UserCreateRequest
 import org.example.project.user.UserRetrieveResponse
 
 
@@ -38,7 +38,7 @@ class CreateUserTests {
 
         val response: HttpResponse = client.post("/user/register") {
             contentType(ContentType.Application.Json)
-            setBody(User("user1", "user1@gmail.com", "password1"))
+            setBody(UserCreateRequest("user1", "user1@gmail.com", "password1"))
         }
         assertEquals(HttpStatusCode.Created, response.status)
 
@@ -68,7 +68,7 @@ class CreateUserTests {
 
         val response: HttpResponse = client.post("/user/register") {
             contentType(ContentType.Application.Json)
-            setBody(User("user2", "user2@gmail.com", "password2"))
+            setBody(UserCreateRequest("user2", "user2@gmail.com", "password2"))
         }
         assertEquals(HttpStatusCode.Created, response.status)
 
@@ -98,7 +98,7 @@ class CreateUserTests {
 
         val response: HttpResponse = client.post("/user/register") {
             contentType(ContentType.Application.Json)
-            setBody(User("", "user3@gmail.com", "password3"))
+            setBody(UserCreateRequest("", "user3@gmail.com", "password3"))
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -123,7 +123,7 @@ class CreateUserTests {
 
         val response: HttpResponse = client.post("/user/register") {
             contentType(ContentType.Application.Json)
-            setBody(User("user4", "", "password4"))
+            setBody(UserCreateRequest("user4", "", "password4"))
         }
         assertEquals(HttpStatusCode.BadRequest, response.status)
         assertEquals("User registration failed", response.bodyAsText())
@@ -147,7 +147,7 @@ class CreateUserTests {
 
         val response: HttpResponse = client.post("/user/register") {
             contentType(ContentType.Application.Json)
-            setBody(User("user5", "user5gmail.com", "password5"))
+            setBody(UserCreateRequest("user5", "user5gmail.com", "password5"))
         }
         assertEquals(HttpStatusCode.BadRequest, response.status)
         assertEquals("User registration failed", response.bodyAsText())
@@ -171,7 +171,7 @@ class CreateUserTests {
 
         val response: HttpResponse = client.post("/user/register") {
             contentType(ContentType.Application.Json)
-            setBody(User("user6", "user6@gmail.com", ""))
+            setBody(UserCreateRequest("user6", "user6@gmail.com", ""))
         }
         assertEquals(HttpStatusCode.BadRequest, response.status)
         assertEquals("User registration failed", response.bodyAsText())
@@ -195,7 +195,7 @@ class CreateUserTests {
 
         val response: HttpResponse = client.post("/user/register") {
             contentType(ContentType.Application.Json)
-            setBody(User("user7", "user7@gmail.com", "weakpsw"))
+            setBody(UserCreateRequest("user7", "user7@gmail.com", "weakpsw"))
         }
         assertEquals(HttpStatusCode.BadRequest, response.status)
         assertEquals("User registration failed", response.bodyAsText())

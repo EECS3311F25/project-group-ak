@@ -88,7 +88,6 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                             TripRetrieveResponse("Trip created successfully", trip)
                         )
                     } else {
-                        println("Trip creation failed, trip is null")
                         call.respond(HttpStatusCode.BadRequest, "Trip creation failed")
                     }
                 } catch (e: Exception) {

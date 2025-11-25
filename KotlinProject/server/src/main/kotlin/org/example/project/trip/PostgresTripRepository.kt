@@ -2,7 +2,6 @@ package org.example.project.trip
 
 import org.example.project.user.UserDAO
 import org.example.project.user.suspendTransaction
-import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import java.util.NoSuchElementException
@@ -29,14 +28,20 @@ class PostgresTripRepository: TripRepository {
     override suspend fun addTrip(userId: Int?, tripDto: TripCreateRequest): Result<TripResponse> = suspendTransaction {
         TripService.validateTripForCreate(tripDto)
             .mapCatching {
-                val newTrip = TripDAO.new {
-                    tripTitle = tripDto.tripTitle!!
-                    tripDescription = tripDto.tripDescription!!
-                    tripLocation = tripDto.tripLocation!!
-                    tripDuration = tripDto.tripDuration
-                    this.userId = UserDAO[userId!!]
+                try {
+                    val user = UserDAO.findById(userId!!) ?: throw IllegalArgumentException("User not found")
+                    val newTrip = TripDAO.new {
+                        tripTitle = tripDto.tripTitle!!
+                        tripDescription = tripDto.tripDescription!!
+                        tripLocation = tripDto.tripLocation!!
+                        tripDuration = tripDto.tripDuration
+                        this.userId = user
+                    }
+                    newTrip.toResponseDto()
+                } catch (e: Exception) {
+                    println("Exception during TripDAO.new: ${e.message}")
+                    throw e
                 }
-                newTrip.toResponseDto()
             }
     }
 

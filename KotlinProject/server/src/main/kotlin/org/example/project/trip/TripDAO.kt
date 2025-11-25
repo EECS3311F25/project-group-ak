@@ -54,7 +54,7 @@ class TripDAO(tripId: EntityID<Int>) : IntEntity(tripId) {
     var tripLocation: String by TripTable.tripLocation
     var stringTripDuration by TripTable.tripDuration
     var tripDuration: Duration
-        get() = Json.decodeFromString(stringTripDuration)
+        get() = Json.decodeFromString<Duration>(stringTripDuration)
         set(value) { stringTripDuration = Json.encodeToString(value) }
 
     var userId by UserDAO referencedOn TripTable.userId

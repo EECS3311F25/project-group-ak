@@ -19,6 +19,10 @@ object Migrations {
             .load()
 
         try {
+            /**
+             * Include flyway.repair() to wipe existing migration file checksums
+             */
+            //  flyway.repair()
             flyway.migrate()
             println("Database migrations completed successfully")
         } catch (e: Exception) {
@@ -34,7 +38,7 @@ object Migrations {
     fun cleanAndMigrate(config: DatabaseConfig) {
         val flyway = Flyway.configure()
             .dataSource(config.jdbcUrl, config.username, config.password)
-            .locations("classpath:db")
+            .locations("classpath:db_create-tables")
             .cleanDisabled(false)
             .load()
 

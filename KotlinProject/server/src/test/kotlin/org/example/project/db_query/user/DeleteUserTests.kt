@@ -2,7 +2,6 @@ package org.example.project.db_query.user
 
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.delete
-import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -14,10 +13,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 import org.example.project.module
-import org.example.project.user.User
 
-//  TODO: System_Design_Document_2_1.pdf
-//  just leave 2_0 as is
 
 class DeleteUserTests {
 
