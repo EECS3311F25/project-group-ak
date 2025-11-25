@@ -3,9 +3,9 @@ package org.example.project
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import org.example.project.trip.tripRoutes
+import org.example.project.db.configureDatabases
+import org.example.project.db.configureRouting
+import org.example.project.db.configureSerialization
 
 const val SERVER_PORT: Int = 8080
 
@@ -19,9 +19,12 @@ fun main() {
 }
 
 fun Application.module() {
-    routing {
-        get("/") { call.respondText("Ktor: ${Greeting().greet()}") }
+    //  Serializable to JSON - see Serialization.kt
+    configureSerialization()
 
-        tripRoutes()
-    }
+    //  DB configuration and migration - see DatabaseConnect.kt and Migration.kt
+    configureDatabases()
+
+    //  Register all HTTP routes - see Routing.kt
+    configureRouting()
 }

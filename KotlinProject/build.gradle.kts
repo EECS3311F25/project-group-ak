@@ -8,4 +8,6 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinJvm) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
+    //  TODO: use this plugin if Flyway migration fix is needed
+    //  alias(libs.plugins.flyway) apply false
 }
