@@ -22,10 +22,10 @@
 
     Trip:   /user/{userId}/trip...
     -   GET    /                                -> list all trips associated with the user of ID userId
-    -   GET    /{id}                            -> get trip
+    -   (WORKING) GET    /{id}                            -> get trip
     -   (WORKING) POST   /                      -> create new trip (belonging to user of ID userId)
-    -   PUT    /{id}                            -> update trip
-    -   DELETE /{id}                            -> delete trip
+    -   (WORKING) PUT    /{id}                            -> update trip
+    -   (WORKING) DELETE /{id}                            -> delete trip
 
     Event:  /user/{userId}/trip/{tripId}/event...
     -   GET    /                                -> list all events associated with the trip of ID tripId
