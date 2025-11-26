@@ -1,5 +1,6 @@
 --  Database schema for Navi travel app
 
+DROP TABLE IF EXISTS locations;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS trips;
 DROP TABLE IF EXISTS users;
@@ -34,7 +35,19 @@ CREATE TABLE IF NOT EXISTS events (
     FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
 );
 
+-- Location table
+CREATE TABLE IF NOT EXISTS locations (
+    id SERIAL PRIMARY KEY,
+    latitude DOUBLE PRECISION NOT NULL,
+    longitude DOUBLE PRECISION NOT NULL,
+    address VARCHAR(500),
+    title VARCHAR(255),
+    event_id INT NOT NULL,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_user_user_id ON users(id);
 CREATE INDEX IF NOT EXISTS idx_trip_user_id ON trips(user_id);
 CREATE INDEX IF NOT EXISTS idx_event_trip_id ON events(trip_id);
+CREATE INDEX IF NOT EXISTS idx_location_event_id ON locations(event_id);

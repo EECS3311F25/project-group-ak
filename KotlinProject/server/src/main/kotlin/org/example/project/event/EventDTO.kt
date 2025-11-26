@@ -3,6 +3,7 @@ package org.example.project.event
 import Duration
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.example.project.location.LocationResponse
 import org.example.project.trip.TripDAO
 
 
@@ -52,6 +53,9 @@ data class EventResponse(
     //  Foreign key to Trip table
     @SerialName("trip_id")
     val tripId: Int?,
+    
+    // Location with GPS coordinates
+    val location: LocationResponse?
 )
 
 @Serializable

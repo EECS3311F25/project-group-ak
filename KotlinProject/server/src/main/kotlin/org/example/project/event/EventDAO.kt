@@ -4,11 +4,15 @@ import Duration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import org.example.project.location.LocationDAO
+import org.example.project.location.LocationTable
+import org.example.project.location.toResponseDto
 import org.example.project.trip.TripDAO
 import org.example.project.trip.TripTable
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.Transaction
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.dao.IntEntity
 import org.jetbrains.exposed.v1.dao.IntEntityClass
 import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
@@ -63,14 +67,20 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
         suspendTransaction(statement = block)
     }
 
-fun EventDAO.toResponseDto() = EventResponse(
-    id.value,
-    eventTitle,
-    eventDescription,
-    eventLocation,
-    eventDuration,
-    tripId.id.value
-)
+fun EventDAO.toResponseDto(): EventResponse {
+    // Find location associated with this event
+    val location = LocationDAO.find { LocationTable.eventId eq this.id }.firstOrNull()
+    
+    return EventResponse(
+        id.value,
+        eventTitle,
+        eventDescription,
+        eventLocation,
+        eventDuration,
+        tripId.id.value,
+        location?.toResponseDto()
+    )
+}
 
 fun daoToEventModel(dao: EventDAO) = Event(
     eventTitle = dao.eventTitle,

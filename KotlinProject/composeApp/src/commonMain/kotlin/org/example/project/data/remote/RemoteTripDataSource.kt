@@ -57,6 +57,17 @@ private data class TripCreateRequest(
 
 // Event DTOs matching server-side models
 @Serializable
+private data class LocationResponse(
+    val id: Int,
+    val latitude: Double,
+    val longitude: Double,
+    val address: String?,
+    val title: String?,
+    @SerialName("event_id")
+    val eventId: Int
+)
+
+@Serializable
 private data class EventResponse(
     val id: Int,
     @SerialName("event_title")
@@ -68,7 +79,8 @@ private data class EventResponse(
     @SerialName("event_duration")
     val eventDuration: Duration,
     @SerialName("trip_id")
-    val tripId: Int?
+    val tripId: Int?,
+    val location: LocationResponse?
 )
 
 @Serializable
@@ -128,9 +140,17 @@ class RemoteTripDataSource(
             id = id.toString(),
             title = eventTitle ?: "",
             description = eventDescription ?: "",
-            location = if (eventLocation != null) {
+            location = if (location != null) {
                 Location(
-                    latitude = 0.0, // TODO: Parse from server or enhance server model
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    address = location.address,
+                    title = location.title
+                )
+            } else if (eventLocation != null) {
+                // Fallback to just address if no GPS coordinates
+                Location(
+                    latitude = 0.0,
                     longitude = 0.0,
                     address = eventLocation
                 )
