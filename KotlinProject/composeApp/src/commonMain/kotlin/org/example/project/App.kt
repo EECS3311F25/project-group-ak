@@ -36,6 +36,7 @@ import org.example.project.presentation.trip.addmember.AddMemberViewModel
 import org.example.project.presentation.trip.addevent.AddEventViewModel
 import org.example.project.presentation.trip.edittrip.EditTripViewModel
 import org.example.project.presentation.ApiTestView
+import org.example.project.presentation.calendar.navigation.NavigationView
 
 @Composable
 /*
@@ -193,6 +194,14 @@ fun App(root: RootComponent) {
                     EditTrip(
                         component = instance.component,
                         viewModel = editTripViewModel
+                    )
+                }
+                
+                is RootComponent.Child.NavigationView -> {
+                    NavigationView(
+                        component = instance.component,
+                        startLocation = instance.startLocation,
+                        endLocation = instance.endLocation
                     )
                 }
                 // =============================================================================================
