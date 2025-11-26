@@ -3,106 +3,160 @@ package org.example.project.trip
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
+import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 
-fun Route.tripRoutes() {
 
-    /* ========== TRIP CRUD (SCRUM-70,71,72,73) ========== */
+/**
+ * Trip HTTP routes.
+ *
+ * Flow (same pattern as user):
+ *  - Application.module() creates PostgresTripRepository
+ *  - Application.configureTripSerialization(tripRepository)
+ *  - Handlers:
+ *      - validate input via TripService
+ *      - call PostgresTripRepository for DB CRUD
+ *
+ * Endpoints:
+ *  /user/{userId}/trip...
+     *  GET    /                                -> list trips associated with userId
+     *  GET    /{id}                            -> get trip by its id (if the associated User requested access)
+     *  POST   /                                -> create trip (if the associated User requested creation)
+     *  PUT    /{id}                            -> update trip (if the associated User requested updating)
+     *  DELETE /{id}                            -> delete trip (if the associated User requested deletion)
+     */
 
-    get("/trip") {
-        val trips = TripRepositoryMock.getAllForUser("kai")
-        call.respond(trips)
-    }
+fun Application.configureTripSerialization(tripRepository: PostgresTripRepository) {
 
-    // GET /trip/{id}
-    get("/trip/{id}") {
-        val id = call.parameters["id"]
-        if (id == null) {
-            call.respond(HttpStatusCode.BadRequest, "id is required")
-            return@get
+    routing {
+        //  All trip routes are prepended by the following
+        route("/user/{userId}/trip") {
+
+            //  GET /user/{userId}/trip  -> all trips associated with userId
+            get {
+                val userId = call.parameters["userId"]?.toIntOrNull()
+                if (userId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing user ID")
+                    return@get
+                }
+
+                //  Repository currently ignores userId in DB layer,
+                //  but route design is already user-scoped for future extension.
+                val trips = tripRepository.allTripsByUser(userId)
+                call.respond(HttpStatusCode.OK,
+                    TripListResponse("Trips retrieved for user $userId", trips))
+            }
+
+            //  GET /user/{userId}/trip/{id}  -> single trip by id
+            get("/{id}") {
+                val userId = call.parameters["userId"]?.toIntOrNull()
+                if (userId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing user ID")
+                    return@get
+                }
+                val tripId = call.parameters["id"]?.toIntOrNull()
+                if (tripId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing trip id")
+                    return@get
+                }
+                val trip = tripRepository.getTrip(tripId)
+                if (trip == null) {
+                    call.respond(HttpStatusCode.NotFound, "Trip not found")
+                } else {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        TripRetrieveResponse("Trip retrieved successfully", trip)
+                    )
+                }
+            }
+
+            //  POST /user/{userId}/trip  -> create new trip for user of ID user_id
+            post {
+                val userId = call.parameters["userId"]?.toIntOrNull()
+                if (userId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing user ID")
+                    return@post
+                }
+                try {
+                    val tripDto = call.receive<TripCreateRequest>()
+                    val addResult = tripRepository.addTrip(userId, tripDto)
+                    val trip = addResult.getOrNull()
+
+                    if (trip != null) {
+                        call.respond(
+                            HttpStatusCode.Created,
+                            TripRetrieveResponse("Trip created successfully", trip)
+                        )
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest, "Trip creation failed")
+                    }
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
+                    return@post
+                }
+            }
+
+            // PUT /user/{userId}/trip/{id}  -> update existing trip
+            put("/{id}") {
+                try {
+                    val userId = call.parameters["userId"]?.toIntOrNull()
+                    if (userId == null) {
+                        call.respond(HttpStatusCode.BadRequest, "Missing user ID")
+                        return@put
+                    }
+                    val tripId = call.parameters["id"]?.toIntOrNull()
+                    if (tripId == null) {
+                        call.respond(HttpStatusCode.BadRequest, "Missing trip ID")
+                        return@put
+                    }
+                    val trip = call.receive<Trip>()
+                    TripService.validateTripForUpdate(trip)
+                        .onFailure { error ->
+                            call.respond(
+                                HttpStatusCode.BadRequest,
+                                error.message ?: "Trip validation failed"
+                            )
+                            return@put
+                        }
+                    tripRepository.updateTrip(tripId, trip)
+                        .onSuccess {
+                            call.respond(HttpStatusCode.OK, "Trip updated successfully")
+                        }
+                        .onFailure {
+                            call.respond(HttpStatusCode.NotFound, "Trip not found")
+                        }
+                } catch(e: Exception) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid trip payload")
+                    return@put
+                }
+            }
+
+            //  DELETE /user/{userId}/trip/{id}  -> delete trip
+            delete("/{id}") {
+                val userId = call.parameters["userId"]?.toIntOrNull()
+                if (userId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing user ID")
+                    return@delete
+                }
+                val tripId = call.parameters["id"]?.toIntOrNull()
+                if (tripId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid or missing trip id")
+                    return@delete
+                }
+                tripRepository.deleteTrip(tripId)
+                    .onSuccess {
+                        call.respond(
+                            HttpStatusCode.NoContent,
+                            "Trip deleted successfully"
+                        )
+                    }
+                    .onFailure { error ->
+                        call.respond(
+                            HttpStatusCode.NotFound,
+                            "Trip does not exist"
+                        )
+                    }
+            }
         }
-        val trip = TripRepositoryMock.getById(id)
-        if (trip == null) call.respond(HttpStatusCode.NotFound, "trip not found")
-        else call.respond(trip)
-    }
-
-    // POST /trip
-    post("/trip") {
-        val body = call.receive<TripCreateRequest>()
-        val created = TripRepositoryMock.createTrip(body)
-        call.respond(HttpStatusCode.Created, created)
-    }
-
-    // PUT /trip/{id}
-    put("/trip/{id}") {
-        val id = call.parameters["id"] ?: return@put call.respond(
-            HttpStatusCode.BadRequest, "id is required"
-        )
-        val body = call.receive<TripUpdateRequest>()
-        val updated = TripRepositoryMock.updateTrip(id, body)
-        if (updated == null) call.respond(HttpStatusCode.NotFound, "trip not found")
-        else call.respond(updated)
-    }
-
-    // DELETE /trip/{id}
-    delete("/trip/{id}") {
-        val id = call.parameters["id"] ?: return@delete call.respond(
-            HttpStatusCode.BadRequest, "id is required"
-        )
-        val ok = TripRepositoryMock.deleteTrip(id)
-        if (!ok) call.respond(HttpStatusCode.NotFound, "trip not found")
-        else call.respond(HttpStatusCode.NoContent)
-    }
-
-    /* ========== EVENT CRUD (SCRUM-59,60,61,62) ========== */
-
-    // GET /trip/{id}/events
-    get("/trip/{id}/events") {
-        val id = call.parameters["id"] ?: return@get call.respond(
-            HttpStatusCode.BadRequest, "id is required"
-        )
-        val events = TripRepositoryMock.listEvents(id) ?: return@get call.respond(
-            HttpStatusCode.NotFound, "trip not found"
-        )
-        call.respond(events)
-    }
-
-    // POST /trip/{id}/events
-    post("/trip/{id}/events") {
-        val id = call.parameters["id"] ?: return@post call.respond(
-            HttpStatusCode.BadRequest, "id is required"
-        )
-        val body = call.receive<EventCreateRequest>()
-        val created = TripRepositoryMock.createEvent(id, body)
-            ?: return@post call.respond(HttpStatusCode.NotFound, "trip not found")
-        call.respond(HttpStatusCode.Created, created)
-    }
-
-    // PUT /trip/{id}/events/{eventId}
-    put("/trip/{id}/events/{eventId}") {
-        val id = call.parameters["id"] ?: return@put call.respond(
-            HttpStatusCode.BadRequest, "id is required"
-        )
-        val eventId = call.parameters["eventId"] ?: return@put call.respond(
-            HttpStatusCode.BadRequest, "eventId is required"
-        )
-        val body = call.receive<EventUpdateRequest>()
-        val updated = TripRepositoryMock.updateEvent(id, eventId, body)
-            ?: return@put call.respond(HttpStatusCode.NotFound, "trip or event not found")
-        call.respond(updated)
-    }
-
-    // DELETE /trip/{id}/events/{eventId}
-    delete("/trip/{id}/events/{eventId}") {
-        val id = call.parameters["id"] ?: return@delete call.respond(
-            HttpStatusCode.BadRequest, "id is required"
-        )
-        val eventId = call.parameters["eventId"] ?: return@delete call.respond(
-            HttpStatusCode.BadRequest, "eventId is required"
-        )
-        val ok = TripRepositoryMock.deleteEvent(id, eventId)
-        if (!ok) call.respond(HttpStatusCode.NotFound, "trip or event not found")
-        else call.respond(HttpStatusCode.NoContent)
     }
 }

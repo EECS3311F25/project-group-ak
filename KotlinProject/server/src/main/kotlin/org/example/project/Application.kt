@@ -11,6 +11,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
 import org.example.project.trip.tripRoutes
+import org.example.project.db.configureDatabases
+import org.example.project.db.configureRouting
+import org.example.project.db.configureSerialization
 
 const val SERVER_PORT: Int = 8080
 
@@ -36,19 +39,27 @@ fun Application.module() {
         allowHeader(HttpHeaders.Authorization)
     }
     
-    // Install ContentNegotiation for JSON serialization
-    install(ContentNegotiation) {
-        json(Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        })
-    }
+//     // Install ContentNegotiation for JSON serialization
+//     install(ContentNegotiation) {
+//         json(Json {
+//             prettyPrint = true
+//             isLenient = true
+//             ignoreUnknownKeys = true
+//         })
+//     }
     
-    routing {
-        get("/") { call.respondText("Ktor: ${Greeting().greet()}") }
+//     routing {
+//         get("/") { call.respondText("Ktor: ${Greeting().greet()}") }
 
-        tripRoutes()
-        mockApiRoutes()
-    }
+//         tripRoutes()
+//         mockApiRoutes()
+//     }
+    //  Serializable to JSON - see Serialization.kt
+    configureSerialization()
+
+    //  DB configuration and migration - see DatabaseConnect.kt and Migration.kt
+    configureDatabases()
+
+    //  Register all HTTP routes - see Routing.kt
+    configureRouting()
 }
