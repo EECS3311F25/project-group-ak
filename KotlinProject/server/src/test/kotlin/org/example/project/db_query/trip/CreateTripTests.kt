@@ -64,11 +64,9 @@ class CreateTripTests {
                         startDate = LocalDate(2026, Month.FEBRUARY, 21),
                         startTime = LocalTime(hour = 8, minute = 30, second = 15),
                         endDate = LocalDate(2026, Month.FEBRUARY, 28),
-                        endTime = LocalTime(hour = 8, minute = 30, second = 15)
-                    ),
+                        endTime = LocalTime(hour = 8, minute = 30, second = 15)),
                     userId
-                )
-            )
+                ))
         }
         println("\n" + response.bodyAsText() + "\n")
         assertEquals(HttpStatusCode.Created, response.status)

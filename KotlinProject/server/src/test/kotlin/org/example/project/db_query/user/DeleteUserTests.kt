@@ -35,7 +35,6 @@ class DeleteUserTests {
 
         val response: HttpResponse = client.delete("/user/1/delete") {
             contentType(ContentType.Application.Json)
-//            setBody(User("user1", "user1@gmail.com", "password1"))
         }
         assertEquals(HttpStatusCode.NoContent, response.status)
         assertEquals("User deleted successfully", response.bodyAsText())
@@ -59,7 +58,6 @@ class DeleteUserTests {
 
         val response: HttpResponse = client.delete("/user/2/delete") {
             contentType(ContentType.Application.Json)
-//            setBody(User("user2", "user2@gmail.com", "password2"))
         }
         assertEquals(HttpStatusCode.NoContent, response.status)
         assertEquals("User deleted successfully", response.bodyAsText())
@@ -83,7 +81,6 @@ class DeleteUserTests {
 
         val response: HttpResponse = client.delete("/user/3/delete") {
             contentType(ContentType.Application.Json)
-//            setBody(User("user3", "user3@gmail.com", "password3"))
         }
         assertEquals(HttpStatusCode.NotFound, response.status)
         assertEquals("User does not exist", response.bodyAsText())

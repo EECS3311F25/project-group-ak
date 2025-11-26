@@ -3,7 +3,9 @@
     *   NOTE: track module dependency carefully, and please fix from bottom up strategically. Consider writing it out
     Warning: SQL doesn't have custom types. Refer to how the Duration type is handled from the backend to the DB, to derive potential steps (consider Google + LLM)
 
-##  PRIORITY #2 (please finish ASAP): fixing HTTPS requests routes
+##  PRIORITY #2: add image URL field into Trip
+
+##  PRIORITY #3 (please finish ASAP): fixing HTTPS requests routes
     See GUIDE.md for routes that are currently working correctly. Those will have relatively correct code, to help you derive how to fix the other ones.
     *CONSIDER* writing tests and run them to check correctness. Only CreateUser and CreateTrip are working.
     *   Testing is optional (and maybe just do it after a lot of fixing) - it is a lot of labor

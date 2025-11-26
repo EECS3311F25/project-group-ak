@@ -60,7 +60,7 @@ class UpdateUserTests {
             }
         }
 
-        val response: HttpResponse = client.put("/user/1") {
+        val response: HttpResponse = client.put("/user/2") {
             contentType(ContentType.Application.Json)
             setBody(User("user2", "user2@gmail.com", "newPassword2"))
         }
