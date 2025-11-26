@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS events (
     event_title VARCHAR(100) NOT NULL,
     event_description VARCHAR(500),
     event_location VARCHAR(255) NOT NULL,
-    trip_duration VARCHAR(200) NOT NULL,
+    event_duration VARCHAR(200) NOT NULL,
     trip_id INT NOT NULL,
     FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
 );
