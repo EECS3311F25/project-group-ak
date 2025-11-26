@@ -6,13 +6,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.example.project.data.source.TripDataSource
+import org.example.project.data.remote.RemoteTripDataSource
 import org.example.project.model.dataClasses.Duration
 import org.example.project.model.dataClasses.Trip
 import org.example.project.model.dataClasses.Event
 
+// USES ONLY REMOTE DATA SOURCE. NO LOCAL DB => NO LOCAL SOURCE
 class TripRepository(
-    private val localDataSource: TripDataSource
+    private val remoteDataSource: RemoteTripDataSource
 ) {
     // StateFlow for reactive updates
     private val _trips = MutableStateFlow<List<Trip>>(emptyList())
@@ -32,11 +33,22 @@ class TripRepository(
     }
     
     suspend fun getAllTrips(): List<Trip> {
-        return localDataSource.getAllTrips()
+        return try {
+            remoteDataSource.getAllTrips()
+        } catch (e: Exception) {
+            println("Failed to fetch remote trips: ${e.message}")
+            e.printStackTrace()
+            emptyList()
+        }
     }
     
     suspend fun getTripById(id: String): Trip? {
-        return localDataSource.getTripById(id)
+        return try {
+            remoteDataSource.getTripById(id)
+        } catch (e: Exception) {
+            println("Failed to fetch trip by id: ${e.message}")
+            null
+        }
     }
     
     suspend fun createTrip(trip: Trip): Result<Trip> {
@@ -44,8 +56,7 @@ class TripRepository(
         _error.value = null
         
         return try {
-            val createdTrip = localDataSource.insertTrip(trip)
-            // 🔥 Key: Update StateFlow so all screens automatically refresh
+            val createdTrip = remoteDataSource.insertTrip(trip)
             refreshTrips()
             _isLoading.value = false
             Result.success(createdTrip)
@@ -61,7 +72,7 @@ class TripRepository(
         _error.value = null
         
         return try {
-            val updatedTrip = localDataSource.updateTrip(trip)
+            val updatedTrip = remoteDataSource.updateTrip(trip)
             refreshTrips()
             _isLoading.value = false
             Result.success(updatedTrip)
@@ -77,7 +88,7 @@ class TripRepository(
         _error.value = null
         
         return try {
-            localDataSource.deleteTrip(tripId)
+            remoteDataSource.deleteTrip(tripId)
             refreshTrips()
             _isLoading.value = false
             Result.success(Unit)
@@ -88,9 +99,14 @@ class TripRepository(
         }
     }
     
-    // 🔥 This method triggers updates to all subscribers
+    // This method triggers updates to all subscribers
     private suspend fun refreshTrips() {
-        _trips.value = localDataSource.getAllTrips()
+        _trips.value = try {
+            remoteDataSource.getAllTrips()
+        } catch (e: Exception) {
+            println("Failed to refresh trips: ${e.message}")
+            emptyList()
+        }
     }
     
     // Manual refresh method for pull-to-refresh
@@ -110,8 +126,9 @@ class TripRepository(
         _isLoading.value = true
         _error.value = null
         return try {
-            val trip = localDataSource.getTripById(tripId)
+            val trip = remoteDataSource.getTripById(tripId)
                 ?: throw IllegalArgumentException("Trip not found")
+            
             trip.events.firstOrNull { it.duration.conflictsWith(event.duration) }?.let { conflicting ->
                 val conflictingRange = "${conflicting.duration.startDate} ${conflicting.duration.startTime} - " +
                     "${conflicting.duration.endDate} ${conflicting.duration.endTime}"
@@ -119,7 +136,8 @@ class TripRepository(
                     "Overlaps with existing event ${conflicting.title} ($conflictingRange)"
                 )
             }
-            localDataSource.addEventToTrip(tripId, event)
+            
+            remoteDataSource.addEventToTrip(tripId, event)
             refreshTrips()
             _isLoading.value = false
             Result.success(event)
@@ -134,7 +152,7 @@ class TripRepository(
         _isLoading.value = true
         _error.value = null
         return try {
-            localDataSource.deleteEventFromTrip(tripId, eventId)
+            remoteDataSource.deleteEventFromTrip(tripId, eventId)
             refreshTrips()
             _isLoading.value = false
             Result.success(Unit)
@@ -149,7 +167,7 @@ class TripRepository(
         _isLoading.value = true
         _error.value = null
         return try {
-            localDataSource.updateEventInTrip(tripId, eventId, updated)
+            remoteDataSource.updateEventInTrip(tripId, eventId, updated)
             refreshTrips()
             _isLoading.value = false
             Result.success(Unit)
@@ -164,7 +182,7 @@ class TripRepository(
         _isLoading.value = true
         _error.value = null
         return try {
-            localDataSource.addMemberToTrip(tripId, userId)
+            remoteDataSource.addMemberToTrip(tripId, userId)
             refreshTrips()
             _isLoading.value = false
             Result.success(Unit)
@@ -179,7 +197,7 @@ class TripRepository(
         _isLoading.value = true
         _error.value = null
         return try {
-            localDataSource.removeMemberFromTrip(tripId, userId)
+            remoteDataSource.removeMemberFromTrip(tripId, userId)
             refreshTrips()
             _isLoading.value = false
             Result.success(Unit)
@@ -232,8 +250,8 @@ class TripRepository(
         _isLoading.value = true
         _error.value = null
         return try {
-            val trip = localDataSource.getTripById(tripId) ?: return Result.failure(Exception("Trip not found"))
-            localDataSource.updateTrip(update(trip))
+            val trip = remoteDataSource.getTripById(tripId) ?: return Result.failure(Exception("Trip not found"))
+            remoteDataSource.updateTrip(update(trip))
             refreshTrips()
             _isLoading.value = false
             Result.success(Unit)

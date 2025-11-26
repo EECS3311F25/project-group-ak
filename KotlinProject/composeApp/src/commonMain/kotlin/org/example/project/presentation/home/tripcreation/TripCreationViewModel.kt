@@ -17,8 +17,7 @@ import org.example.project.model.dataClasses.User
 import org.example.project.model.dataClasses.Event
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
-import org.example.project.data.source.LocalTripDataSource
-import org.example.project.data.source.LocalUserDataSource
+import org.example.project.data.remote.RemoteTripDataSource
 
 data class TripCreationState(
     val title: String = "",
@@ -36,8 +35,8 @@ data class TripCreationState(
 )
 
 class TripCreationViewModel(
-    private val tripRepository: TripRepository = TripRepository(LocalTripDataSource()),
-    private val userRepository: UserRepository = UserRepository(LocalUserDataSource()) // Add UserRepository
+    private val tripRepository: TripRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     
     private val _state = MutableStateFlow(TripCreationState())
@@ -47,10 +46,14 @@ class TripCreationViewModel(
     init {
         viewModelScope.launch {
             try {
+                println("TripCreationViewModel: Loading current user...")
                 val currentUser = userRepository.getCurrentUser()
+                println("TripCreationViewModel: Successfully loaded user: ${currentUser.name} (ID: ${currentUser.id})")
                 addUser(currentUser)
             } catch (e: Exception) {
                 // Handle error if needed
+                println("TripCreationViewModel: Error loading current user: ${e.message}")
+                e.printStackTrace()
                 _state.value = _state.value.copy(
                     errorMessage = "Failed to load current user: ${e.message}"
                 )
@@ -201,35 +204,6 @@ class TripCreationViewModel(
         validateForm()
     }
     
-    // Events
-    fun addEvent(event: Event) {
-        val currentEvents = _state.value.events.toMutableList()
-        currentEvents.add(event)
-        _state.value = _state.value.copy(
-            events = currentEvents,
-            errorMessage = null
-        )
-        validateForm()
-    }
-    
-    fun removeEvent(event: Event) {
-        val currentEvents = _state.value.events.toMutableList()
-        currentEvents.remove(event)
-        _state.value = _state.value.copy(
-            events = currentEvents,
-            errorMessage = null
-        )
-        validateForm()
-    }
-    
-    fun updateEvents(newEvents: List<Event>) {
-        _state.value = _state.value.copy(
-            events = newEvents,
-            errorMessage = null
-        )
-        validateForm()
-    }
-    
     // Image Header URL
     fun updateImageHeaderUrl(newImageUrl: String?) {
         _state.value = _state.value.copy(
@@ -306,6 +280,8 @@ class TripCreationViewModel(
                 )
                 
             } catch (e: Exception) {
+                println("TripCreationViewModel: Error creating trip: ${e.message}")
+                e.printStackTrace()
                 _state.value = currentState.copy(
                     isLoading = false,
                     errorMessage = "Failed to create trip: ${e.message}"

@@ -12,6 +12,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
@@ -227,6 +228,24 @@ fun TimelineView(
                                 .size(iconBoxSize)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.surface)
+                                .clickable {
+                                    val firstEvent = first.first
+                                    val secondEvent = second.first
+                                    
+                                    // Only navigate if both events have locations
+                                    val firstLoc = firstEvent.location
+                                    val secondLoc = secondEvent.location
+                                    if (firstLoc != null && secondLoc != null) {
+                                        component.onEvent(
+                                            CalendarViewEvent.ShowNavigation(
+                                                startLocation = firstLoc,
+                                                endLocation = secondLoc,
+                                                startTitle = firstEvent.title,
+                                                endTitle = secondEvent.title
+                                            )
+                                        )
+                                    }
+                                }
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Commute,

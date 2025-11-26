@@ -17,8 +17,10 @@ import org.example.project.presentation.trip.addevent.AddEventComponent
 import org.example.project.presentation.trip.addmember.AddMemberComponent
 import org.example.project.presentation.trip.edittrip.EditTripComponent
 import org.example.project.presentation.calendar.CalendarViewComponent
-import org.example.project.data.source.LocalUserDataSource
-import org.example.project.data.repository.UserRepository
+import org.example.project.presentation.calendar.navigation.NavigationViewComponent
+import org.example.project.presentation.uishared.MapMarker
+import org.example.project.presentation.uishared.toMapMarker
+import org.example.project.model.dataClasses.Location
 import org.example.project.model.dataClasses.Trip
 
 class RootComponent(
@@ -33,8 +35,6 @@ class RootComponent(
         handleBackButton = true,
         childFactory = ::createChild
     )
-
-    private val userRepository = UserRepository(LocalUserDataSource())
 
     fun navigateToHome() {
         navigation.pushNew(Configuration.HomeView)
@@ -121,7 +121,6 @@ class RootComponent(
                         navigation.pushNew(Configuration.TripView(trip.id))
                     },
                     onNavigateToHomeView = { navigation.pop() },
-                    userRepository = userRepository
                 )
             )
 
@@ -139,9 +138,29 @@ class RootComponent(
                     },
                     onAddEvent =  { initialDate ->
                         navigation.pushNew(Configuration.AddEvent(config.tripId, null, initialDate)) 
+                    },
+                    onNavigateToNavigation = { startLocation, endLocation, startTitle, endTitle ->
+                        navigation.pushNew(Configuration.NavigationView(
+                            startLocation, endLocation, startTitle, endTitle
+                        ))
                     }
                 ),
                 config.tripId
+            )
+            
+            is Configuration.NavigationView -> Child.NavigationView(
+                component = NavigationViewComponent(
+                    componentContext = context,
+                    onGoBack = { navigation.pop() }
+                ),
+                startLocation = config.startLocation.toMapMarker(
+                    title = config.startTitle,
+                    description = "Start"
+                ),
+                endLocation = config.endLocation.toMapMarker(
+                    title = config.endTitle,
+                    description = "Destination"
+                )
             )
         }
     }
@@ -156,6 +175,11 @@ class RootComponent(
         data class AddMember(val component : AddMemberComponent, val tripId: String) : Child()
         data class CalendarView(val component: CalendarViewComponent, val tripId: String) : Child()
         data class EditTrip(val component : EditTripComponent, val tripId: String) : Child()
+        data class NavigationView(
+            val component: NavigationViewComponent,
+            val startLocation: MapMarker,
+            val endLocation: MapMarker
+        ) : Child()
     }
 
     @Serializable
@@ -178,5 +202,12 @@ class RootComponent(
         data class EditTrip(val tripId: String) : Configuration()
         @Serializable
         data class CalendarView(val tripId: String): Configuration()
+        @Serializable
+        data class NavigationView(
+            val startLocation: Location,
+            val endLocation: Location,
+            val startTitle: String,
+            val endTitle: String
+        ): Configuration()
     }
 }
