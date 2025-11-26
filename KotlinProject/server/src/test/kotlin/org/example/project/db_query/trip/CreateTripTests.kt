@@ -40,7 +40,9 @@ class CreateTripTests {
                 json()
             }
         }
-
+        /**
+         * Create new User
+         */
         val userResponse: HttpResponse = client.post("/user/register") {
             contentType(ContentType.Application.Json)
             setBody(UserCreateRequest("user0", "user0@gmail.com", "password0"))
@@ -49,6 +51,9 @@ class CreateTripTests {
         val userResponseData = userResponse.body<UserRetrieveResponse>().data
         val userId = userResponseData.id
 
+        /**
+         * Create new Trip under the new User
+         */
         val response: HttpResponse = client.post("/user/$userId/trip") {
             contentType(ContentType.Application.Json)
             setBody(TripCreateRequest(

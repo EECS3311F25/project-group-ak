@@ -16,14 +16,14 @@
 ##  (!!!) Supported HTTPS request routes
     User:   prepend the following with "/user"
     -   GET     /{id}                   -> get user by user ID ("/user")
-    -   POST    /register               -> create new user ("/user/register")
+    -   (working-ish) POST    /register -> create new user ("/user/register")
     -   PUT     /{id}/password          -> update user password (requires user entry's ID in the parameter)
     -   DELETE  /{id}/delete            -> delete user (requires user entry's ID in the parameter)
 
     Trip:   /user/{userId}/trip...
     -   GET    /                                -> list all trips associated with the user of ID userId
     -   GET    /{id}                            -> get trip
-    -   POST   /                                -> create new trip (under user of ID userId)
+    -   (working-ish) POST   /                  -> create new trip (under user of ID userId)
     -   PUT    /{id}                            -> update trip
     -   DELETE /{id}                            -> delete trip
 
