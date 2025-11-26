@@ -58,8 +58,9 @@ import org.example.project.presentation.calendar.navigation.NavigationView
  */ 
 fun App(root: RootComponent) {
     // 🔥 Create shared repository instances at App level
-    val tripRepository = remember { TripRepository(RemoteTripDataSource()) }
-    val userRepository = remember { UserRepository(RemoteUserDataSource()) }
+    val userDataSource = remember { RemoteUserDataSource() }
+    val tripRepository = remember { TripRepository(RemoteTripDataSource(userDataSource)) }
+    val userRepository = remember { UserRepository(userDataSource) }
     
     MaterialTheme(
         colorScheme = LightColorScheme

@@ -58,9 +58,20 @@ class HomeViewModel(
 
         // Load current user once
         viewModelScope.launch {
-            val user = userRepository.getCurrentUser()
-            _currentUser.value = user
-            _uiState.update { it.copy(currentUser = user) }
+            try {
+                val user = userRepository.getCurrentUser()
+                _currentUser.value = user
+                _uiState.update { it.copy(currentUser = user) }
+                println("HomeViewModel: Loaded user: ${user.name} (ID: ${user.id})")
+            } catch (e: Exception) {
+                println("HomeViewModel: Error loading user: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+        
+        // Initial data load
+        viewModelScope.launch {
+            tripRepository.refresh()
         }
     }
 

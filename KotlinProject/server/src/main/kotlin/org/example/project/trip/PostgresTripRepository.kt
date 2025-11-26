@@ -32,7 +32,7 @@ class PostgresTripRepository: TripRepository {
                     val user = UserDAO.findById(userId!!) ?: throw IllegalArgumentException("User not found")
                     val newTrip = TripDAO.new {
                         tripTitle = tripDto.tripTitle!!
-                        tripDescription = tripDto.tripDescription!!
+                        tripDescription = tripDto.tripDescription ?: "" // Allow empty description
                         tripLocation = tripDto.tripLocation!!
                         tripDuration = tripDto.tripDuration
                         this.userId = user
@@ -40,6 +40,7 @@ class PostgresTripRepository: TripRepository {
                     newTrip.toResponseDto()
                 } catch (e: Exception) {
                     println("Exception during TripDAO.new: ${e.message}")
+                    e.printStackTrace()
                     throw e
                 }
             }
