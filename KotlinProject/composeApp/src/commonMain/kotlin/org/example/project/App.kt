@@ -29,12 +29,13 @@ import org.example.project.presentation.calendar.CalendarViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
-import org.example.project.data.source.LocalTripDataSource
-import org.example.project.data.source.LocalUserDataSource
+import org.example.project.data.remote.RemoteTripDataSource
+import org.example.project.data.remote.RemoteUserDataSource
 import org.example.project.presentation.trip.TripViewModel
 import org.example.project.presentation.trip.addmember.AddMemberViewModel
 import org.example.project.presentation.trip.addevent.AddEventViewModel
 import org.example.project.presentation.trip.edittrip.EditTripViewModel
+import org.example.project.presentation.ApiTestView
 
 @Composable
 /*
@@ -56,8 +57,8 @@ import org.example.project.presentation.trip.edittrip.EditTripViewModel
  */ 
 fun App(root: RootComponent) {
     // 🔥 Create shared repository instances at App level
-    val tripRepository = remember { TripRepository(LocalTripDataSource()) }
-    val userRepository = remember { UserRepository(LocalUserDataSource()) }
+    val tripRepository = remember { TripRepository(RemoteTripDataSource()) }
+    val userRepository = remember { UserRepository(RemoteUserDataSource()) }
     
     MaterialTheme(
         colorScheme = LightColorScheme
@@ -213,9 +214,11 @@ fun App() {
     // DEV USE Temporary: ================================================
     // start the app on HomeView for development.
     LaunchedEffect(root) {
-        root.navigateToHome()
+       root.navigateToHome()
     }
     //====================================================================
     
     App(root)
+
+    //ApiTestView()
 }

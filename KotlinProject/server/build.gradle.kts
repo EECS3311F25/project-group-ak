@@ -31,21 +31,20 @@ dependencies {
     implementation(projects.shared)
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
+    implementation(libs.ktor.server.cors)
+    implementation(libs.ktor.server.contentnegotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.server.sessions)
+    
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
 
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.server.content.negotiation.jvm)
-    implementation(libs.ktor.server.cors.jvm)
-    implementation(libs.ktor.server.status.pages)
-    implementation(libs.ktor.server.sessions)
-
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.contentnegotiation)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.encoding)
-
 
     //  H2 driver for JDBC
     //  refer to: https://www.jetbrains.com/help/exposed/working-with-database.html#choosing-between-jdbc-and-r2dbc
@@ -53,9 +52,8 @@ dependencies {
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
     implementation(libs.flyway.core)
+    implementation(libs.flyway.database.postgresql)
     implementation(libs.postgresql)
     implementation(libs.h2)
     implementation(libs.logback.classic)
-    implementation(libs.flyway.core)
-    implementation(libs.flyway.database.postgresql)
 }

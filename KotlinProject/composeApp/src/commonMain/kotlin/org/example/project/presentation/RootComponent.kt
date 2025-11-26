@@ -17,8 +17,6 @@ import org.example.project.presentation.trip.addevent.AddEventComponent
 import org.example.project.presentation.trip.addmember.AddMemberComponent
 import org.example.project.presentation.trip.edittrip.EditTripComponent
 import org.example.project.presentation.calendar.CalendarViewComponent
-import org.example.project.data.source.LocalUserDataSource
-import org.example.project.data.repository.UserRepository
 import org.example.project.model.dataClasses.Trip
 
 class RootComponent(
@@ -33,8 +31,6 @@ class RootComponent(
         handleBackButton = true,
         childFactory = ::createChild
     )
-
-    private val userRepository = UserRepository(LocalUserDataSource())
 
     fun navigateToHome() {
         navigation.pushNew(Configuration.HomeView)
@@ -121,7 +117,6 @@ class RootComponent(
                         navigation.pushNew(Configuration.TripView(trip.id))
                     },
                     onNavigateToHomeView = { navigation.pop() },
-                    userRepository = userRepository
                 )
             )
 

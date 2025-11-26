@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.sp
 import org.example.project.presentation.home.tripcreation.TripCreationComponent
 import org.example.project.presentation.home.tripcreation.TripCreationEvent
 import org.example.project.presentation.home.tripcreation.TripCreationViewModel
-import org.example.project.model.dataClasses.User
 import org.example.project.presentation.uishared.DatePickerSection
 
 
@@ -26,17 +25,10 @@ fun TripCreationView(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
-    var currentUser by remember { mutableStateOf<User?>(null) }
     val scrollState = rememberScrollState()
 
-    // Load current user when component is created
-    LaunchedEffect(component.users) {
-        currentUser = component.users.getCurrentUser()
-        currentUser?.let { user ->
-            viewModel.addUser(user)
-        }
-    }
-
+    // Note: Current user is automatically loaded in TripCreationViewModel.init{}
+    
     Column(
         modifier = modifier
             .fillMaxSize()
