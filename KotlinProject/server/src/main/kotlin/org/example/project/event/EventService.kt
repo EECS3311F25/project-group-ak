@@ -22,9 +22,7 @@ object EventService {
         if (eventDto.eventTitle.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
         }
-        if (eventDto.eventDescription.isNullOrBlank()) {
-            return Result.failure(IllegalArgumentException("Event description cannot be empty"))
-        }
+        // Description is optional, no validation needed
         if (eventDto.eventLocation.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Event location cannot be empty"))
         }

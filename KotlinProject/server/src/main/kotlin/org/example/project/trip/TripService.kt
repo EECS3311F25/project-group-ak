@@ -25,9 +25,7 @@ object TripService {
         if (tripDto.tripTitle.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Trip title cannot be empty"))
         }
-        if (tripDto.tripDescription.isNullOrBlank()) {
-            return Result.failure(IllegalArgumentException("Trip description cannot be empty"))
-        }
+        // Description is optional, no validation needed
         if (tripDto.tripLocation.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Trip location cannot be empty"))
         }

@@ -46,10 +46,14 @@ class TripCreationViewModel(
     init {
         viewModelScope.launch {
             try {
+                println("TripCreationViewModel: Loading current user...")
                 val currentUser = userRepository.getCurrentUser()
+                println("TripCreationViewModel: Successfully loaded user: ${currentUser.name} (ID: ${currentUser.id})")
                 addUser(currentUser)
             } catch (e: Exception) {
                 // Handle error if needed
+                println("TripCreationViewModel: Error loading current user: ${e.message}")
+                e.printStackTrace()
                 _state.value = _state.value.copy(
                     errorMessage = "Failed to load current user: ${e.message}"
                 )
@@ -276,6 +280,8 @@ class TripCreationViewModel(
                 )
                 
             } catch (e: Exception) {
+                println("TripCreationViewModel: Error creating trip: ${e.message}")
+                e.printStackTrace()
                 _state.value = currentState.copy(
                     isLoading = false,
                     errorMessage = "Failed to create trip: ${e.message}"

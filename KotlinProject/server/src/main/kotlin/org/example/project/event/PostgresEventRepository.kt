@@ -29,7 +29,7 @@ class PostgresEventRepository: EventRepository {
             .mapCatching {
                 val newEvent = EventDAO.new {
                     eventTitle = eventDto.eventTitle!!
-                    eventDescription = eventDto.eventDescription!!
+                    eventDescription = eventDto.eventDescription ?: "" // Allow empty description
                     eventLocation = eventDto.eventLocation!!
                     eventDuration = eventDto.eventDuration
                     this.tripId = TripDAO[tripId!!]
