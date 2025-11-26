@@ -32,7 +32,11 @@ actual fun MapWindow(
     var isMapReady by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var routeInfo by remember { mutableStateOf<Pair<Double, Double>?>(null) }
+    var selectedStartMarker by remember { mutableStateOf<MapMarker?>(null) }
     val mapId = remember { "map-${(0..999999).random()}" }
+    
+    // NavBar height to subtract from map height (64dp converted to pixels, approximately 88px)
+    val navBarHeightPx = 88
     
     LaunchedEffect(Unit) {
         console.log("MapView: Starting initialization...")
@@ -75,19 +79,42 @@ actual fun MapWindow(
             top = "${rect.top}px"
             left = "${rect.left}px"
             width = "${rect.width}px"
-            height = "${rect.height}px"
+            // Subtract NavBar height from the total height
+            height = "${rect.height - navBarHeightPx}px"
             zIndex = "1"
         }
         
         document.body?.appendChild(container)
-        console.log("MapView: Container div created and appended to body")
+        console.log("MapView: Container div created with height adjusted for NavBar")
         
         // Wait a bit for DOM to settle
         kotlinx.coroutines.delay(300)
         
         // Initialize the map
         try {
-            initializeMapboxMap(mapId, latitude, longitude, zoom, markers, routeEndpoints, onRouteCalculated)
+            initializeMapboxMap(
+                mapId, 
+                latitude, 
+                longitude, 
+                zoom, 
+                markers, 
+                routeEndpoints, 
+                onRouteCalculated,
+                onStartMarkerSelected = { marker ->
+                    selectedStartMarker = marker
+                    console.log("Start marker selected: ${marker.title}")
+                },
+                onEndMarkerSelected = { endMarker ->
+                    selectedStartMarker?.let { startMarker ->
+                        console.log("End marker selected: ${endMarker.title}, navigating from ${startMarker.title}")
+                        // TODO: Navigate to NavigationView with these two markers
+                        // For now, just show alert - you'll replace this with actual navigation
+                        js("""
+                            alert('Route from: ' + startMarker.title + '\nTo: ' + endMarker.title);
+                        """)
+                    }
+                }
+            )
             isMapReady = true
             console.log("MapView: Map initialized successfully")
         } catch (e: Throwable) {
@@ -132,7 +159,9 @@ private fun initializeMapboxMap(
     zoom: Double,
     markers: List<MapMarker>,
     routeEndpoints: Pair<MapMarker, MapMarker>?,
-    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)?
+    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)?,
+    onStartMarkerSelected: (MapMarker) -> Unit,
+    onEndMarkerSelected: (MapMarker) -> Unit
 ) {
     // Access token from Config (loaded from environment)
     val accessToken = Config.MAPBOX_ACCESS_TOKEN
@@ -152,6 +181,71 @@ private fun initializeMapboxMap(
         if (js("typeof mapboxgl !== 'undefined'") as Boolean) {
             // Set access token
             js("mapboxgl.accessToken = accessToken")
+            
+            // Store marker instances and navigation state using dynamic property access
+            js("window['mapMarkers_' + mapId] = []")
+            js("window['navigationMode_' + mapId] = false")
+            js("window['startMarker_' + mapId] = null")
+            
+            // Create Kotlin callback wrappers that can be called from JavaScript
+            js("window['kotlinStartCallback_' + mapId] = onStartMarkerSelected")
+            js("window['kotlinEndCallback_' + mapId] = onEndMarkerSelected")
+            
+            // Set up global handler for "Navigate from here" button
+            js("""
+                var mapIdStr = mapId;
+                window['handleNavigateFromHere_' + mapIdStr] = function(title, lat, lng, address) {
+                    console.log('Navigate from here clicked:', title);
+                    
+                    // Store the start marker
+                    window['startMarker_' + mapIdStr] = { title: title, latitude: lat, longitude: lng, address: address };
+                    
+                    // Enable navigation mode
+                    window['navigationMode_' + mapIdStr] = true;
+                    
+                    // Change all other markers to yellow
+                    window['mapMarkers_' + mapIdStr].forEach(function(markerObj) {
+                        if (markerObj.title !== title) {
+                            markerObj.marker.remove();
+                            var newMarker = new mapboxgl.Marker({ color: '#FFD700' })
+                                .setLngLat([markerObj.longitude, markerObj.latitude])
+                                .setPopup(markerObj.popup)
+                                .addTo(markerObj.map);
+                            markerObj.marker = newMarker;
+                        }
+                    });
+                    
+                    // Close the current popup
+                    var map = window['mapInstance_' + mapIdStr];
+                    var popups = document.getElementsByClassName('mapboxgl-popup');
+                    if (popups.length) {
+                        for (var i = 0; i < popups.length; i++) {
+                            popups[i].remove();
+                        }
+                    }
+                };
+            """)
+            
+            // Set up global handler for destination marker selection
+            js("""
+                var mapIdStr = mapId;
+                window['handleDestinationSelected_' + mapIdStr] = function(title, lat, lng, address) {
+                    console.log('Destination selected:', title);
+                    
+                    if (window['startMarker_' + mapIdStr]) {
+                        var startMarker = window['startMarker_' + mapIdStr];
+                        var endMarker = { title: title, latitude: lat, longitude: lng, address: address };
+                        
+                        // Call Kotlin callbacks
+                        window['kotlinStartCallback_' + mapIdStr](startMarker);
+                        window['kotlinEndCallback_' + mapIdStr](endMarker);
+                        
+                        // Reset navigation mode
+                        window['navigationMode_' + mapIdStr] = false;
+                        window['startMarker_' + mapIdStr] = null;
+                    }
+                };
+            """)
             
             // Create map
             val map = js("""
@@ -182,15 +276,55 @@ private fun initializeMapboxMap(
                 val markerLat = marker.latitude
                 val markerTitle = marker.title
                 val markerDesc = marker.description ?: ""
+                val markerAddress = marker.address
                 
                 js("""
-                    new mapboxgl.Marker()
+                    var mapIdStr = mapId;
+                    var popup = new mapboxgl.Popup({ offset: 25 })
+                        .setHTML(
+                            '<div style="padding: 8px;">' +
+                                '<h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold;">' + markerTitle + '</h3>' + 
+                                (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
+                                '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
+                                '<button id="nav-btn-' + markerTitle.replace(/\s+/g, '-') + '" ' +
+                                    'style="background-color: #3887be; color: white; border: none; ' +
+                                    'padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%;">' +
+                                    'Navigate from here' +
+                                '</button>' +
+                            '</div>'
+                        );
+                    
+                    var newMarker = new mapboxgl.Marker({ color: '#3887be' })
                         .setLngLat([markerLng, markerLat])
-                        .setPopup(new mapboxgl.Popup().setHTML(
-                            '<h3>' + markerTitle + '</h3>' + 
-                            (markerDesc ? '<p>' + markerDesc + '</p>' : '')
-                        ))
-                        .addTo(map)
+                        .setPopup(popup)
+                        .addTo(map);
+                    
+                    // Store marker reference
+                    window['mapMarkers_' + mapIdStr].push({
+                        title: markerTitle,
+                        latitude: markerLat,
+                        longitude: markerLng,
+                        address: markerAddress,
+                        marker: newMarker,
+                        popup: popup,
+                        map: map
+                    });
+                    
+                    // Add click handler for the button after popup opens
+                    popup.on('open', function() {
+                        var btn = document.getElementById('nav-btn-' + markerTitle.replace(/\s+/g, '-'));
+                        if (btn) {
+                            btn.onclick = function() {
+                                if (window['navigationMode_' + mapIdStr]) {
+                                    // In navigation mode, this is the destination
+                                    window['handleDestinationSelected_' + mapIdStr](markerTitle, markerLat, markerLng, markerAddress);
+                                } else {
+                                    // Start navigation mode
+                                    window['handleNavigateFromHere_' + mapIdStr](markerTitle, markerLat, markerLng, markerAddress);
+                                }
+                            };
+                        }
+                    });
                 """)
             }
             

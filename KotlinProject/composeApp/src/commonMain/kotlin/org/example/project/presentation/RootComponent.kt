@@ -18,6 +18,7 @@ import org.example.project.presentation.trip.addmember.AddMemberComponent
 import org.example.project.presentation.trip.edittrip.EditTripComponent
 import org.example.project.presentation.calendar.CalendarViewComponent
 import org.example.project.presentation.calendar.navigation.NavigationViewComponent
+import org.example.project.presentation.map.MapViewComponent
 import org.example.project.presentation.uishared.MapMarker
 import org.example.project.presentation.uishared.toMapMarker
 import org.example.project.model.dataClasses.Location
@@ -74,7 +75,11 @@ class RootComponent(
                         navigation.pop()
                         navigation.pushNew(Configuration.CalendarView(config.tripId))
                     },
-                    onNavigateToEditTrip = { navigation.pushNew(Configuration.EditTrip(config.tripId)) }
+                    onNavigateToEditTrip = { navigation.pushNew(Configuration.EditTrip(config.tripId)) },
+                    onNavigateToMap = {
+                        navigation.pop()
+                        navigation.pushNew(Configuration.MapView(config.tripId))
+                    }
                 ),
                 config.tripId
             )
@@ -143,6 +148,10 @@ class RootComponent(
                         navigation.pushNew(Configuration.NavigationView(
                             startLocation, endLocation, startTitle, endTitle
                         ))
+                    },
+                    onNavigateToMap = {
+                        navigation.pop()
+                        navigation.pushNew(Configuration.MapView(config.tripId))
                     }
                 ),
                 config.tripId
@@ -162,6 +171,23 @@ class RootComponent(
                     description = "Destination"
                 )
             )
+            
+            is Configuration.MapView -> Child.MapView(
+                MapViewComponent(
+                    componentContext = context,
+                    tripId = config.tripId,
+                    onGoBack = { navigation.replaceAll(Configuration.HomeView) },
+                    onNavigateToTripView = {
+                        navigation.pop()
+                        navigation.pushNew(Configuration.TripView(config.tripId))
+                    },
+                    onNavigateToCalendarView = {
+                        navigation.pop()
+                        navigation.pushNew(Configuration.CalendarView(config.tripId))
+                    }
+                ),
+                config.tripId
+            )
         }
     }
 
@@ -180,6 +206,7 @@ class RootComponent(
             val startLocation: MapMarker,
             val endLocation: MapMarker
         ) : Child()
+        data class MapView(val component: MapViewComponent, val tripId: String) : Child()
     }
 
     @Serializable
@@ -209,5 +236,7 @@ class RootComponent(
             val startTitle: String,
             val endTitle: String
         ): Configuration()
+        @Serializable
+        data class MapView(val tripId: String): Configuration()
     }
 }

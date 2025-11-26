@@ -125,7 +125,7 @@ fun TripView(
                         onItemSelected = { index ->
                             when (index) {
                                 1 -> component.onEvent(TripViewEvent.ClickCalendar(tripData)) // Calendar
-                                // 2 -> Map view (to be implemented later)
+                                2 -> component.onEvent(TripViewEvent.ClickMap) // Map
                             }
                         },
                         onBack = { component.onBack() }

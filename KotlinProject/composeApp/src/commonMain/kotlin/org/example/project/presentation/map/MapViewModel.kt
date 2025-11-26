@@ -8,10 +8,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.example.project.data.repository.TripRepository
 import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Trip
 import org.example.project.presentation.uishared.MapWindow
 import org.example.project.presentation.uishared.MapMarker
 
 data class MapUiState(
+    val trip: Trip? = null,
     val centerLatitude: Double = 43.6532, // Default: Toronto
     val centerLongitude: Double = -79.3832,
     val zoom: Double = 12.0,
@@ -29,6 +31,13 @@ class MapViewModel(
     val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()
     
     init {
+        loadTripLocations()
+    }
+    
+    /**
+     * Refresh trip data (called from UI)
+     */
+    fun refreshTrip() {
         loadTripLocations()
     }
     
@@ -59,6 +68,7 @@ class MapViewModel(
                     }
                     
                     _uiState.value = _uiState.value.copy(
+                        trip = trip,
                         centerLatitude = centerLat,
                         centerLongitude = centerLng,
                         markers = markers,
