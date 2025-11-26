@@ -10,7 +10,6 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
-import org.example.project.trip.tripRoutes
 import org.example.project.db.configureDatabases
 import org.example.project.db.configureRouting
 import org.example.project.db.configureSerialization
