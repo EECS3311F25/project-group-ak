@@ -10,10 +10,9 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.encodeToString
 import io.ktor.client.statement.*
 import org.example.project.config.AIConfig
 import org.example.project.trip.Trip
@@ -44,10 +43,9 @@ class AISummaryService(private val config : AIConfig){
         }
     
         try {
-            val prompt = formatPrompt(trip)
             logger.info("Generating summary for trip : ${trip.id}")
 
-            val response = callAIService(prompt)
+            val response = callAIService(trip)
             logger.info("Successfully generated summary for trip: ${trip.id}")
             return response
 
@@ -61,63 +59,18 @@ class AISummaryService(private val config : AIConfig){
     } 
 
 
-
-    // format prompt
-    private fun formatPrompt(trip: Trip) : String {
-        val participants = trip.users.joinToString(", ")
-        val dateRange = "${trip.duration.start} to ${trip.duration.end}"
-
-        // if event is empty
-        val eventsText = if (trip.events.isEmpty()){
-            "No specific events planned yet "
-        }  
-        else {
-            trip.events.mapIndexed { index, event ->
-                val day = index + 1
-                val timeRange = "${event.duration.start} - ${event.duration.end}"
-                
-                val locationText = if (event.location != null) {
-                    " at (${event.location.latitude}, ${event.location.longitude})"
-                } else {
-                    ""
-                }
-
-                "- Day $day: ${event.title} ($timeRange)$locationText${if (event.description != null) " - ${event.description}" else ""}"
-            }.joinToString("\n")
-        }
-
-
-        return """
-            Generate a brief, engaging summary (2-3 sentences) for this trip.
-            
-            IMPORTANT: Use varied, creative opening phrases. Do NOT always start with "Embark" or similar predictable openings. 
-            Start with different engaging phrases each time (e.g., "Join", "Experience", "Discover", "Explore", "Get ready for", 
-            or any other creative opening that fits the trip).
-            
-            Trip Details:
-            Title: ${trip.name}
-            Dates: $dateRange
-            Owner: ${trip.owner}
-            Participants: $participants
-            
-            Events:
-            $eventsText
-            
-            Make it sound exciting and capture the essence of the trip. Keep it concise and appealing. 
-            Be creative with your opening to make each summary unique.
-        """.trimIndent()
-
-    }
-
-
     /*
-    Calls Python AI service instead of AI API directly
-    Python service handles the actual AI API call (Claude/OpenAI)
+    Calls Python AI service with trip data
+    Python service handles prompt formatting and AI API call (Claude/OpenAI)
     */
-    private suspend fun callAIService(prompt: String): String {
-        // Request body for Python service using JsonObject for mixed types
+    private suspend fun callAIService(trip: Trip): String {
+        // Serialize Trip to JSON
+        val tripJson = Json.encodeToString(Trip.serializer(), trip)
+        val tripJsonElement = Json.parseToJsonElement(tripJson)
+        
+        // Request body for Python service - send trip data instead of formatted prompt
         val requestBody = buildJsonObject {
-            put("prompt", prompt)
+            put("trip", tripJsonElement)
             put("model", config.model)
             put("max_tokens", config.maxTokens)
             put("temperature", config.temperature)

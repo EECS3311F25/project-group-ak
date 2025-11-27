@@ -61,13 +61,13 @@ fun TripSummarySection(
             // Always show button when not generating
             if (!isGenerating) {
                 if (error != null) {
-                    TextButton(onClick = onRetryClick) {
-                        Text("Retry", color = Color.White)
-                    }
+                TextButton(onClick = onRetryClick) {
+                    Text("Retry", color = Color.White)
+                }
                 } else {
                     // Show "Regenerate" if summary exists, "Generate" otherwise
                     val buttonText = if (aiSummary != null) "Regenerate" else "Generate"
-                    TextButton(onClick = onGenerateClick) {
+                TextButton(onClick = onGenerateClick) {
                         Text(buttonText, color = Color.White)
                     }
                 }
