@@ -3,23 +3,31 @@ package org.example.project.event
 import Duration
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.example.project.location.LocationResponse
 
-
+/**
+ * Domain model representing an Event.
+ * Now includes a new Location field as required by Toni's instructions.
+ */
 @Serializable
-data class Event (
+data class Event(
     @SerialName("event_title")
     val eventTitle: String,
     @SerialName("event_description")
     val eventDescription: String,
 
-    //  TODO: implement Location data type
-    //  TODO: implement Location type's logic + interaction w/ app's map view
+    // Legacy string location (still stored in DB)
     @SerialName("event_location")
     val eventLocation: String,
+
     @SerialName("event_duration")
     val eventDuration: Duration,
 
-    //  Foreign key to Trip table
     @SerialName("trip_id")
-    val tripId: Int?,
+    val tripId: Int,
+
+    /**
+     * New Location object (GPS coordinates + optional title/address)
+     */
+    val location: LocationResponse? = null
 )

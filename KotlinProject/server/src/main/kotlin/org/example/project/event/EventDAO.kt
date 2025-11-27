@@ -12,7 +12,6 @@ import org.example.project.trip.TripTable
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.Transaction
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
-import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.dao.IntEntity
 import org.jetbrains.exposed.v1.dao.IntEntityClass
 import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
@@ -35,18 +34,19 @@ Table / IntIdTable(db_table_name)
 
 //  TODO: improve logic of field nullability
 
+/**
+ * Exposed table for Event.
+ */
 object EventTable : IntIdTable("events") {
     val eventTitle = varchar("event_title", 100)
     val eventDescription = varchar("event_description", 500)
     val eventLocation = varchar("event_location", 255)
     val eventDuration = varchar("event_duration", 200)
-
-    //  Foreign key to Trip table
     val tripId = reference("trip_id", TripTable, onDelete = ReferenceOption.CASCADE)
 }
 
 /**
-Entity object maps Event type's fields to columns in the database's Event table
+ * Exposed DAO for Event table.
  */
 class EventDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<EventDAO>(EventTable)
@@ -55,22 +55,27 @@ class EventDAO(id: EntityID<Int>) : IntEntity(id) {
     var eventDescription by EventTable.eventDescription
     var eventLocation by EventTable.eventLocation
     var stringEventDuration by EventTable.eventDuration
+
     var eventDuration: Duration
         get() = Json.decodeFromString(stringEventDuration)
         set(value) { stringEventDuration = Json.encodeToString(value) }
 
     var tripId by TripDAO referencedOn EventTable.tripId
+
+    /**
+     * Helper to get LocationDAO associated with this event.
+     */
+    val location: LocationDAO?
+        get() = LocationDAO.find { LocationTable.eventId eq this.id }.firstOrNull()
 }
 
-suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
-    withContext(Dispatchers.IO) {
-        suspendTransaction(statement = block)
-    }
-
+/**
+ * Convert EventDAO → EventResponse
+ */
 fun EventDAO.toResponseDto(): EventResponse {
-    // Find location associated with this event
-    val location = LocationDAO.find { LocationTable.eventId eq this.id }.firstOrNull()
-    
+    val locationDao = this.location
+    val locationResponse = locationDao?.toResponseDto()
+
     return EventResponse(
         id.value,
         eventTitle,
@@ -78,14 +83,11 @@ fun EventDAO.toResponseDto(): EventResponse {
         eventLocation,
         eventDuration,
         tripId.id.value,
-        location?.toResponseDto()
+        locationResponse
     )
 }
 
-fun daoToEventModel(dao: EventDAO) = Event(
-    eventTitle = dao.eventTitle,
-    eventDescription = dao.eventDescription,
-    eventLocation = dao.eventLocation,
-    dao.eventDuration,
-    dao.tripId.id.value
-)
+suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
+    withContext(Dispatchers.IO) {
+        suspendTransaction(statement = block)
+    }

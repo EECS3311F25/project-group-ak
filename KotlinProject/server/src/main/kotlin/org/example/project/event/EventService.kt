@@ -13,44 +13,31 @@ package org.example.project.event
  * - Validate Event data for create / update.
  * - Return Result<Unit> so routes can map it to HTTP responses.
  */
+
 object EventService {
 
-    /**
-     * Validate event data before creating a new Event.
-     */
     fun validateEventForCreate(eventDto: EventCreateRequest): Result<Unit> {
-        if (eventDto.eventTitle.isNullOrBlank()) {
+        if (eventDto.eventTitle.isNullOrBlank())
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
-        }
-        // Description is optional, no validation needed
-        if (eventDto.eventLocation.isNullOrBlank()) {
+
+        if (eventDto.eventLocation.isNullOrBlank())
             return Result.failure(IllegalArgumentException("Event location cannot be empty"))
+
+        // Location validation
+        eventDto.location?.let {
+            if (it.latitude == 0.0 && it.longitude == 0.0)
+                return Result.failure(IllegalArgumentException("Invalid GPS coordinates"))
         }
-        //  TODO: implement verification for Duration's fields
 
         return Result.success(Unit)
     }
 
-    /**
-     * Validate event data before updating an existing Event.
-     * (Currently same rules as create; can be customized later.)
-     */
     fun validateEventForUpdate(event: Event): Result<Unit> {
-        if (event.eventTitle.isBlank()) {
+        if (event.eventTitle.isBlank())
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
-        }
 
-        if (event.eventLocation.isBlank()) {
+        if (event.eventLocation.isBlank())
             return Result.failure(IllegalArgumentException("Event location cannot be empty"))
-        }
-
-        if (event.eventDescription.isBlank()) {
-            return Result.failure(IllegalArgumentException("Event description cannot be empty"))
-        }
-        if (event.eventLocation.isBlank()) {
-            return Result.failure(IllegalArgumentException("Event location cannot be empty"))
-        }
-        //  TODO: implement verification for Duration's fields
 
         return Result.success(Unit)
     }
