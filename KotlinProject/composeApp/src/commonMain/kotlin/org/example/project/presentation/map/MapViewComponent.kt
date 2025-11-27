@@ -8,7 +8,8 @@ class MapViewComponent(
     val tripId: String,
     private val onGoBack: () -> Unit,
     private val onNavigateToTripView: () -> Unit,
-    private val onNavigateToCalendarView: () -> Unit
+    private val onNavigateToCalendarView: () -> Unit,
+    private val onNavigateToNavigation: (Location, Location, String, String) -> Unit = { _, _, _, _ -> }
 ) : ComponentContext by componentContext {
 
     fun onBack() {
@@ -20,6 +21,12 @@ class MapViewComponent(
             is MapViewEvent.Back -> onBack()
             is MapViewEvent.NavigateToTrip -> onNavigateToTripView()
             is MapViewEvent.NavigateToCalendar -> onNavigateToCalendarView()
+            is MapViewEvent.NavigateToNavigation -> onNavigateToNavigation(
+                event.startLocation,
+                event.endLocation,
+                event.startTitle,
+                event.endTitle
+            )
         }
     }
 }
@@ -28,4 +35,10 @@ sealed class MapViewEvent {
     object Back : MapViewEvent()
     object NavigateToTrip : MapViewEvent()
     object NavigateToCalendar : MapViewEvent()
+    data class NavigateToNavigation(
+        val startLocation: Location,
+        val endLocation: Location,
+        val startTitle: String,
+        val endTitle: String
+    ) : MapViewEvent()
 }

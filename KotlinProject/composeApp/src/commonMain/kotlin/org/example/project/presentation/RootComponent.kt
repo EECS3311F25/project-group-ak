@@ -184,6 +184,11 @@ class RootComponent(
                     onNavigateToCalendarView = {
                         navigation.pop()
                         navigation.pushNew(Configuration.CalendarView(config.tripId))
+                    },
+                    onNavigateToNavigation = { startLocation, endLocation, startTitle, endTitle ->
+                        navigation.pushNew(Configuration.NavigationView(
+                            startLocation, endLocation, startTitle, endTitle
+                        ))
                     }
                 ),
                 config.tripId

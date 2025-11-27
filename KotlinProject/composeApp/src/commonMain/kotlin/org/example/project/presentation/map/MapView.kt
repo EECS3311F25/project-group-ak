@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.example.project.model.dataClasses.Location
 import org.example.project.presentation.uishared.MapWindow
 import org.example.project.presentation.uishared.MapMarker
 import org.example.project.presentation.uishared.NavBar
@@ -76,6 +77,24 @@ fun MapView(
                             longitude = uiState.centerLongitude,
                             zoom = uiState.zoom,
                             markers = uiState.markers,
+                            onNavigateToNavigation = { startMarker, endMarker ->
+                                component.onEvent(
+                                    MapViewEvent.NavigateToNavigation(
+                                        startLocation = Location(
+                                            latitude = startMarker.latitude,
+                                            longitude = startMarker.longitude,
+                                            address = startMarker.address
+                                        ),
+                                        endLocation = Location(
+                                            latitude = endMarker.latitude,
+                                            longitude = endMarker.longitude,
+                                            address = endMarker.address
+                                        ),
+                                        startTitle = startMarker.title,
+                                        endTitle = endMarker.title
+                                    )
+                                )
+                            },
                             modifier = Modifier.fillMaxSize()
                                 .padding(bottom = navBarHeight) // Add padding to prevent overlap with NavBar
                         )

@@ -27,6 +27,7 @@ actual fun MapWindow(
     markers: List<MapMarker>,
     routeEndpoints: Pair<MapMarker, MapMarker>?,
     onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)?,
+    onNavigateToNavigation: ((startMarker: MapMarker, endMarker: MapMarker) -> Unit)?,
     modifier: Modifier
 ) {
     var isMapReady by remember { mutableStateOf(false) }
@@ -100,6 +101,7 @@ actual fun MapWindow(
                 markers, 
                 routeEndpoints, 
                 onRouteCalculated,
+                onNavigateToNavigation,
                 onStartMarkerSelected = { marker ->
                     selectedStartMarker = marker
                     console.log("Start marker selected: ${marker.title}")
@@ -107,11 +109,8 @@ actual fun MapWindow(
                 onEndMarkerSelected = { endMarker ->
                     selectedStartMarker?.let { startMarker ->
                         console.log("End marker selected: ${endMarker.title}, navigating from ${startMarker.title}")
-                        // TODO: Navigate to NavigationView with these two markers
-                        // For now, just show alert - you'll replace this with actual navigation
-                        js("""
-                            alert('Route from: ' + startMarker.title + '\nTo: ' + endMarker.title);
-                        """)
+                        // Call the navigation callback to navigate to NavigationView
+                        onNavigateToNavigation?.invoke(startMarker, endMarker)
                     }
                 }
             )
@@ -168,6 +167,7 @@ private fun initializeMapboxMap(
     markers: List<MapMarker>,
     routeEndpoints: Pair<MapMarker, MapMarker>?,
     onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)?,
+    onNavigateToNavigation: ((startMarker: MapMarker, endMarker: MapMarker) -> Unit)?,
     onStartMarkerSelected: (MapMarker) -> Unit,
     onEndMarkerSelected: (MapMarker) -> Unit
 ) {
@@ -199,31 +199,66 @@ private fun initializeMapboxMap(
             js("window['kotlinStartCallback_' + mapId] = onStartMarkerSelected")
             js("window['kotlinEndCallback_' + mapId] = onEndMarkerSelected")
             
+            // Create a wrapper for handling destination selection
+            val handleDestinationWrapper: (String, Double, Double, String) -> Unit = { title, lat, lng, address ->
+                console.log("Destination wrapper called: $title")
+                
+                // Get the start marker from window storage
+                val startMarkerData = js("window['startMarker_' + mapId]")
+                
+                if (startMarkerData != null) {
+                    // Extract start marker data
+                    val startTitle = js("startMarkerData.title") as String
+                    val startLat = js("startMarkerData.latitude") as Double
+                    val startLng = js("startMarkerData.longitude") as Double
+                    val startAddress = js("startMarkerData.address") as String
+                    
+                    // Create MapMarker objects
+                    val startMarker = MapMarker(
+                        title = startTitle,
+                        latitude = startLat,
+                        longitude = startLng,
+                        address = startAddress
+                    )
+                    
+                    val endMarker = MapMarker(
+                        title = title,
+                        latitude = lat,
+                        longitude = lng,
+                        address = address
+                    )
+                    
+                    console.log("Calling onNavigateToNavigation with MapMarker objects")
+                    
+                    // Call the navigation callback
+                    onNavigateToNavigation?.invoke(startMarker, endMarker)
+                    
+                    // Reset navigation mode
+                    js("window['navigationMode_' + mapId] = false")
+                    js("window['startMarker_' + mapId] = null")
+                } else {
+                    console.error("No start marker found!")
+                }
+            }
+            
+            // Store the wrapper in window
+            js("window['handleDestinationSelected_' + mapId] = handleDestinationWrapper")
+            
             // Set up global handler for "Navigate from here" button
             js("""
                 var mapIdStr = mapId;
                 window['handleNavigateFromHere_' + mapIdStr] = function(title, lat, lng, address) {
                     console.log('Navigate from here clicked:', title);
+                    console.log('Current navigation mode:', window['navigationMode_' + mapIdStr]);
                     
                     // Store the start marker
                     window['startMarker_' + mapIdStr] = { title: title, latitude: lat, longitude: lng, address: address };
                     
                     // Enable navigation mode
                     window['navigationMode_' + mapIdStr] = true;
+                    console.log('Navigation mode enabled, startMarker:', window['startMarker_' + mapIdStr]);
                     
-                    // Change all other markers to yellow
-                    window['mapMarkers_' + mapIdStr].forEach(function(markerObj) {
-                        if (markerObj.title !== title) {
-                            markerObj.marker.remove();
-                            var newMarker = new mapboxgl.Marker({ color: '#FFD700' })
-                                .setLngLat([markerObj.longitude, markerObj.latitude])
-                                .setPopup(markerObj.popup)
-                                .addTo(markerObj.map);
-                            markerObj.marker = newMarker;
-                        }
-                    });
-                    
-                    // Close the current popup
+                    // Close all popups first
                     var map = window['mapInstance_' + mapIdStr];
                     var popups = document.getElementsByClassName('mapboxgl-popup');
                     if (popups.length) {
@@ -231,27 +266,120 @@ private fun initializeMapboxMap(
                             popups[i].remove();
                         }
                     }
-                };
-            """)
-            
-            // Set up global handler for destination marker selection
-            js("""
-                var mapIdStr = mapId;
-                window['handleDestinationSelected_' + mapIdStr] = function(title, lat, lng, address) {
-                    console.log('Destination selected:', title);
                     
-                    if (window['startMarker_' + mapIdStr]) {
-                        var startMarker = window['startMarker_' + mapIdStr];
-                        var endMarker = { title: title, latitude: lat, longitude: lng, address: address };
+                    // Update ALL markers - both start and destinations
+                    var markersChanged = 0;
+                    window['mapMarkers_' + mapIdStr].forEach(function(markerObj) {
+                        // Remove old marker
+                        markerObj.marker.remove();
                         
-                        // Call Kotlin callbacks
-                        window['kotlinStartCallback_' + mapIdStr](startMarker);
-                        window['kotlinEndCallback_' + mapIdStr](endMarker);
+                        // Create new popup
+                        var newPopup = new mapboxgl.Popup({ offset: 25 })
+                            .setHTML(markerObj.popupHTML);
                         
-                        // Reset navigation mode
-                        window['navigationMode_' + mapIdStr] = false;
-                        window['startMarker_' + mapIdStr] = null;
+                        // Determine color: blue for start marker, yellow for others
+                        var markerColor = (markerObj.title === title) ? '#3887be' : '#FFD700';
+                        
+                        // Create new marker with appropriate color
+                        var newMarker = new mapboxgl.Marker({ color: markerColor })
+                            .setLngLat([markerObj.longitude, markerObj.latitude])
+                            .setPopup(newPopup)
+                            .addTo(markerObj.map);
+                        
+                        // Update marker reference
+                        markerObj.marker = newMarker;
+                        markerObj.popup = newPopup;
+                        
+                        // Attach popup event handler with IIFE to capture popup
+                        (function(capturedPopup, capturedMarkerObj, isStart) {
+                            capturedPopup.on('open', function() {
+                                setTimeout(function() {
+                                    var popupContent = capturedPopup.getElement();
+                                    var btn = popupContent ? popupContent.querySelector('button') : null;
+                                    if (btn) {
+                                        var btnText = btn.querySelector('.nav-btn-text');
+                                        if (isStart) {
+                                            btnText.textContent = 'Cancel Navigation';
+                                        } else {
+                                            btnText.textContent = 'Select as destination';
+                                        }
+                                        btn.onclick = function(e) {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            if (isStart) {
+                                                window['handleCancelNavigation_' + mapIdStr]();
+                                            } else {
+                                                window['handleDestinationSelected_' + mapIdStr](
+                                                    capturedMarkerObj.title,
+                                                    capturedMarkerObj.latitude,
+                                                    capturedMarkerObj.longitude,
+                                                    capturedMarkerObj.address
+                                                );
+                                            }
+                                        };
+                                    }
+                                }, 100);
+                            });
+                        })(newPopup, markerObj, markerObj.title === title);
+                        
+                        markersChanged++;
+                    });
+                    console.log('Updated ' + markersChanged + ' markers for navigation mode');
+                };
+                
+                window['handleCancelNavigation_' + mapIdStr] = function() {
+                    console.log('Cancel navigation clicked');
+                    
+                    // Reset navigation mode
+                    window['navigationMode_' + mapIdStr] = false;
+                    window['startMarker_' + mapIdStr] = null;
+                    
+                    // Close all popups
+                    var popups = document.getElementsByClassName('mapboxgl-popup');
+                    if (popups.length) {
+                        for (var i = 0; i < popups.length; i++) {
+                            popups[i].remove();
+                        }
                     }
+                    
+                    // Change all markers back to blue
+                    window['mapMarkers_' + mapIdStr].forEach(function(markerObj) {
+                        markerObj.marker.remove();
+                        var newPopup = new mapboxgl.Popup({ offset: 25 })
+                            .setHTML(markerObj.popupHTML);
+                        var newMarker = new mapboxgl.Marker({ color: '#3887be' })
+                            .setLngLat([markerObj.longitude, markerObj.latitude])
+                            .setPopup(newPopup)
+                            .addTo(markerObj.map);
+                        markerObj.marker = newMarker;
+                        markerObj.popup = newPopup;
+                        
+                        // Reattach popup event handler with IIFE to capture popup
+                        (function(capturedPopup, capturedMarkerObj) {
+                            capturedPopup.on('open', function() {
+                                setTimeout(function() {
+                                    var popupContent = capturedPopup.getElement();
+                                    var btn = popupContent ? popupContent.querySelector('button') : null;
+                                    if (btn) {
+                                        var btnText = btn.querySelector('.nav-btn-text');
+                                        btnText.textContent = 'Navigate from here';
+                                        btn.onclick = function(e) {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            window['handleNavigateFromHere_' + mapIdStr](
+                                                capturedMarkerObj.title,
+                                                capturedMarkerObj.latitude,
+                                                capturedMarkerObj.longitude,
+                                                capturedMarkerObj.address
+                                            );
+                                        };
+                                    }
+                                }, 100);
+                            });
+                        })(newPopup, markerObj);
+                    });
+                    
+                    console.log('Navigation cancelled, all markers reset to blue');
                 };
             """)
             
@@ -302,23 +430,28 @@ private fun initializeMapboxMap(
                         '<p style="margin: 0 0 8px 0; font-size: 13px; color: #444;">' + markerStartTime + ' - ' + markerEndTime + '</p>' : 
                         '';
                     
+                    // Create unique button ID
+                    var buttonId = 'nav-btn-' + markerTitle.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+                    console.log('Creating button with ID:', buttonId, 'for marker:', markerTitle);
+                    
+                    // Store the popup HTML for later recreation
+                    var popupHTML = '<div style="padding: 8px;">' +
+                        '<div style="display: flex; align-items: center; margin-bottom: 8px;">' +
+                            eventNumberHtml +
+                            '<h3 style="margin: 0; font-size: 16px; font-weight: bold; flex: 1;">' + markerTitle + '</h3>' +
+                        '</div>' +
+                        timeHtml +
+                        (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
+                        '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
+                        '<button id="' + buttonId + '" ' +
+                            'style="background-color: #3887be; color: white; border: none; ' +
+                            'padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%;">' +
+                            '<span class="nav-btn-text">Navigate from here</span>' +
+                        '</button>' +
+                    '</div>';
+                    
                     var popup = new mapboxgl.Popup({ offset: 25 })
-                        .setHTML(
-                            '<div style="padding: 8px;">' +
-                                '<div style="display: flex; align-items: center; margin-bottom: 8px;">' +
-                                    eventNumberHtml +
-                                    '<h3 style="margin: 0; font-size: 16px; font-weight: bold; flex: 1;">' + markerTitle + '</h3>' +
-                                '</div>' +
-                                timeHtml +
-                                (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
-                                '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
-                                '<button id="nav-btn-' + markerTitle.replace(/\s+/g, '-') + '" ' +
-                                    'style="background-color: #3887be; color: white; border: none; ' +
-                                    'padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%;">' +
-                                    'Navigate from here' +
-                                '</button>' +
-                            '</div>'
-                        );
+                        .setHTML(popupHTML);
                     
                     var newMarker = new mapboxgl.Marker({ color: '#3887be' })
                         .setLngLat([markerLng, markerLat])
@@ -333,24 +466,99 @@ private fun initializeMapboxMap(
                         address: markerAddress,
                         marker: newMarker,
                         popup: popup,
+                        popupHTML: popupHTML,
                         map: map
                     });
                     
                     // Add click handler for the button after popup opens
-                    popup.on('open', function() {
-                        var btn = document.getElementById('nav-btn-' + markerTitle.replace(/\s+/g, '-'));
-                        if (btn) {
-                            btn.onclick = function() {
-                                if (window['navigationMode_' + mapIdStr]) {
-                                    // In navigation mode, this is the destination
-                                    window['handleDestinationSelected_' + mapIdStr](markerTitle, markerLat, markerLng, markerAddress);
-                                } else {
-                                    // Start navigation mode
-                                    window['handleNavigateFromHere_' + mapIdStr](markerTitle, markerLat, markerLng, markerAddress);
+                    // Use IIFE to capture the correct popup and marker data
+                    (function(capturedPopup, capturedTitle, capturedLat, capturedLng, capturedAddress) {
+                        capturedPopup.on('open', function() {
+                            console.log('[initMap] Popup opened for:', capturedTitle);
+                            
+                            // Function to setup button with retry mechanism
+                            function setupButton(attempt) {
+                                var popupContent = capturedPopup.getElement();
+                                console.log('[initMap] Attempt', attempt, '- Popup element for', capturedTitle, ':', popupContent);
+                                
+                                if (!popupContent) {
+                                    if (attempt < 10) {
+                                        console.log('[initMap] Retrying in 50ms...');
+                                        setTimeout(function() { setupButton(attempt + 1); }, 50);
+                                    } else {
+                                        console.error('[initMap] Failed to get popup content after 10 attempts for:', capturedTitle);
+                                    }
+                                    return;
                                 }
-                            };
-                        }
-                    });
+                                
+                                var btn = popupContent.querySelector('button');
+                                console.log('[initMap] Button element found:', btn);
+                                
+                                if (btn) {
+                                    var btnText = btn.querySelector('.nav-btn-text');
+                                    
+                                    // Function to update button text based on current state
+                                    function updateButtonText() {
+                                        if (window['navigationMode_' + mapIdStr]) {
+                                            var startMarkerTitle = window['startMarker_' + mapIdStr] ? window['startMarker_' + mapIdStr].title : null;
+                                            if (capturedTitle === startMarkerTitle) {
+                                                btnText.textContent = 'Cancel Navigation';
+                                                console.log('[initMap] Button text: Cancel Navigation');
+                                            } else {
+                                                btnText.textContent = 'Select as destination';
+                                                console.log('[initMap] Button text: Select as destination');
+                                            }
+                                        } else {
+                                            btnText.textContent = 'Navigate from here';
+                                            console.log('[initMap] Button text: Navigate from here');
+                                        }
+                                    }
+                                    
+                                    // Set initial button text
+                                    updateButtonText();
+                                    
+                                    // Remove any existing onclick handlers
+                                    btn.onclick = null;
+                                    
+                                    // Attach new click handler that checks state at click time
+                                    btn.onclick = function(e) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        
+                                        console.log('[initMap] Button clicked for:', capturedTitle);
+                                        console.log('[initMap] Current navigation mode:', window['navigationMode_' + mapIdStr]);
+                                        
+                                        // Check current state at click time
+                                        if (window['navigationMode_' + mapIdStr]) {
+                                            var startMarkerTitle = window['startMarker_' + mapIdStr] ? window['startMarker_' + mapIdStr].title : null;
+                                            console.log('[initMap] Start marker:', startMarkerTitle);
+                                            
+                                            if (capturedTitle === startMarkerTitle) {
+                                                // Cancel navigation
+                                                console.log('[initMap] Calling handleCancelNavigation');
+                                                window['handleCancelNavigation_' + mapIdStr]();
+                                            } else {
+                                                // Select as destination
+                                                console.log('[initMap] Calling handleDestinationSelected');
+                                                window['handleDestinationSelected_' + mapIdStr](capturedTitle, capturedLat, capturedLng, capturedAddress);
+                                            }
+                                        } else {
+                                            // Start navigation mode
+                                            console.log('[initMap] Calling handleNavigateFromHere');
+                                            window['handleNavigateFromHere_' + mapIdStr](capturedTitle, capturedLat, capturedLng, capturedAddress);
+                                        }
+                                    };
+                                    
+                                    console.log('[initMap] Button onclick handler attached for:', capturedTitle);
+                                } else {
+                                    console.error('[initMap] Button not found for marker:', capturedTitle);
+                                }
+                            }
+                            
+                            // Start setup with initial delay
+                            setTimeout(function() { setupButton(1); }, 50);
+                        });
+                    })(popup, markerTitle, markerLat, markerLng, markerAddress);
                 """)
             }
             
@@ -541,6 +749,8 @@ private fun updateMapView(
                 });
                 window['mapMarkers_' + mapIdStr] = [];
             }
+            // Preserve navigation state across updates
+            // Don't reset navigationMode or startMarker here
         """)
         
         // Add new markers
@@ -567,58 +777,156 @@ private fun updateMapView(
                         '<p style="margin: 0 0 8px 0; font-size: 13px; color: #444;">' + markerStartTime + ' - ' + markerEndTime + '</p>' : 
                         '';
 
+                    // Create unique button ID
+                    var buttonId = 'nav-btn-' + markerTitle.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+                    console.log('[updateMapView] Creating button with ID:', buttonId, 'for marker:', markerTitle);
+
+                    // Store the popup HTML for later recreation
+                    var popupHTML = '<div style="padding: 8px;">' +
+                        '<div style="display: flex; align-items: center; margin-bottom: 8px;">' +
+                            eventNumberHtml +
+                            '<h3 style="margin: 0; font-size: 16px; font-weight: bold; flex: 1;">' + markerTitle + '</h3>' +
+                        '</div>' +
+                        timeHtml +
+                        (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
+                        '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
+                        '<button id="' + buttonId + '" ' +
+                            'style="background-color: #3887be; color: white; border: none; ' +
+                            'padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%;">' +
+                            '<span class="nav-btn-text">Navigate from here</span>' +
+                        '</button>' +
+                    '</div>';
+
                     var popup = new mapboxgl.Popup({ offset: 25 })
-                        .setHTML(
-                            '<div style="padding: 8px;">' +
-                                '<div style="display: flex; align-items: center; margin-bottom: 8px;">' +
-                                    eventNumberHtml +
-                                    '<h3 style="margin: 0; font-size: 16px; font-weight: bold; flex: 1;">' + markerTitle + '</h3>' +
-                                '</div>' +
-                                timeHtml +
-                                (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
-                                '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
-                                '<button id="nav-btn-' + markerTitle.replace(/\s+/g, '-') + '" ' +
-                                    'style="background-color: #3887be; color: white; border: none; ' +
-                                    'padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%;">' +
-                                    'Navigate from here' +
-                                '</button>' +
-                            '</div>'
-                        );                var newMarker = new mapboxgl.Marker({ color: '#3887be' })
-                    .setLngLat([markerLng, markerLat])
-                    .setPopup(popup)
-                    .addTo(mapInstance);
-                
-                // Store marker reference
-                if (!window['mapMarkers_' + mapIdStr]) {
-                    window['mapMarkers_' + mapIdStr] = [];
-                }
-                
-                window['mapMarkers_' + mapIdStr].push({
-                    title: markerTitle,
-                    latitude: markerLat,
-                    longitude: markerLng,
-                    address: markerAddress,
-                    marker: newMarker,
-                    popup: popup,
-                    map: mapInstance
-                });
-                
-                // Add click handler for the button after popup opens
-                popup.on('open', function() {
-                    var btn = document.getElementById('nav-btn-' + markerTitle.replace(/\s+/g, '-'));
-                    if (btn) {
-                        btn.onclick = function() {
-                            if (window['navigationMode_' + mapIdStr]) {
-                                // In navigation mode, this is the destination
-                                window['handleDestinationSelected_' + mapIdStr](markerTitle, markerLat, markerLng, markerAddress);
-                            } else {
-                                // Start navigation mode
-                                window['handleNavigateFromHere_' + mapIdStr](markerTitle, markerLat, markerLng, markerAddress);
-                            }
-                        };
+                        .setHTML(popupHTML);
+                    
+                    // Determine marker color based on navigation state
+                    var markerColor = '#3887be'; // Default blue
+                    var isStartMarker = false;
+                    
+                    if (window['navigationMode_' + mapIdStr] && window['startMarker_' + mapIdStr]) {
+                        var startMarkerTitle = window['startMarker_' + mapIdStr].title;
+                        if (markerTitle === startMarkerTitle) {
+                            // This is the start marker, keep it blue
+                            markerColor = '#3887be';
+                            isStartMarker = true;
+                        } else {
+                            // Other markers should be yellow in navigation mode
+                            markerColor = '#FFD700';
+                        }
                     }
-                });
-            """)
+                    
+                    var newMarker = new mapboxgl.Marker({ color: markerColor })
+                        .setLngLat([markerLng, markerLat])
+                        .setPopup(popup)
+                        .addTo(mapInstance);
+                    
+                    // Store marker reference
+                    if (!window['mapMarkers_' + mapIdStr]) {
+                        window['mapMarkers_' + mapIdStr] = [];
+                    }
+                    
+                    window['mapMarkers_' + mapIdStr].push({
+                        title: markerTitle,
+                        latitude: markerLat,
+                        longitude: markerLng,
+                        address: markerAddress,
+                        marker: newMarker,
+                        popup: popup,
+                        popupHTML: popupHTML,
+                        map: mapInstance
+                    });
+                    
+                    // Store a reference to update button text dynamically
+                    // Use IIFE to capture the correct popup and marker data
+                    (function(capturedPopup, capturedTitle, capturedLat, capturedLng, capturedAddress) {
+                        capturedPopup.on('open', function() {
+                            console.log('[updateMapView] Popup opened for:', capturedTitle);
+                            
+                            // Function to setup button with retry mechanism
+                            function setupButton(attempt) {
+                                var popupContent = capturedPopup.getElement();
+                                console.log('[updateMapView] Attempt', attempt, '- Popup element for', capturedTitle, ':', popupContent);
+                                
+                                if (!popupContent) {
+                                    if (attempt < 10) {
+                                        console.log('[updateMapView] Retrying in 50ms...');
+                                        setTimeout(function() { setupButton(attempt + 1); }, 50);
+                                    } else {
+                                        console.error('[updateMapView] Failed to get popup content after 10 attempts for:', capturedTitle);
+                                    }
+                                    return;
+                                }
+                                
+                                var btn = popupContent.querySelector('button');
+                                console.log('[updateMapView] Button element found:', btn);
+                                
+                                if (btn) {
+                                    var btnText = btn.querySelector('.nav-btn-text');
+                                    
+                                    // Function to update button text based on current state
+                                    function updateButtonText() {
+                                        if (window['navigationMode_' + mapIdStr]) {
+                                            var startMarkerTitle = window['startMarker_' + mapIdStr] ? window['startMarker_' + mapIdStr].title : null;
+                                            if (capturedTitle === startMarkerTitle) {
+                                                btnText.textContent = 'Cancel Navigation';
+                                                console.log('[updateMapView] Button text: Cancel Navigation');
+                                            } else {
+                                                btnText.textContent = 'Select as destination';
+                                                console.log('[updateMapView] Button text: Select as destination');
+                                            }
+                                        } else {
+                                            btnText.textContent = 'Navigate from here';
+                                            console.log('[updateMapView] Button text: Navigate from here');
+                                        }
+                                    }
+                                    
+                                    // Set initial button text
+                                    updateButtonText();
+                                    
+                                    // Remove any existing onclick handlers
+                                    btn.onclick = null;
+                                    
+                                    // Attach new click handler that checks state at click time
+                                    btn.onclick = function(e) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        
+                                        console.log('[updateMapView] Button clicked for:', capturedTitle);
+                                        console.log('[updateMapView] Current navigation mode:', window['navigationMode_' + mapIdStr]);
+                                        
+                                        // Check current state at click time
+                                        if (window['navigationMode_' + mapIdStr]) {
+                                            var startMarkerTitle = window['startMarker_' + mapIdStr] ? window['startMarker_' + mapIdStr].title : null;
+                                            console.log('[updateMapView] Start marker:', startMarkerTitle);
+                                            
+                                            if (capturedTitle === startMarkerTitle) {
+                                                // Cancel navigation
+                                                console.log('[updateMapView] Calling handleCancelNavigation');
+                                                window['handleCancelNavigation_' + mapIdStr]();
+                                            } else {
+                                                // Select as destination
+                                                console.log('[updateMapView] Calling handleDestinationSelected');
+                                                window['handleDestinationSelected_' + mapIdStr](capturedTitle, capturedLat, capturedLng, capturedAddress);
+                                            }
+                                        } else {
+                                            // Start navigation mode
+                                            console.log('[updateMapView] Calling handleNavigateFromHere');
+                                            window['handleNavigateFromHere_' + mapIdStr](capturedTitle, capturedLat, capturedLng, capturedAddress);
+                                        }
+                                    };
+                                    
+                                    console.log('[updateMapView] Button onclick handler attached for:', capturedTitle);
+                                } else {
+                                    console.error('[updateMapView] Button not found for marker:', capturedTitle);
+                                }
+                            }
+                            
+                            // Start setup with initial delay
+                            setTimeout(function() { setupButton(1); }, 50);
+                        });
+                    })(popup, markerTitle, markerLat, markerLng, markerAddress);
+                """)
         }
         
         console.log("MapView: Map updated with ${markers.size} markers")

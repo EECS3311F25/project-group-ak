@@ -13,6 +13,7 @@ import kotlinx.datetime.LocalTime
  * @param markers List of map markers to display
  * @param routeEndpoints Optional pair of markers to show route between (if null, no route is shown)
  * @param onRouteCalculated Callback with distance (km), driving duration (minutes), and walking duration (minutes) when route is calculated
+ * @param onNavigateToNavigation Callback when user selects two markers for navigation
  * @param modifier Compose modifier
  */
 @Composable
@@ -23,6 +24,7 @@ expect fun MapWindow(
     markers: List<MapMarker> = emptyList(),
     routeEndpoints: Pair<MapMarker, MapMarker>? = null,
     onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)? = null,
+    onNavigateToNavigation: ((startMarker: MapMarker, endMarker: MapMarker) -> Unit)? = null,
     modifier: Modifier = Modifier
 )
 
