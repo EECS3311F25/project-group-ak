@@ -10,7 +10,7 @@ data class Trip(
     val duration: Duration,
 
     val description: String = "",
-    val location: String = "",
+    val location: Location? = null,
 
     val users: List<User>,
     val events: List<Event> = emptyList(),

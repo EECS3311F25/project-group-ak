@@ -1,5 +1,9 @@
 package org.example.project
 
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -59,6 +63,7 @@ fun Application.module() {
     //  DB configuration and migration - see DatabaseConnect.kt and Migration.kt
     configureDatabases()
 
-    //  Register all HTTP routes - see Routing.kt
+    //  Register all HTTP routes to the database - see Routing.kt
     configureRouting()
+
 }
