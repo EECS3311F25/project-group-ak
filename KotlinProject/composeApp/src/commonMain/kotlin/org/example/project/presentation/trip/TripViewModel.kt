@@ -58,11 +58,8 @@ class TripViewModel(
             _isGeneratingSummary.value = false
             
             result.onSuccess { response ->
-                println("✅ AI Summary generated successfully: ${response.summary.take(50)}...")
                 _aiSummary.value = response.summary
-                println("✅ _aiSummary.value is now: ${_aiSummary.value?.take(50)}...")
             }.onFailure { error ->
-                println("❌ AI Summary failed: ${error.message}")
                 _summaryError.value = error.message ?: "Failed to generate summary"
             }
         }

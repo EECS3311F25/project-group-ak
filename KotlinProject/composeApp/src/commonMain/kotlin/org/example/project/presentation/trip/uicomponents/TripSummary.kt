@@ -33,7 +33,6 @@ fun TripSummarySection(
     onGenerateClick: () -> Unit = {},
     onRetryClick: () -> Unit = {}
 ) {
-    println("🔵 TripSummarySection recomposed - aiSummary: ${aiSummary?.take(30)}..., isGenerating: $isGenerating")
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,7 +67,6 @@ fun TripSummarySection(
                 } else {
                     // Show "Regenerate" if summary exists, "Generate" otherwise
                     val buttonText = if (aiSummary != null) "Regenerate" else "Generate"
-                    println("🔵 Button text: $buttonText (aiSummary is ${if (aiSummary != null) "NOT NULL" else "NULL"})")
                     TextButton(onClick = onGenerateClick) {
                         Text(buttonText, color = Color.White)
                     }

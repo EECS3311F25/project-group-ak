@@ -53,7 +53,7 @@ def generate_summary():
         prompt = data.get('prompt')
         model = data.get('model', 'claude-3-haiku-20240307')
         max_tokens = data.get('max_tokens', 150)
-        temperature = data.get('temperature', 0.7)
+        temperature = data.get('temperature', 1.2)
         
         # Validate prompt
         if not prompt:
