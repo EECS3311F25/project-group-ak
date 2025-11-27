@@ -13,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
+import org.example.project.model.dataClasses.Location
+import org.example.project.model.dataClasses.LocationSuggestion
 
 /**
  * Reusable location search text field with suggestions dropdown.
@@ -36,11 +37,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LocationTextField(
     label: String = "Search location",
-    value: String,
+    value: String?,
     onValueChange: (String) -> Unit,
-    suggestions: List<String> = emptyList(),
-    onSuggestionClick: (String) -> Unit = {},
-    onSearchClick: () -> Unit = {}
+    suggestions: List<LocationSuggestion> = emptyList(),
+    onSuggestionClick: (LocationSuggestion) -> Unit = {},
+//    onSearchClick: () -> Unit = {}
 ) {
     var hasFocus by remember { mutableStateOf(false) }
 
@@ -49,7 +50,7 @@ fun LocationTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .onFocusChanged { state -> hasFocus = state.isFocused },
-            value = value,
+            value = value.toString(),
             onValueChange = { onValueChange(it) },
             label = { Text(label) },
             singleLine = true,
@@ -59,14 +60,14 @@ fun LocationTextField(
                     contentDescription = null
                 )
             },
-            trailingIcon = {
-                IconButton(onClick = { onSearchClick() }) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search"
-                    )
-                }
-            },
+//            trailingIcon = {
+//                IconButton(onClick = { onSearchClick() }) {
+//                    Icon(
+//                        imageVector = Icons.Default.Search,
+//                        contentDescription = "Search"
+//                    )
+//                }
+//            },
         )
 
         if (hasFocus && suggestions.isNotEmpty()) {
@@ -77,12 +78,12 @@ fun LocationTextField(
             ) {
                 items(suggestions) { suggestion ->
                     Text(
-                        text = suggestion,
+                        text = suggestion.title,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 onSuggestionClick(suggestion)
-                                onValueChange(suggestion)
+                                onValueChange(suggestion.title)
                                 hasFocus = false
                             }
                             .padding(8.dp)
@@ -91,30 +92,4 @@ fun LocationTextField(
             }
         }
     }
-}
-
-/**
- * Simple internal stateful wrapper if you just want a drop-in widget.
- */
-@Composable
-fun LocationTextField(
-    label: String = "Search location",
-    suggestions: List<String> = emptyList(),
-    onSuggestionClick: (String) -> Unit = {},
-    onSearchClick: (String) -> Unit = {}
-) {
-    var text by remember { mutableStateOf("") }
-
-    LocationTextField(
-        label = label,
-        value = text,
-        onValueChange = { text = it },
-        suggestions = suggestions,
-        onSuggestionClick = {
-            text = it
-            onSuggestionClick(it)
-        },
-        // Pass the current text to whoever triggers the API call
-        onSearchClick = { onSearchClick(text) }
-    )
 }

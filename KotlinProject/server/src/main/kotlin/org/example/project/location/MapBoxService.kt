@@ -46,7 +46,7 @@ class MapBoxService(
         val address = feature.properties?.full_address
 
         return SimpleLocation(
-            name = name,
+            title = name,
             latitude = lat,
             longitude = lon,
             address = address
@@ -71,7 +71,7 @@ data class SimpleLocation(
     val longitude: Double,
     val address: String?,
     @SerialName("name")
-    val name: String?,
+    val title: String?,
 )
 
 @Serializable

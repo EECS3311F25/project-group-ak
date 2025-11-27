@@ -3,7 +3,6 @@ package com.example.routes
 import org.example.project.location.MapBoxService
 import org.example.project.http.HttpClientProvider
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 

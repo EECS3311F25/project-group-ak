@@ -9,3 +9,8 @@ data class Location(
     val address: String? = null,
     val title: String? = null
 )
+
+data class LocationSuggestion(
+    val title: String,
+    val id: String,
+)

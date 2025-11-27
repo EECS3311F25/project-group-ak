@@ -17,13 +17,16 @@ import org.example.project.model.dataClasses.User
 import org.example.project.model.dataClasses.Event
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
-import org.example.project.data.remote.RemoteTripDataSource
+import org.example.project.model.dataClasses.Location
+import org.example.project.model.dataClasses.LocationSuggestion
 
 data class TripCreationState(
     val title: String = "",
     val duration: Duration? = null,
     val description: String = "",
-    val location: String = "",
+    val location: Location? = null,
+    val locationQuery: String = "",
+    val suggestions: List<Location> = emptyList(), // might need to change later
     val users: List<User> = emptyList(),
     val events: List<Event> = emptyList(),
     val imageHeaderUrl: String? = null,
@@ -196,13 +199,21 @@ class TripCreationViewModel(
     }
     
     // Location
-    fun updateLocation(newLocation: String) {
+    fun onLocationQueryChanged(newText: String) {
         _state.value = _state.value.copy(
-            location = newLocation,
+            locationQuery = newText,
             errorMessage = null
         )
-        validateForm()
+        validateForm() //
     }
+    fun onLocationSuggestionSelected(suggestion: LocationSuggestion) {
+        // fetch location details from API
+        // update location field with new location details
+
+    }
+//    fun onSearchLocationClicked() {
+//        TODO("Not yet implemented")
+//    }
     
     // Image Header URL
     fun updateImageHeaderUrl(newImageUrl: String?) {
@@ -218,7 +229,7 @@ class TripCreationViewModel(
         val currentState = _state.value
         val isValid = currentState.title.isNotBlank() &&
                      currentState.duration != null &&
-                     currentState.location.isNotBlank()
+                     currentState.location != null
                      // Note: Don't require users.isNotEmpty() since current user is auto-added        
         _state.value = currentState.copy(isFormValid = isValid)
     }
@@ -235,7 +246,7 @@ class TripCreationViewModel(
             val errorMsg = when {
                 currentState.title.isBlank() -> "Trip title is required"
                 currentState.duration == null -> "Trip duration is required"
-                currentState.location.isBlank() -> "Trip location is required"
+                currentState.location == null -> "Trip location is required"
                 else -> "Please fill in all required fields"
             }
             onError(errorMsg)
@@ -258,7 +269,7 @@ class TripCreationViewModel(
                     title = currentState.title.trim(),
                     duration = duration,
                     description = currentState.description.trim(),
-                    location = currentState.location.trim(),
+                    location = currentState.location,
                     users = currentState.users, // Includes current user + any added users
                     events = currentState.events,
                     imageHeaderUrl = currentState.imageHeaderUrl,
@@ -314,7 +325,7 @@ class TripCreationViewModel(
     fun isFieldValid(field: String): Boolean {
         return when (field) {
             "title" -> _state.value.title.isNotBlank()
-            "location" -> _state.value.location.isNotBlank()
+            "location" -> _state.value.location != null
             "duration" -> _state.value.duration != null
             "users" -> _state.value.users.isNotEmpty()
             else -> false
@@ -326,7 +337,7 @@ class TripCreationViewModel(
         
         return when (field) {
             "title" -> if (_state.value.title.isBlank()) "Title is required" else null
-            "location" -> if (_state.value.location.isBlank()) "Location is required" else null
+            "location" -> if (_state.value.location == null) "Location is required" else null
             "duration" -> if (_state.value.duration == null) "Duration is required" else null
             "users" -> if (_state.value.users.isEmpty()) "At least one user is required" else null
             else -> null
