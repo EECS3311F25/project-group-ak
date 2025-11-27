@@ -14,7 +14,7 @@
     -   response: __Response (e.g TripResponse). This is the ONLY data type sent back in HTTPS responses (see below for how to use)
     
 ##  (!!!) Supported HTTPS request routes
-    User:   prepend the following with "/user"
+    User (WORKING):   prepend the following with "/user"
     -   GET     /{id}                   -> get user by user ID ("/user")
     -   POST    /register               -> create new user ("/user/register")
     -   PUT     /{id}/password          -> update user password (requires user entry's ID in the parameter)
@@ -22,10 +22,10 @@
 
     Trip:   /user/{userId}/trip...
     -   GET    /                                -> list all trips associated with the user of ID userId
-    -   GET    /{id}                            -> get trip
-    -   POST   /                                -> create new trip (under user of ID userId)
-    -   PUT    /{id}                            -> update trip
-    -   DELETE /{id}                            -> delete trip
+    -   (WORKING) GET    /{id}                            -> get trip
+    -   (WORKING) POST   /                      -> create new trip (belonging to user of ID userId)
+    -   (WORKING) PUT    /{id}                            -> update trip
+    -   (WORKING) DELETE /{id}                            -> delete trip
 
     Event:  /user/{userId}/trip/{tripId}/event...
     -   GET    /                                -> list all events associated with the trip of ID tripId

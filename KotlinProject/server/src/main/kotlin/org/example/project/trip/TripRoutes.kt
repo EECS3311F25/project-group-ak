@@ -110,14 +110,7 @@ fun Application.configureTripSerialization(tripRepository: PostgresTripRepositor
                         return@put
                     }
                     val trip = call.receive<Trip>()
-                    TripService.validateTripForUpdate(trip)
-                        .onFailure { error ->
-                            call.respond(
-                                HttpStatusCode.BadRequest,
-                                error.message ?: "Trip validation failed"
-                            )
-                            return@put
-                        }
+
                     tripRepository.updateTrip(tripId, trip)
                         .onSuccess {
                             call.respond(HttpStatusCode.OK, "Trip updated successfully")

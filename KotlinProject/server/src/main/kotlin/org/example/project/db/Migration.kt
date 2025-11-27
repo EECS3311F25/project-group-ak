@@ -15,6 +15,7 @@ object Migrations {
     fun runMigrations(config: DatabaseConfig) {
         val flyway = Flyway.configure()
             .dataSource(config.jdbcUrl, config.username, config.password)
+            .baselineOnMigrate(true)
             .locations("classpath:db_create-tables")
             .load()
 
@@ -22,7 +23,7 @@ object Migrations {
             /**
              * Include flyway.repair() to wipe existing migration file checksums
              */
-            //  flyway.repair()
+            flyway.repair()
             flyway.migrate()
             println("Database migrations completed successfully")
         } catch (e: Exception) {
