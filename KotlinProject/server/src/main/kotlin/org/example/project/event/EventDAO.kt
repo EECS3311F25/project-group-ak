@@ -4,18 +4,15 @@ import Duration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import org.example.project.location.LocationDAO
-import org.example.project.location.LocationTable
-import org.example.project.location.toResponseDto
-import org.example.project.trip.TripDAO
-import org.example.project.trip.TripTable
+import org.example.project.trip.Location
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.Transaction
+import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.IntEntity
 import org.jetbrains.exposed.v1.dao.IntEntityClass
-import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
+import org.example.project.trip.TripTable
 
 
 /**
@@ -35,59 +32,53 @@ Table / IntIdTable(db_table_name)
 //  TODO: improve logic of field nullability
 
 /**
- * Exposed table for Event.
+ * Database table for Events.
+ * event_location stores a JSON-encoded Location object.
  */
 object EventTable : IntIdTable("events") {
     val eventTitle = varchar("event_title", 100)
     val eventDescription = varchar("event_description", 500)
-    val eventLocation = varchar("event_location", 255)
     val eventDuration = varchar("event_duration", 200)
+    val eventLocation = varchar("event_location", 500)   // <-- Location stored as JSON
     val tripId = reference("trip_id", TripTable, onDelete = ReferenceOption.CASCADE)
 }
 
 /**
- * Exposed DAO for Event table.
+ * DAO (Data Access Object) that maps an Event row.
+ * Converts location JSON <-> Location data class.
  */
 class EventDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<EventDAO>(EventTable)
 
-    var eventTitle by EventTable.eventTitle
-    var eventDescription by EventTable.eventDescription
-    var eventLocation by EventTable.eventLocation
-    var stringEventDuration by EventTable.eventDuration
+    var eventTitle: String by EventTable.eventTitle
+    var eventDescription: String by EventTable.eventDescription
 
+    // Duration JSON encoding/decoding
+    var stringDuration by EventTable.eventDuration
     var eventDuration: Duration
-        get() = Json.decodeFromString(stringEventDuration)
-        set(value) { stringEventDuration = Json.encodeToString(value) }
+        get() = Json.decodeFromString(stringDuration)
+        set(value) { stringDuration = Json.encodeToString(value) }
 
-    var tripId by TripDAO referencedOn EventTable.tripId
+    // Location JSON encoding/decoding (correct Toni design)
+    var stringLocation by EventTable.eventLocation
+    var location: Location
+        get() = Json.decodeFromString(stringLocation)
+        set(value) { stringLocation = Json.encodeToString(value) }
 
-    /**
-     * Helper to get LocationDAO associated with this event.
-     */
-    val location: LocationDAO?
-        get() = LocationDAO.find { LocationTable.eventId eq this.id }.firstOrNull()
-}
-
-/**
- * Convert EventDAO → EventResponse
- */
-fun EventDAO.toResponseDto(): EventResponse {
-    val locationDao = this.location
-    val locationResponse = locationDao?.toResponseDto()
-
-    return EventResponse(
-        id.value,
-        eventTitle,
-        eventDescription,
-        eventLocation,
-        eventDuration,
-        tripId.id.value,
-        locationResponse
-    )
+    var trip by TripTable referencedOn EventTable.tripId
 }
 
 suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
-    withContext(Dispatchers.IO) {
-        suspendTransaction(statement = block)
-    }
+    withContext(Dispatchers.IO) { suspendTransaction(statement = block) }
+
+/**
+ * Convert DAO → Response DTO for frontend.
+ */
+fun EventDAO.toResponseDto() = EventResponse(
+    id.value,
+    eventTitle,
+    eventDescription,
+    eventDuration,
+    location,        // <-- already decoded from JSON
+    trip.id.value
+)

@@ -1,43 +1,58 @@
 package org.example.project.event
 
-
 /**
- * Service layer for Event business logic.
+ * Business logic and validation utilities for Event operations.
  *
- * IMPORTANT:
- * - Routes -> EventService (validation only) -> EventRepository (PostgresEventRepository) -> database
- * - This class does NOT talk to the database directly.
- * - This class does NOT hold a reference to any repository.
- *
- * Responsibility:
- * - Validate Event data for create / update.
- * - Return Result<Unit> so routes can map it to HTTP responses.
+ * NOTE:
+ * - Ensure Event creation/update inputs are valid before repository access.
+ * - Keep service layer strict but simple.
  */
-
 object EventService {
 
-    fun validateEventForCreate(eventDto: EventCreateRequest): Result<Unit> {
-        if (eventDto.eventTitle.isNullOrBlank())
+    /**
+     * Validate input for event creation.
+     */
+    fun validateEventForCreate(event: EventCreateRequest): Result<Unit> {
+
+        if (event.eventTitle.isBlank())
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
 
-        if (eventDto.eventLocation.isNullOrBlank())
-            return Result.failure(IllegalArgumentException("Event location cannot be empty"))
+        if (event.eventDuration == null)
+            return Result.failure(IllegalArgumentException("Event duration is missing"))
 
-        // Location validation
-        eventDto.location?.let {
-            if (it.latitude == 0.0 && it.longitude == 0.0)
-                return Result.failure(IllegalArgumentException("Invalid GPS coordinates"))
-        }
+        // Validate Location
+        validateLocation(event.location).getOrElse { return Result.failure(it) }
 
         return Result.success(Unit)
     }
 
+    /**
+     * Validate input for event update.
+     * Uses Event domain model (not DTO).
+     */
     fun validateEventForUpdate(event: Event): Result<Unit> {
+
         if (event.eventTitle.isBlank())
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
 
-        if (event.eventLocation.isBlank())
-            return Result.failure(IllegalArgumentException("Event location cannot be empty"))
+        if (event.eventDuration == null)
+            return Result.failure(IllegalArgumentException("Event duration is missing"))
+
+        // Validate Location
+        validateLocation(event.location).getOrElse { return Result.failure(it) }
+
+        return Result.success(Unit)
+    }
+
+    /**
+     * Location validation applies to both update & create.
+     */
+    private fun validateLocation(loc: org.example.project.trip.Location): Result<Unit> {
+        if (loc.latitude !in -90.0..90.0)
+            return Result.failure(IllegalArgumentException("Invalid latitude"))
+
+        if (loc.longitude !in -180.0..180.0)
+            return Result.failure(IllegalArgumentException("Invalid longitude"))
 
         return Result.success(Unit)
     }

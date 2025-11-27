@@ -1,33 +1,30 @@
 package org.example.project.event
 
-import Duration
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.example.project.location.LocationResponse
+import kotlinx.serialization.SerialName
+import Duration
+import org.example.project.trip.Location  // <-- Reuse Location data class
 
 /**
- * Domain model representing an Event.
- * Now includes a new Location field as required by Toni's instructions.
+ * Event domain model (used in request bodies for update)
+ * Note:
+ * - Location is NOT an entity, NOT stored in a separate table.
+ * - Location is simply a data class embedded inside Event and stored as JSON.
  */
 @Serializable
 data class Event(
     @SerialName("event_title")
     val eventTitle: String,
-    @SerialName("event_description")
-    val eventDescription: String,
 
-    // Legacy string location (still stored in DB)
-    @SerialName("event_location")
-    val eventLocation: String,
+    @SerialName("event_description")
+    val eventDescription: String? = "",
 
     @SerialName("event_duration")
     val eventDuration: Duration,
 
-    @SerialName("trip_id")
-    val tripId: Int,
+    // Embedded Location (stored as JSON in DB)
+    val location: Location,
 
-    /**
-     * New Location object (GPS coordinates + optional title/address)
-     */
-    val location: LocationResponse? = null
+    @SerialName("trip_id")
+    val tripId: Int
 )
