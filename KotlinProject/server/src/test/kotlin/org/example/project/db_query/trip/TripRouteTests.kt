@@ -22,7 +22,6 @@ import org.example.project.module
 import org.example.project.trip.Trip
 import org.example.project.trip.TripCreateRequest
 import org.example.project.trip.TripRetrieveResponse
-import org.example.project.user.User
 import org.example.project.user.UserCreateRequest
 import org.example.project.user.UserRetrieveResponse
 import kotlin.test.Test
@@ -30,39 +29,10 @@ import kotlin.test.assertEquals
 
 class TripRouteTests {
 
-    @Test
-    fun tripCRUD_Success2() = testApplication {
-        application {
-            module()
-        }
-
-        val client = createClient {
-            install(ContentNegotiation) {
-                json()
-            }
-        }
-
-        val tripDeleteResponse: HttpResponse = client.delete("/user/6/trip/5") {
-            contentType(ContentType.Application.Json)
-        }
-        assertEquals(HttpStatusCode.NoContent, tripDeleteResponse.status)
-        assertEquals("Trip deleted successfully", tripDeleteResponse.bodyAsText())
-
-        /**
-         *  Run valid user delete
-         */
-        val userDeleteResponse: HttpResponse = client.delete("/user/6/delete") {
-            contentType(ContentType.Application.Json)
-        }
-        assertEquals(HttpStatusCode.NoContent, userDeleteResponse.status)
-        assertEquals("User deleted successfully", userDeleteResponse.bodyAsText())
-    }
-
-
     /**
      *  Valid user creation -> valid trip creation (associated w/ created user) -> valid trip update -> valid trip retrieval -> valid trip delete -> valid user delete
-     *  @result Trip associated with account will be created without any errors and exceptions + returns Created status code
-     */
+     *  @result Data will not be in the DB after the CRUD op sequence
+    */
     @Test
     fun tripCRUD_Success1() = testApplication {
         application {
