@@ -288,9 +288,16 @@ private fun initializeMapboxMap(
                 val markerStartTime = marker.startTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
                 val markerEndTime = marker.endTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
                 val hasTime = markerStartTime.isNotEmpty() && markerEndTime.isNotEmpty()
+                val eventNumber = marker.eventNumber ?: 0
+                val hasEventNumber = eventNumber > 0
                 
                 js("""
                     var mapIdStr = mapId;
+                    var eventNumberHtml = hasEventNumber ? 
+                        '<div style="display: inline-block; background-color: #3887be; color: white; font-weight: bold; ' +
+                        'width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; ' +
+                        'font-size: 14px; margin-right: 8px; vertical-align: middle;">' + eventNumber + '</div>' : 
+                        '';
                     var timeHtml = hasTime ? 
                         '<p style="margin: 0 0 8px 0; font-size: 13px; color: #444;">' + markerStartTime + ' - ' + markerEndTime + '</p>' : 
                         '';
@@ -298,7 +305,10 @@ private fun initializeMapboxMap(
                     var popup = new mapboxgl.Popup({ offset: 25 })
                         .setHTML(
                             '<div style="padding: 8px;">' +
-                                '<h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold;">' + markerTitle + '</h3>' + 
+                                '<div style="display: flex; align-items: center; margin-bottom: 8px;">' +
+                                    eventNumberHtml +
+                                    '<h3 style="margin: 0; font-size: 16px; font-weight: bold; flex: 1;">' + markerTitle + '</h3>' +
+                                '</div>' +
                                 timeHtml +
                                 (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
                                 '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
@@ -535,37 +545,45 @@ private fun updateMapView(
         
         // Add new markers
         markers.forEach { marker ->
-            val markerLng = marker.longitude
-            val markerLat = marker.latitude
-            val markerTitle = marker.title
-            val markerDesc = marker.description ?: ""
-            val markerAddress = marker.address
-            val markerStartTime = marker.startTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
-            val markerEndTime = marker.endTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
-            val hasTime = markerStartTime.isNotEmpty() && markerEndTime.isNotEmpty()
-            
-            js("""
-                var mapIdStr = mapId;
-                var timeHtml = hasTime ? 
-                    '<p style="margin: 0 0 8px 0; font-size: 13px; color: #444;">' + markerStartTime + ' - ' + markerEndTime + '</p>' : 
-                    '';
-                
-                var popup = new mapboxgl.Popup({ offset: 25 })
-                    .setHTML(
-                        '<div style="padding: 8px;">' +
-                            '<h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold;">' + markerTitle + '</h3>' + 
-                            timeHtml +
-                            (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
-                            '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
-                            '<button id="nav-btn-' + markerTitle.replace(/\s+/g, '-') + '" ' +
-                                'style="background-color: #3887be; color: white; border: none; ' +
-                                'padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%;">' +
-                                'Navigate from here' +
-                            '</button>' +
-                        '</div>'
-                    );
-                
-                var newMarker = new mapboxgl.Marker({ color: '#3887be' })
+                val markerLng = marker.longitude
+                val markerLat = marker.latitude
+                val markerTitle = marker.title
+                val markerDesc = marker.description ?: ""
+                val markerAddress = marker.address
+                val markerStartTime = marker.startTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
+                val markerEndTime = marker.endTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
+                val hasTime = markerStartTime.isNotEmpty() && markerEndTime.isNotEmpty()
+                val eventNumber = marker.eventNumber ?: 0
+                val hasEventNumber = eventNumber > 0
+
+                js("""
+                    var mapIdStr = mapId;
+                    var eventNumberHtml = hasEventNumber ? 
+                        '<div style="display: inline-block; background-color: #3887be; color: white; font-weight: bold; ' +
+                        'width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; ' +
+                        'font-size: 14px; margin-right: 8px; vertical-align: middle;">' + eventNumber + '</div>' : 
+                        '';
+                    var timeHtml = hasTime ? 
+                        '<p style="margin: 0 0 8px 0; font-size: 13px; color: #444;">' + markerStartTime + ' - ' + markerEndTime + '</p>' : 
+                        '';
+
+                    var popup = new mapboxgl.Popup({ offset: 25 })
+                        .setHTML(
+                            '<div style="padding: 8px;">' +
+                                '<div style="display: flex; align-items: center; margin-bottom: 8px;">' +
+                                    eventNumberHtml +
+                                    '<h3 style="margin: 0; font-size: 16px; font-weight: bold; flex: 1;">' + markerTitle + '</h3>' +
+                                '</div>' +
+                                timeHtml +
+                                (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
+                                '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
+                                '<button id="nav-btn-' + markerTitle.replace(/\s+/g, '-') + '" ' +
+                                    'style="background-color: #3887be; color: white; border: none; ' +
+                                    'padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%;">' +
+                                    'Navigate from here' +
+                                '</button>' +
+                            '</div>'
+                        );                var newMarker = new mapboxgl.Marker({ color: '#3887be' })
                     .setLngLat([markerLng, markerLat])
                     .setPopup(popup)
                     .addTo(mapInstance);

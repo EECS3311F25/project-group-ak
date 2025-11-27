@@ -61,7 +61,7 @@ actual fun RenderDayDropdownOverlay(
         
         // Function to update the displayed text
         val updateDisplayText: (Int) -> Unit = { index ->
-            val selectedText = days.getOrElse(index) { "All Days" }
+            val selectedText = days.getOrElse(index) { "Day 1" }
             selectedDisplay.innerHTML = """
                 <span>$selectedText</span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left: 8px;">
@@ -85,49 +85,12 @@ actual fun RenderDayDropdownOverlay(
         
         // Function to update option backgrounds based on selection
         val updateOptionBackgrounds: (Int) -> Unit = { currentIndex ->
-            // Update "All Days" option
-            val allDaysOption = document.getElementById("map-day-option-all") as? HTMLDivElement
-            allDaysOption?.style?.backgroundColor = if (currentIndex == -1) "#f0f0f0" else "white"
-            
             // Update day options
             days.forEachIndexed { index, _ ->
                 val option = document.getElementById("map-day-option-$index") as? HTMLDivElement
                 option?.style?.backgroundColor = if (index == currentIndex) "#f0f0f0" else "white"
             }
         }
-        
-        // Add "All Days" option
-        val allDaysOption = document.createElement("div") as HTMLDivElement
-        allDaysOption.id = "map-day-option-all"
-        allDaysOption.textContent = "All Days"
-        allDaysOption.style.apply {
-            padding = "10px 16px"
-            fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-            fontSize = "14px"
-            color = "#000000"
-            backgroundColor = if (selectedDayIndex == -1) "#f0f0f0" else "white"
-            cursor = "pointer"
-        }
-        allDaysOption.asDynamic().onmouseenter = {
-            val currentBg = allDaysOption.style.backgroundColor
-            if (currentBg != "rgb(240, 240, 240)") { // Not selected
-                allDaysOption.style.backgroundColor = "#f5f5f5"
-            }
-        }
-        allDaysOption.asDynamic().onmouseleave = {
-            val currentSelectedIndex = (document.getElementById("map-day-dropdown") as? HTMLDivElement)?.asDynamic()?.selectedIndex as? Int ?: selectedDayIndex
-            allDaysOption.style.backgroundColor = if (currentSelectedIndex == -1) "#f0f0f0" else "white"
-        }
-        allDaysOption.onclick = {
-            (document.getElementById("map-day-dropdown") as? HTMLDivElement)?.asDynamic()?.selectedIndex = -1
-            onDaySelected(-1)
-            updateDisplayText(-1)
-            updateOptionBackgrounds(-1)
-            dropdownMenu.style.display = "none"
-            isExpanded = false
-            it.stopPropagation()
-        }
-        dropdownMenu.appendChild(allDaysOption)
         
         // Add day options
         days.forEachIndexed { index, day ->

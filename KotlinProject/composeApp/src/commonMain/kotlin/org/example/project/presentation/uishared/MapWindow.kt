@@ -36,5 +36,6 @@ data class MapMarker(
     val description: String? = null,
     val address: String,
     val startTime: LocalTime? = null,
-    val endTime: LocalTime? = null
+    val endTime: LocalTime? = null,
+    val eventNumber: Int? = null // Order of event in the day (1-based)
 )

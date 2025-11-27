@@ -21,7 +21,7 @@ data class MapUiState(
     val zoom: Double = 12.0,
     val markers: List<MapMarker> = emptyList(),
     val days: List<String> = emptyList(), // List of day labels (e.g., "Day 1", "Day 2")
-    val selectedDayIndex: Int = -1, // -1 means "All Days"
+    val selectedDayIndex: Int = 0, // Default to Day 1 (0-based index)
     val isLoading: Boolean = false,
     val error: String? = null
 )
@@ -46,27 +46,25 @@ class MapViewModel(
     }
     
     /**
-     * Select a specific day to filter events (or -1 for all days)
+     * Select a specific day to filter events
      */
     fun selectDay(dayIndex: Int) {
         val trip = _uiState.value.trip ?: return
         
-        // Filter events by selected day
-        val filteredEvents = if (dayIndex == -1) {
-            // Show all events
-            trip.events
-        } else {
-            // Calculate the actual date for this day index
-            val dayDate = trip.duration.startDate.plus(dayIndex, DateTimeUnit.DAY)
-            // Filter events that occur on this date
-            trip.events.filter { event ->
-                event.duration.isWithin(dayDate)
-            }
+        // Calculate the actual date for this day index
+        val dayDate = trip.duration.startDate.plus(dayIndex, DateTimeUnit.DAY)
+        
+        // Filter events that occur on this date
+        val filteredEvents = trip.events.filter { event ->
+            event.duration.isWithin(dayDate)
         }
         
-        // Convert filtered events to markers
-        val markers = filteredEvents.mapNotNull { event ->
-            event.toMapMarker()
+        // Sort events by start time
+        val sortedEvents = filteredEvents.sortedBy { it.duration.startTime }
+        
+        // Convert filtered events to markers with event numbers
+        val markers = sortedEvents.mapIndexedNotNull { index, event ->
+            event.toMapMarker()?.copy(eventNumber = index + 1)
         }
         
         // Recalculate center if we have markers
@@ -95,30 +93,38 @@ class MapViewModel(
                 val trip = tripRepository.getTripById(tripId)
                 
                 if (trip != null) {
-                    // Convert events to markers (assuming events have location data)
-                    val markers = trip.events.mapNotNull { event ->
-                        event.toMapMarker()
-                    }
-                    
-                    // Calculate center point from markers
-                    val (centerLat, centerLng) = if (markers.isNotEmpty()) {
-                        calculateCenter(markers)
-                    } else {
-                        43.6532 to -79.3832 // Default: Toronto
-                    }
-                    
                     // Calculate number of days in trip
                     val days = calculateDays(trip)
                     
+                    // Store trip and days first
                     _uiState.value = _uiState.value.copy(
                         trip = trip,
-                        centerLatitude = centerLat,
-                        centerLongitude = centerLng,
-                        markers = markers,
                         days = days,
-                        selectedDayIndex = -1, // Default to "All Days"
                         isLoading = false
                     )
+                    
+                    // Default to showing Day 1 (index 0)
+                    if (days.isNotEmpty()) {
+                        selectDay(0)
+                    } else {
+                        // No days, show all events
+                        val markers = trip.events.mapNotNull { event ->
+                            event.toMapMarker()
+                        }
+                        
+                        val (centerLat, centerLng) = if (markers.isNotEmpty()) {
+                            calculateCenter(markers)
+                        } else {
+                            43.6532 to -79.3832 // Default: Toronto
+                        }
+                        
+                        _uiState.value = _uiState.value.copy(
+                            centerLatitude = centerLat,
+                            centerLongitude = centerLng,
+                            markers = markers,
+                            selectedDayIndex = 0
+                        )
+                    }
                 } else {
                     _uiState.value = _uiState.value.copy(
                         error = "Trip not found",
