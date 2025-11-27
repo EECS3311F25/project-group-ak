@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import org.example.project.presentation.uishared.MapWindow
 import org.example.project.presentation.uishared.MapMarker
 import org.example.project.presentation.uishared.NavBar
+import org.example.project.presentation.map.uicomponents.RenderDayDropdownOverlay
 
 @Composable
 fun MapView(
@@ -79,16 +80,15 @@ fun MapView(
                                 .padding(bottom = navBarHeight) // Add padding to prevent overlap with NavBar
                         )
                         
-                        // Optional: Show marker count
-                        Card(
-                            modifier = Modifier
-                                .align(Alignment.TopCenter)
-                                .padding(16.dp)
-                        ) {
-                            Text(
-                                text = "${uiState.markers.size} locations",
-                                modifier = Modifier.padding(8.dp),
-                                style = MaterialTheme.typography.bodyMedium
+                        // Day selection dropdown overlay (only show if we have days)
+                        if (uiState.days.isNotEmpty()) {
+                            RenderDayDropdownOverlay(
+                                days = uiState.days,
+                                selectedDayIndex = uiState.selectedDayIndex,
+                                onDaySelected = { dayIndex ->
+                                    viewModel.selectDay(dayIndex)
+                                },
+                                onCleanup = { }
                             )
                         }
                     }

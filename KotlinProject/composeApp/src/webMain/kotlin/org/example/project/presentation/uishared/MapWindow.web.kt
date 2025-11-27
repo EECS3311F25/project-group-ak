@@ -123,6 +123,14 @@ actual fun MapWindow(
         }
     }
     
+    // Update map when markers, center, or zoom change
+    LaunchedEffect(markers, latitude, longitude, zoom) {
+        if (isMapReady) {
+            console.log("MapView: Updating map with ${markers.size} markers")
+            updateMapView(mapId, latitude, longitude, zoom, markers, routeEndpoints)
+        }
+    }
+    
     DisposableEffect(mapId) {
         onDispose {
             console.log("MapView: Cleaning up map $mapId")
@@ -277,13 +285,21 @@ private fun initializeMapboxMap(
                 val markerTitle = marker.title
                 val markerDesc = marker.description ?: ""
                 val markerAddress = marker.address
+                val markerStartTime = marker.startTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
+                val markerEndTime = marker.endTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
+                val hasTime = markerStartTime.isNotEmpty() && markerEndTime.isNotEmpty()
                 
                 js("""
                     var mapIdStr = mapId;
+                    var timeHtml = hasTime ? 
+                        '<p style="margin: 0 0 8px 0; font-size: 13px; color: #444;">' + markerStartTime + ' - ' + markerEndTime + '</p>' : 
+                        '';
+                    
                     var popup = new mapboxgl.Popup({ offset: 25 })
                         .setHTML(
                             '<div style="padding: 8px;">' +
                                 '<h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold;">' + markerTitle + '</h3>' + 
+                                timeHtml +
                                 (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
                                 '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
                                 '<button id="nav-btn-' + markerTitle.replace(/\s+/g, '-') + '" ' +
@@ -497,6 +513,7 @@ private fun updateMapView(
 ) {
     val mapInstance = js("window['mapInstance_' + mapId]")
     if (mapInstance != null) {
+        // Update map center and zoom
         js("""
             mapInstance.flyTo({
                 center: [longitude, latitude],
@@ -504,6 +521,89 @@ private fun updateMapView(
                 essential: true
             })
         """)
+        
+        // Clear existing markers
+        js("""
+            var mapIdStr = mapId;
+            if (window['mapMarkers_' + mapIdStr]) {
+                window['mapMarkers_' + mapIdStr].forEach(function(markerObj) {
+                    markerObj.marker.remove();
+                });
+                window['mapMarkers_' + mapIdStr] = [];
+            }
+        """)
+        
+        // Add new markers
+        markers.forEach { marker ->
+            val markerLng = marker.longitude
+            val markerLat = marker.latitude
+            val markerTitle = marker.title
+            val markerDesc = marker.description ?: ""
+            val markerAddress = marker.address
+            val markerStartTime = marker.startTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
+            val markerEndTime = marker.endTime?.let { "${it.hour.toString().padStart(2, '0')}:${it.minute.toString().padStart(2, '0')}" } ?: ""
+            val hasTime = markerStartTime.isNotEmpty() && markerEndTime.isNotEmpty()
+            
+            js("""
+                var mapIdStr = mapId;
+                var timeHtml = hasTime ? 
+                    '<p style="margin: 0 0 8px 0; font-size: 13px; color: #444;">' + markerStartTime + ' - ' + markerEndTime + '</p>' : 
+                    '';
+                
+                var popup = new mapboxgl.Popup({ offset: 25 })
+                    .setHTML(
+                        '<div style="padding: 8px;">' +
+                            '<h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold;">' + markerTitle + '</h3>' + 
+                            timeHtml +
+                            (markerDesc ? '<p style="margin: 0 0 8px 0; font-size: 14px;">' + markerDesc + '</p>' : '') +
+                            '<p style="margin: 0 0 12px 0; font-size: 12px; color: #666;">' + markerAddress + '</p>' +
+                            '<button id="nav-btn-' + markerTitle.replace(/\s+/g, '-') + '" ' +
+                                'style="background-color: #3887be; color: white; border: none; ' +
+                                'padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; width: 100%;">' +
+                                'Navigate from here' +
+                            '</button>' +
+                        '</div>'
+                    );
+                
+                var newMarker = new mapboxgl.Marker({ color: '#3887be' })
+                    .setLngLat([markerLng, markerLat])
+                    .setPopup(popup)
+                    .addTo(mapInstance);
+                
+                // Store marker reference
+                if (!window['mapMarkers_' + mapIdStr]) {
+                    window['mapMarkers_' + mapIdStr] = [];
+                }
+                
+                window['mapMarkers_' + mapIdStr].push({
+                    title: markerTitle,
+                    latitude: markerLat,
+                    longitude: markerLng,
+                    address: markerAddress,
+                    marker: newMarker,
+                    popup: popup,
+                    map: mapInstance
+                });
+                
+                // Add click handler for the button after popup opens
+                popup.on('open', function() {
+                    var btn = document.getElementById('nav-btn-' + markerTitle.replace(/\s+/g, '-'));
+                    if (btn) {
+                        btn.onclick = function() {
+                            if (window['navigationMode_' + mapIdStr]) {
+                                // In navigation mode, this is the destination
+                                window['handleDestinationSelected_' + mapIdStr](markerTitle, markerLat, markerLng, markerAddress);
+                            } else {
+                                // Start navigation mode
+                                window['handleNavigateFromHere_' + mapIdStr](markerTitle, markerLat, markerLng, markerAddress);
+                            }
+                        };
+                    }
+                });
+            """)
+        }
+        
+        console.log("MapView: Map updated with ${markers.size} markers")
     }
 }
 

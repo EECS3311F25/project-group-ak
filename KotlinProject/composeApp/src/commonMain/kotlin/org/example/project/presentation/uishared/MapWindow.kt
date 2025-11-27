@@ -2,6 +2,7 @@ package org.example.project.presentation.uishared
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kotlinx.datetime.LocalTime
 
 /**
  * Common interface for map display across platforms
@@ -33,5 +34,7 @@ data class MapMarker(
     val longitude: Double,
     val title: String,
     val description: String? = null,
-    val address: String
+    val address: String,
+    val startTime: LocalTime? = null,
+    val endTime: LocalTime? = null
 )
