@@ -29,8 +29,18 @@ KMP allows Navi to work on multiple platforms, the currently working one with Ma
     ```
 
 ### Run Python Server
+    1. Activate Python Environment
+    2. Run the file
+    
   - On macOS/Linux
-    TODO
+    under python-ai-service/
+    ```shell
+    source .venv/bin/activate
+    python3 ai_service.py
+    ```
+    
+    
+    
 
 ### Build and Run JS Target
   - on macOS/Linux
