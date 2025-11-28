@@ -37,11 +37,10 @@ import org.example.project.model.dataClasses.LocationSuggestion
 @Composable
 fun LocationTextField(
     label: String = "Search location",
-    value: String?,
+    value: String,
     onValueChange: (String) -> Unit,
     suggestions: List<LocationSuggestion> = emptyList(),
     onSuggestionClick: (LocationSuggestion) -> Unit = {},
-//    onSearchClick: () -> Unit = {}
 ) {
     var hasFocus by remember { mutableStateOf(false) }
 
@@ -50,24 +49,10 @@ fun LocationTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .onFocusChanged { state -> hasFocus = state.isFocused },
-            value = value.toString(),
+            value = value,
             onValueChange = { onValueChange(it) },
             label = { Text(label) },
             singleLine = true,
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = null
-                )
-            },
-//            trailingIcon = {
-//                IconButton(onClick = { onSearchClick() }) {
-//                    Icon(
-//                        imageVector = Icons.Default.Search,
-//                        contentDescription = "Search"
-//                    )
-//                }
-//            },
         )
 
         if (hasFocus && suggestions.isNotEmpty()) {

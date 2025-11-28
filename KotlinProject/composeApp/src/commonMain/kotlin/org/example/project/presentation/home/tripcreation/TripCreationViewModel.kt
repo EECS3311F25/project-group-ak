@@ -11,6 +11,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlinx.coroutines.launch
+import org.example.project.data.repository.LocationRepository
 import org.example.project.model.dataClasses.Trip
 import org.example.project.model.dataClasses.Duration
 import org.example.project.model.dataClasses.User
@@ -19,6 +20,7 @@ import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
 import org.example.project.model.dataClasses.Location
 import org.example.project.model.dataClasses.LocationSuggestion
+import org.example.project.utils.generateSessionId
 
 data class TripCreationState(
     val title: String = "",
@@ -26,10 +28,11 @@ data class TripCreationState(
     val description: String = "",
     val location: Location? = null,
     val locationQuery: String = "",
-    val suggestions: List<Location> = emptyList(), // might need to change later
+    val suggestions: List<LocationSuggestion> = emptyList(), // might need to change later
     val users: List<User> = emptyList(),
     val events: List<Event> = emptyList(),
     val imageHeaderUrl: String? = null,
+    val sessionId: String = generateSessionId(),
     
     // UI state
     val isLoading: Boolean = false,
@@ -39,7 +42,8 @@ data class TripCreationState(
 
 class TripCreationViewModel(
     private val tripRepository: TripRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val locationRepository: LocationRepository
 ) : ViewModel() {
     
     private val _state = MutableStateFlow(TripCreationState())
@@ -204,15 +208,33 @@ class TripCreationViewModel(
             locationQuery = newText,
             errorMessage = null
         )
-        validateForm() //
-    }
-    fun onLocationSuggestionSelected(suggestion: LocationSuggestion) {
-        // fetch location details from API
-        // update location field with new location details
 
+        viewModelScope.launch {
+            if (newText.isBlank()) {
+                _state.value = _state.value.copy(suggestions = emptyList())
+                return@launch
+            }
+            val suggestions = locationRepository.suggestLocations(
+                query = newText,
+                sessionId = state.value.sessionId
+            )
+            _state.value = _state.value.copy(suggestions = suggestions)
+        }
+    }
+
+    fun onLocationSuggestionSelected(suggestion: LocationSuggestion) {
+        _state.value = _state.value.copy(
+            locationQuery = suggestion.title,
+            errorMessage = null
+        )
+
+        viewModelScope.launch {
+            val location = locationRepository.getLocation(suggestion.id, state.value.sessionId)
+            _state.value = _state.value.copy(location = location, suggestions = emptyList())
+        }
     }
 //    fun onSearchLocationClicked() {
-//        TODO("Not yet implemented")
+//
 //    }
     
     // Image Header URL
@@ -228,8 +250,7 @@ class TripCreationViewModel(
     private fun validateForm() {
         val currentState = _state.value
         val isValid = currentState.title.isNotBlank() &&
-                     currentState.duration != null &&
-                     currentState.location != null
+                     currentState.duration != null
                      // Note: Don't require users.isNotEmpty() since current user is auto-added        
         _state.value = currentState.copy(isFormValid = isValid)
     }
@@ -325,7 +346,6 @@ class TripCreationViewModel(
     fun isFieldValid(field: String): Boolean {
         return when (field) {
             "title" -> _state.value.title.isNotBlank()
-            "location" -> _state.value.location != null
             "duration" -> _state.value.duration != null
             "users" -> _state.value.users.isNotEmpty()
             else -> false
@@ -337,7 +357,6 @@ class TripCreationViewModel(
         
         return when (field) {
             "title" -> if (_state.value.title.isBlank()) "Title is required" else null
-            "location" -> if (_state.value.location == null) "Location is required" else null
             "duration" -> if (_state.value.duration == null) "Duration is required" else null
             "users" -> if (_state.value.users.isEmpty()) "At least one user is required" else null
             else -> null

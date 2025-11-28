@@ -10,8 +10,10 @@ import kotlinx.serialization.Serializable
 class MapBoxService(
     private val client: HttpClient
 ) {
-    private val token: String =
+    // Lazily read token so creating MapBoxService does not fail during app/test startup
+    private val token: String by lazy {
         System.getenv("MAPBOX_TOKEN") ?: error("MAPBOX_TOKEN is not set")
+    }
 
     private val baseUrl = "https://api.mapbox.com/search/searchbox/v1"
 

@@ -22,7 +22,7 @@ private data class TripResponse(
     @SerialName("trip_description")
     val tripDescription: String?,
     @SerialName("trip_location")
-    val tripLocation: String?,
+    val tripLocation: Location?,
     @SerialName("trip_duration")
     val tripDuration: Duration,
     @SerialName("user_id")
@@ -48,7 +48,7 @@ private data class TripCreateRequest(
     @SerialName("trip_description")
     val tripDescription: String?,
     @SerialName("trip_location")
-    val tripLocation: String?,
+    val tripLocation: Location?,
     @SerialName("trip_duration")
     val tripDuration: Duration,
     @SerialName("user_id")
@@ -75,7 +75,7 @@ private data class EventResponse(
     @SerialName("event_description")
     val eventDescription: String?,
     @SerialName("event_location")
-    val eventLocation: String?,
+    val eventLocation: Location?,
     @SerialName("event_duration")
     val eventDuration: Duration,
     @SerialName("trip_id")
@@ -102,7 +102,7 @@ private data class EventCreateRequest(
     @SerialName("event_description")
     val eventDescription: String?,
     @SerialName("event_location")
-    val eventLocation: String?,
+    val eventLocation: Location?,
     @SerialName("event_duration")
     val eventDuration: Duration,
     @SerialName("trip_id")
@@ -125,7 +125,7 @@ class RemoteTripDataSource(
             id = id.toString(),
             title = tripTitle ?: "",
             description = tripDescription ?: "",
-            location = tripLocation ?: "",
+            location = tripLocation,
             duration = tripDuration,
             users = emptyList(), // TODO: Fetch associated users
             events = emptyList(), // TODO: Fetch associated events
@@ -152,7 +152,7 @@ class RemoteTripDataSource(
                 Location(
                     latitude = 0.0,
                     longitude = 0.0,
-                    address = eventLocation
+                    address = null
                 )
             } else null,
             duration = eventDuration,
@@ -241,7 +241,7 @@ class RemoteTripDataSource(
         val request = EventCreateRequest(
             eventTitle = event.title,
             eventDescription = event.description,
-            eventLocation = event.location?.address ?: "",
+            eventLocation = event.location,
             eventDuration = event.duration,
             tripId = tripId.toInt()
         )
@@ -260,7 +260,7 @@ class RemoteTripDataSource(
         val request = EventCreateRequest(
             eventTitle = updated.title,
             eventDescription = updated.description,
-            eventLocation = updated.location?.address ?: "",
+            eventLocation = updated.location,
             eventDuration = updated.duration,
             tripId = tripId.toInt()
         )

@@ -95,7 +95,7 @@ fun TripCreationView(
 //        )
         LocationTextField(
             label = "Location",
-            value = state.locationQuery.ifBlank { state.location?.title },
+            value = state.locationQuery,
             onValueChange = { newText ->
                 viewModel.onLocationQueryChanged(newText)
             },
@@ -103,9 +103,6 @@ fun TripCreationView(
             onSuggestionClick = { suggestion ->
                 viewModel.onLocationSuggestionSelected(suggestion)
             },
-//            onSearchClick = {
-//                viewModel.onSearchLocationClicked()
-//            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
