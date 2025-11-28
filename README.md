@@ -10,12 +10,29 @@ KMP allows Navi to work on multiple platforms, the currently working one with Ma
 ### Requirements
 
 - MapBox API key in .env
-- LLM API key in .env
+- Claude API key in .env
+- Docker
+- Java 21
+
+### Run PostgreSQL in Docker 
+  - On macOS/Linux
+    under KotlinProject/
+    ```shell
+    docker compose up -d
+    ```
+
+### Run Ktor Backend
+  - On macOS/Linux
+    under KotlinProject/
+    ```shell
+    ./gradlew :server:run
+    ```
+
+### Run Python Server
+  - On macOS/Linux
+    TODO
 
 ### Build and Run JS Target
-
-To build and run the development version of the desktop app, use the run configuration from the run widget in your IDE’s toolbar or run it directly from the terminal:
-
   - on macOS/Linux
     ```shell
     ./gradlew :composeApp:jsBrowserDevelopmentRun
