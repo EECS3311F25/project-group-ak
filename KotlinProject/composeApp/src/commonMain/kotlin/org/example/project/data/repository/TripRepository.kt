@@ -6,14 +6,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.example.project.data.remote.RemoteTripDataSource
+import org.example.project.data.source.TripDataSource
 import org.example.project.model.dataClasses.Duration
 import org.example.project.model.dataClasses.Trip
 import org.example.project.model.dataClasses.Event
 
 // USES ONLY REMOTE DATA SOURCE. NO LOCAL DB => NO LOCAL SOURCE
 class TripRepository(
-    private val remoteDataSource: RemoteTripDataSource
+    private val remoteDataSource: org.example.project.data.source.TripDataSource
 ) {
     // StateFlow for reactive updates
     private val _trips = MutableStateFlow<List<Trip>>(emptyList())

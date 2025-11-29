@@ -13,7 +13,7 @@ class RemoteTripDataSource : TripDataSource {
     private val apiBaseUrl = "http://localhost:8080"
 
     // USES MOCK ENDPOINTS
-    suspend fun fetchTrips(): List<Trip> {
+    override suspend fun fetchTrips(): List<Trip> {
         return HttpClientProvider.client.get("$apiBaseUrl/mocktrips").body()
     }
 

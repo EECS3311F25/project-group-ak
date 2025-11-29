@@ -4,10 +4,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.example.project.model.dataClasses.User
-import org.example.project.data.remote.RemoteUserDataSource
+import org.example.project.data.source.UserDataSource
 
 class UserRepository(
-    private val remoteUserDataSource: RemoteUserDataSource
+    private val remoteUserDataSource: org.example.project.data.source.UserDataSource
 ) {
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
