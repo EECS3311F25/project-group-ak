@@ -146,7 +146,7 @@ class CalendarViewModel(
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
                 val updatedEvents = _uiState.value.currentTrip.events.map { event ->
-                    if (event.title == oldEvent.title && event.duration == oldEvent.duration) newEvent else event
+                    if (event.id == oldEvent.id) newEvent else event
                 }
                 val updatedTrip = _uiState.value.currentTrip.copy(events = updatedEvents)
                 val result = tripRepository.updateTrip(updatedTrip)
@@ -172,7 +172,7 @@ class CalendarViewModel(
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
                 val updatedEvents = _uiState.value.currentTrip.events.filter {
-                    it.title != event.title || it.duration != event.duration
+                    it.id != event.id
                 }
                 val updatedTrip = _uiState.value.currentTrip.copy(events = updatedEvents)
                 val result = tripRepository.updateTrip(updatedTrip)
@@ -249,7 +249,7 @@ class CalendarViewModel(
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
                 val updatedEvents = _uiState.value.currentTrip.events.map { event ->
-                    if (event.title == oldEvent.title && event.duration == oldEvent.duration) newEvent else event
+                    if (event.id == oldEvent.id) newEvent else event
                 }
                 val updatedTrip = _uiState.value.currentTrip.copy(events = updatedEvents)
                 val result = tripRepository.updateTrip(updatedTrip)
