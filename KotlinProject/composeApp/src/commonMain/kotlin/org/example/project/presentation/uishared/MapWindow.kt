@@ -2,6 +2,7 @@ package org.example.project.presentation.uishared
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kotlinx.datetime.LocalTime
 
 /**
  * Common interface for map display across platforms
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
  * @param markers List of map markers to display
  * @param routeEndpoints Optional pair of markers to show route between (if null, no route is shown)
  * @param onRouteCalculated Callback with distance (km), driving duration (minutes), and walking duration (minutes) when route is calculated
+ * @param onNavigateToNavigation Callback when user selects two markers for navigation
  * @param modifier Compose modifier
  */
 @Composable
@@ -22,6 +24,7 @@ expect fun MapWindow(
     markers: List<MapMarker> = emptyList(),
     routeEndpoints: Pair<MapMarker, MapMarker>? = null,
     onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)? = null,
+    onNavigateToNavigation: ((startMarker: MapMarker, endMarker: MapMarker) -> Unit)? = null,
     modifier: Modifier = Modifier
 )
 
@@ -33,5 +36,8 @@ data class MapMarker(
     val longitude: Double,
     val title: String,
     val description: String? = null,
-    val address: String
+    val address: String,
+    val startTime: LocalTime? = null,
+    val endTime: LocalTime? = null,
+    val eventNumber: Int? = null // Order of event in the day (1-based)
 )
