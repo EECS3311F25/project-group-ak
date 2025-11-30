@@ -36,6 +36,7 @@ import org.example.project.presentation.trip.addmember.AddMemberViewModel
 import org.example.project.presentation.trip.addevent.AddEventViewModel
 import org.example.project.presentation.trip.edittrip.EditTripViewModel
 import org.example.project.presentation.ApiTestView
+import org.example.project.presentation.calendar.navigation.NavigationView
 
 @Composable
 /*
@@ -57,8 +58,9 @@ import org.example.project.presentation.ApiTestView
  */ 
 fun App(root: RootComponent) {
     // 🔥 Create shared repository instances at App level
-    val tripRepository = remember { TripRepository(RemoteTripDataSource()) }
-    val userRepository = remember { UserRepository(RemoteUserDataSource()) }
+    val userDataSource = remember { RemoteUserDataSource() }
+    val tripRepository = remember { TripRepository(RemoteTripDataSource(userDataSource)) }
+    val userRepository = remember { UserRepository(userDataSource) }
     
     MaterialTheme(
         colorScheme = LightColorScheme
@@ -193,6 +195,14 @@ fun App(root: RootComponent) {
                     EditTrip(
                         component = instance.component,
                         viewModel = editTripViewModel
+                    )
+                }
+                
+                is RootComponent.Child.NavigationView -> {
+                    NavigationView(
+                        component = instance.component,
+                        startLocation = instance.startLocation,
+                        endLocation = instance.endLocation
                     )
                 }
                 // =============================================================================================

@@ -1,30 +1,44 @@
 package org.example.project.repository
 
+import org.example.project.trip.PostgresTripRepository
 import org.example.project.trip.Trip
-import org.example.project.trip.TripRepositoryMock
+import org.example.project.trip.TripResponse
 import org.slf4j.LoggerFactory
 
 /**
- * PostgreSQL implementation of TripRepository.
+ * Adapter that bridges the AI summary's TripRepository interface with the database PostgresTripRepository.
  * 
- * Currently uses TripRepositoryMock as a fallback until full database integration is complete.
- * TODO: Replace with actual PostgreSQL database queries using Exposed ORM.
+ * Converts between:
+ * - AI summary interface: getById(id: String): Trip?
+ * - Database interface: getTrip(tripId: Int?): TripResponse?
  */
-class TripRepositoryImpl : TripRepository {
+class TripRepositoryImpl(
+    private val postgresRepository: PostgresTripRepository = PostgresTripRepository()
+) : TripRepository {
     private val logger = LoggerFactory.getLogger(TripRepositoryImpl::class.java)
 
     override suspend fun getById(id: String): Trip? {
-        // TODO: Replace with actual database query
-        // Example future implementation:
-        // return suspendTransaction {
-        //     TripTable.select { TripTable.id eq id.toInt() }
-        //         .firstOrNull()
-        //         ?.let { daoToTripModel(it) }
-        // }
+        val tripId = id.toIntOrNull()
+        if (tripId == null) {
+            logger.warn("Invalid trip ID format: $id (expected integer)")
+            return null
+        }
         
-        // For now, use mock repository
-        logger.debug("Getting trip by ID: $id (using mock repository)")
-        return TripRepositoryMock.getById(id)
+        val tripResponse = postgresRepository.getTrip(tripId)
+        return tripResponse?.toTrip()
+    }
+    
+    /**
+     * Convert TripResponse (database DTO) to Trip (database model)
+     */
+    private fun TripResponse.toTrip(): Trip {
+        return Trip(
+            tripTitle = this.tripTitle,
+            tripDescription = this.tripDescription,
+            tripLocation = this.tripLocation,
+            tripDuration = this.tripDuration,
+            userId = this.userId
+        )
     }
 }
 

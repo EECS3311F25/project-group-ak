@@ -4,17 +4,15 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
 import org.example.project.config.AIConfig
+import org.example.project.db.configureDatabases
+import org.example.project.db.configureRouting
+import org.example.project.db.configureSerialization
 import org.example.project.repository.TripRepositoryImpl
 import org.example.project.routes.configureAISummaryRoutes
 import org.example.project.service.AISummaryService
-import org.example.project.trip.tripRoutes
+import org.example.project.trip.PostgresTripRepository
 
 const val SERVER_PORT: Int = 8080
 
@@ -43,33 +41,27 @@ fun Application.module() {
         allowHeader(HttpHeaders.Authorization)
     }
     
-    // Install ContentNegotiation for JSON serialization
-    install(ContentNegotiation) {
-        json(Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        })
-        }
+    //  Serializable to JSON - see Serialization.kt
+    configureSerialization()
+
+    //  DB configuration and migration - see DatabaseConnect.kt and Migration.kt
+    configureDatabases()
 
     // Initialize AI configuration and service
     val aiConfig = AIConfig()
     val aiSummaryService = AISummaryService(aiConfig)
 
-    // Initialize trip repository (uses PostgreSQL when database is set up)
+    // Initialize trip repository adapter for AI summary (bridges database and AI summary interfaces)
     val tripRepository = TripRepositoryImpl()
 
     // register shutdown hook to close HTTP client
     monitor.subscribe(ApplicationStopped) {
         aiSummaryService.close()
     }
-    
-    routing {
-        get("/") { call.respondText("Ktor: ${Greeting().greet()}") }
-        get("/health") { call.respondText("Healthy") }
 
-        tripRoutes()
-        configureAISummaryRoutes(aiSummaryService, tripRepository)
-        mockApiRoutes()
-    }
+    //  Register all HTTP routes - see Routing.kt (includes database routes)
+    configureRouting()
+    
+    // Register AI summary routes (your feature)
+    configureAISummaryRoutes(aiSummaryService, tripRepository)
 }

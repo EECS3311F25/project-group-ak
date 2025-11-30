@@ -7,10 +7,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.example.project.data.remote.RemoteTripDataSource
+import org.example.project.data.remote.RemoteUserDataSource
 
 @Composable
 fun ApiTestView() {
-    val dataSource = remember { RemoteTripDataSource() }
+    val userDataSource = remember { RemoteUserDataSource() }
+    val dataSource = remember { RemoteTripDataSource(userDataSource) }
     var result by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()

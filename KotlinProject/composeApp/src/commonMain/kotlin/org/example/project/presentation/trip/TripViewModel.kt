@@ -71,16 +71,9 @@ class TripViewModel(
     }
 
     init {
+        // Load the trip with all its events
         viewModelScope.launch {
-            tripRepository.trips.collect { trips ->
-                _trip.value = trips.find { it.id == tripId }
-            }
-        }
-
-        viewModelScope.launch {
-            if (_trip.value == null) {
-                _trip.value = tripRepository.getTripById(tripId)
-            }
+            _trip.value = tripRepository.getTripById(tripId)
         }
     }
 
@@ -88,18 +81,24 @@ class TripViewModel(
     fun addEvent(event: Event) {
         viewModelScope.launch {
             tripRepository.addEvent(tripId, event)
+            // Refresh the specific trip to get updated events
+            _trip.value = tripRepository.getTripById(tripId)
         }
     }
 
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {
             tripRepository.deleteEvent(tripId, eventId)
+            // Refresh the specific trip to get updated events
+            _trip.value = tripRepository.getTripById(tripId)
         }
     }
 
     fun updateEvent(eventId: String, updated: Event) {
         viewModelScope.launch {
             tripRepository.updateEvent(tripId, eventId, updated)
+            // Refresh the specific trip to get updated events
+            _trip.value = tripRepository.getTripById(tripId)
         }
     }
 

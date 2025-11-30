@@ -2,6 +2,7 @@ package org.example.project.presentation.calendar
 
 import com.arkivanov.decompose.ComponentContext
 import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Location
 import org.example.project.model.dataClasses.Trip
 import kotlinx.datetime.LocalDate
 
@@ -13,7 +14,8 @@ class CalendarViewComponent(
     private val onGoBack: () -> Unit,
     private val onNavigateToTripView: () -> Unit,
     private val onEditEvent: (String) -> Unit = {},
-    private val onAddEvent: (LocalDate) -> Unit = {}
+    private val onAddEvent: (LocalDate) -> Unit = {},
+    private val onNavigateToNavigation: (Location, Location, String, String) -> Unit = { _, _, _, _ -> }
 ) : ComponentContext by componentContext {
 
     fun onBack() {
@@ -26,6 +28,12 @@ class CalendarViewComponent(
             is CalendarViewEvent.NavigateToTrip -> onNavigateToTripView()
             is CalendarViewEvent.ClickEditEvent -> onEditEvent(event.eventId)
             is CalendarViewEvent.ClickAddEvent -> onAddEvent(event.initialDate)
+            is CalendarViewEvent.ShowNavigation -> onNavigateToNavigation(
+                event.startLocation,
+                event.endLocation,
+                event.startTitle,
+                event.endTitle
+            )
         }
     }
 }
@@ -35,4 +43,10 @@ sealed class CalendarViewEvent {
     object NavigateToTrip : CalendarViewEvent()
     data class ClickEditEvent(val eventId: String) : CalendarViewEvent()
     data class ClickAddEvent(val initialDate: LocalDate) : CalendarViewEvent()
+    data class ShowNavigation(
+        val startLocation: Location,
+        val endLocation: Location,
+        val startTitle: String,
+        val endTitle: String
+    ) : CalendarViewEvent()
 }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.flyway)
     application
     java
 }
@@ -19,7 +20,6 @@ java {
 }
 version = "1.0.0"
 
-
 application {
     mainClass.set("org.example.project.ApplicationKt")
     
@@ -30,17 +30,38 @@ application {
 dependencies {
 
     implementation(projects.shared)
-    implementation(libs.logback)
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.contentnegotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     // Ktor Client for AI service calls
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.contentnegotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
+   
+   
+
+    
+  
+
+    implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.server.sessions)
+    
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
 
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.contentnegotiation)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.encoding)
+
+    //  H2 driver for JDBC
+    //  refer to: https://www.jetbrains.com/help/exposed/working-with-database.html#choosing-between-jdbc-and-r2dbc
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.flyway.core)
+    implementation(libs.flyway.database.postgresql)
+    implementation(libs.postgresql)
+    implementation(libs.h2)
+    implementation(libs.logback.classic)
 }

@@ -10,6 +10,6 @@ data class Event(
     val title: String,
     val duration: Duration,
     val description: String = "",
-    val location: String = "",
+    val location: Location? = null,
     val imageUrl: String? = null
 )

@@ -198,7 +198,7 @@ fun EventCard(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                if (event.location.isNotEmpty()) {
+                event.location?.let { location ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Filled.Place,
@@ -208,7 +208,7 @@ fun EventCard(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = event.location,
+                            text = location.address ?: location.title ?: "${location.latitude}, ${location.longitude}",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
                             maxLines = 1

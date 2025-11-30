@@ -108,7 +108,7 @@ class AddEventViewModel(
                     _state.value = _state.value.copy(
                         title = event.title,
                         description = event.description,
-                        location = event.location,
+                        location = event.location?.address ?: event.location?.title ?: "",
                         imageUrl = event.imageUrl.orEmpty(),
                         durationFields = DurationFields(
                             startDate = event.duration.startDate.toString(),
@@ -249,7 +249,13 @@ class AddEventViewModel(
             title = current.title.trim(),
             duration = duration,
             description = current.description.trim(),
-            location = current.location.trim(),
+            location = if (current.location.trim().isNotEmpty()) {
+                org.example.project.model.dataClasses.Location(
+                    latitude = 0.0,  // TODO: Implement geocoding or coordinate input
+                    longitude = 0.0,
+                    address = current.location.trim()
+                )
+            } else null,
             imageUrl = normalizedImage
         )
 
