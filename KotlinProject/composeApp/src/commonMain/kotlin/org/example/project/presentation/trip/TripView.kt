@@ -98,7 +98,7 @@ fun TripView(
                         duration = tripData.duration,
                         events = tripData.events,
                         onDeleteEvent = { event ->
-                            viewModel.deleteEvent(event.title)
+                            viewModel.deleteEvent(event.id)
                         },
                         onEditEvent = { event ->
                             component.onEvent(TripViewEvent.ClickEditEvent(event.title))

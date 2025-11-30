@@ -119,6 +119,8 @@ class RemoteTripDataSource(
     // USES MOCK ENDPOINTS
     override suspend fun fetchTrips(): List<Trip> {
         return HttpClientProvider.client.get("$apiBaseUrl/mocktrips").body()
+    }
+    
     // Helper function to convert server TripResponse to client Trip model
     private fun TripResponse.toTrip(): Trip {
         val now = kotlinx.datetime.Clock.System.now()
@@ -181,23 +183,39 @@ class RemoteTripDataSource(
     }
 
     override suspend fun getTripById(id: String): Trip? {
-        return try {
-            // Fetch the trip
-            val tripResponse: TripRetrieveResponse = HttpClientProvider.client
+        val tripResult = runCatching {
+            HttpClientProvider.client
                 .get("$apiBaseUrl/user/${getCurrentUserId()}/trip/$id")
-                .body()
-            
-            // Fetch the events for this trip
-            val eventsResponse: EventListResponse = HttpClientProvider.client
-                .get("$apiBaseUrl/user/${getCurrentUserId()}/trip/$id/event")
-                .body()
-            
-            // Convert trip and include the fetched events
-            val trip = tripResponse.data.toTrip()
-            trip.copy(events = eventsResponse.events.map { it.toEvent() })
-        } catch (e: Exception) {
-            null
+                .body<TripRetrieveResponse>()
         }
+        
+        if (tripResult.isFailure) {
+            println("Failed to fetch trip $id: ${tripResult.exceptionOrNull()?.message}")
+            tripResult.exceptionOrNull()?.printStackTrace()
+            return null
+        }
+        
+        val tripResponse = tripResult.getOrThrow()
+        
+        val eventsResult = runCatching {
+            HttpClientProvider.client
+                .get("$apiBaseUrl/user/${getCurrentUserId()}/trip/$id/event")
+                .body<EventListResponse>()
+        }
+        
+        val events = eventsResult.fold(
+            onSuccess = { response: EventListResponse -> 
+                println("Loaded ${response.events.size} events for trip $id")
+                response.events.map { eventResponse -> eventResponse.toEvent() }
+            },
+            onFailure = { error: Throwable ->
+                println("Failed to fetch events for trip $id: ${error.message}")
+                error.printStackTrace()
+                emptyList()
+            }
+        )
+        
+        return tripResponse.data.toTrip().copy(events = events)
     }
 
     override suspend fun insertTrip(trip: Trip): Trip {

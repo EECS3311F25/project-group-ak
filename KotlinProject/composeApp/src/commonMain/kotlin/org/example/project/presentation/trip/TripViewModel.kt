@@ -39,29 +39,30 @@ class TripViewModel(
     fun generateAISummary() {
         viewModelScope.launch {
             val currentTrip = _trip.value ?: return@launch
+            
             _isGeneratingSummary.value = true
             _summaryError.value = null
             _aiSummary.value = null // Clear old summary when regenerating
             
-            // Step 1: Check if trip is in localCreatedTrips (newly created trip)
-            val localTrip = tripRepository.getLocalCreatedTrip(currentTrip.id)
-            val tripData = if (localTrip != null) {
-                // Convert frontend Trip to backend Trip format
-                org.example.project.data.api.TripConverter.toBackendTrip(localTrip)
-            } else {
-                null // Trip exists in backend, let backend look it up
-            }
+            println("Generating AI summary for trip ${currentTrip.id} with ${currentTrip.events.size} events")
             
             val apiService = TripApiService(HttpClientFactory.create())
-            val result = apiService.generateTripSummary(currentTrip.id, tripData)
+            // Trip exists in backend, let backend look it up by ID (tripData = null)
+            val result = apiService.generateTripSummary(currentTrip.id, tripData = null)
+            
+            result.fold(
+                onSuccess = { response ->
+                    println("AI summary generated successfully")
+                    _aiSummary.value = response.summary
+                },
+                onFailure = { error ->
+                    println("AI summary generation failed: ${error.message}")
+                    error.printStackTrace()
+                    _summaryError.value = error.message ?: "Failed to generate summary"
+                }
+            )
             
             _isGeneratingSummary.value = false
-            
-            result.onSuccess { response ->
-                _aiSummary.value = response.summary
-            }.onFailure { error ->
-                _summaryError.value = error.message ?: "Failed to generate summary"
-            }
         }
     }
 

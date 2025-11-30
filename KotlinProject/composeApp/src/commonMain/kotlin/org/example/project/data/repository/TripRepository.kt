@@ -54,9 +54,12 @@ class TripRepository(
     /**
      * Check if a trip is in localCreatedTrips (temporary cache for new trips)
      * Returns the trip if found, null otherwise
+     * NOTE: With database integration, this is no longer needed as trips are stored in DB
      */
     fun getLocalCreatedTrip(id: String): Trip? {
-        return localCreatedTrips[id]
+        // With database, trips are stored in DB, so this always returns null
+        // Kept for backward compatibility with AI summary feature
+        return null
     }
     
     suspend fun createTrip(trip: Trip): Result<Trip> {
