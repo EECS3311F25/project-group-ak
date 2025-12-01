@@ -11,8 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.presentation.home.tripcreation.TripCreationComponent
+import org.example.project.presentation.home.tripcreation.TripCreationEvent
+import org.example.project.presentation.home.tripcreation.TripCreationViewModel
 import org.example.project.presentation.uishared.DatePickerSection
-import org.example.project.presentation.uishared.LocationTextField
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,33 +78,22 @@ fun TripCreationView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-//        // === LOCATION FIELD ===
-//        OutlinedTextField(
-//            value = state.location,
-//            onValueChange = viewModel::updateLocation,
-//            label = { Text("Location *") },
-//            placeholder = { Text("Enter destination") },
-//            isError = !viewModel.isFieldValid("location") && state.location.isNotEmpty(),
-//            supportingText = {
-//                viewModel.getFieldError("location")?.let { error ->
-//                    Text(
-//                        text = error,
-//                        color = MaterialTheme.colorScheme.error
-//                    )
-//                }
-//            },
-//            modifier = Modifier.fillMaxWidth()
-//        )
-        LocationTextField(
-            label = "Location",
-            value = state.locationQuery,
-            onValueChange = { newText ->
-                viewModel.onLocationQueryChanged(newText)
+        // === LOCATION FIELD ===
+        OutlinedTextField(
+            value = state.location,
+            onValueChange = viewModel::updateLocation,
+            label = { Text("Location *") },
+            placeholder = { Text("Enter destination") },
+            isError = !viewModel.isFieldValid("location") && state.location.isNotEmpty(),
+            supportingText = {
+                viewModel.getFieldError("location")?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             },
-            suggestions = state.suggestions,
-            onSuggestionClick = { suggestion ->
-                viewModel.onLocationSuggestionSelected(suggestion)
-            },
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))

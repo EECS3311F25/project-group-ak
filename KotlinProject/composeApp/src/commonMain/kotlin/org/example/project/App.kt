@@ -111,7 +111,7 @@ fun App(root: RootComponent) {
                 // 🔥 Pass shared repositories to TripCreationView
                 is RootComponent.Child.TripCreationView -> {
                     val tripCreationViewModel: TripCreationViewModel = viewModel { 
-                        TripCreationViewModel(tripRepository, userRepository, locationRepository)
+                        TripCreationViewModel(tripRepository, userRepository)
                     }
                     TripCreationView(
                         component = instance.component,

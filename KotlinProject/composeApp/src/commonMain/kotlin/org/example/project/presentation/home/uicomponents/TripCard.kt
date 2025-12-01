@@ -132,9 +132,9 @@ fun TripCard(
                 color = Color.White,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
-            if (trip.location?.title?.isNotEmpty() == true) {
+            if (trip.location.isNotEmpty()) {
                 Text(
-                    text = trip.location.title,
+                    text = trip.location,
                     color = Color.White.copy(alpha = 0.8f),
                     modifier = Modifier
                 )
