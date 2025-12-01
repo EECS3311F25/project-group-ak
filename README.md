@@ -42,6 +42,12 @@ KMP allows Navi to work on multiple platforms, the currently working one with Ma
           
   Next Steps :
 
+    Create Python enviroment inside python-ai-service directory
+      -    python3 -m venv venv
+    Install everything from requirements : 
+      -    pip install -r requirements.txt
+      
+
     1. Activate Python Environment
     2. Run the file
     
