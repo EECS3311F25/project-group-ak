@@ -38,7 +38,8 @@ fun CalendarView(
     // Collect UI state from ViewModel
     val uiState by viewModel.uiState.collectAsState()
     val events = uiState.events
-    val selectedDate = uiState.selectedDate
+    val tripDays = uiState.currentTrip.duration?.getAllDates() ?: emptyList()
+    val selectedDate = uiState.selectedDate ?: tripDays.getOrNull(0)
     val isLoading = uiState.isLoading
     val error = uiState.error
     val trip = uiState.currentTrip
@@ -125,10 +126,10 @@ fun CalendarView(
                         }
                     }
                     
-                    // Initialize scroll position to first day
+                    // Initialize scroll position to first event
                     LaunchedEffect(Unit) {
                         if (selectedDate != null) {
-                            val initialIndex = tripDays.indexOf(selectedDate).coerceAtLeast(0)
+                            val initialIndex = tripDays.indexOf(selectedDate).coerceAtLeast(1)
                             listState.scrollToItem(initialIndex)
                         }
                     }

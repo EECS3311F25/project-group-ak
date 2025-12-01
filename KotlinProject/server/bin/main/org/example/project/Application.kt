@@ -64,4 +64,4 @@ fun Application.module() {
     
     // Register AI summary routes (your feature)
     configureAISummaryRoutes(aiSummaryService, tripRepository)
-}
+            }
