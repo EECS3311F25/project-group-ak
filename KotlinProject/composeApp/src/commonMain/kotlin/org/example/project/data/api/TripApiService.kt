@@ -20,6 +20,10 @@ import org.example.project.data.api.dto.TripSummaryRequest
 import org.example.project.data.api.dto.TripSummaryResponse
 import org.example.project.data.api.dto.ErrorResponse
 
+/*
+HTTP Client that calls backEnd endpoint
+*/
+
 
 class TripApiService(
     private val client : HttpClient,

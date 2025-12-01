@@ -39,7 +39,7 @@ class TripViewModel(
     private val _summaryError = MutableStateFlow<String?>(null)
     val summaryError: StateFlow<String?> = _summaryError.asStateFlow()
 
-
+    // FrontEnd - Triggers this function
     fun generateAISummary() {
         viewModelScope.launch {
             val currentTrip = uiState.value.trip ?: return@launch
@@ -51,7 +51,8 @@ class TripViewModel(
             println("Generating AI summary for trip ${currentTrip.id} with ${currentTrip.events.size} events")
             
             val apiService = TripApiService(HttpClientFactory.create())
-            // Trip exists in backend, let backend look it up by ID (tripData = null)
+
+            // 2nd step : Trip exists in backend, let backend look it up by ID (tripData = null)
             val result = apiService.generateTripSummary(currentTrip.id, tripData = null)
             
             result.fold(
@@ -76,48 +77,17 @@ class TripViewModel(
     }
 
     init {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
-            try {
-                println("=== TripViewModel: Loading trip with ID: $tripId ===")
-                val trip = tripRepository.getTripById(tripId)
-                if (trip != null) {
-                    println("Loaded trip: ${trip.title} with ${trip.events.size} events")
-                    _uiState.update { it.copy(trip = trip, isLoading = false) }
-                } else {
-                    println("ERROR: Trip not found with ID: $tripId")
-                    _uiState.update { it.copy(error = "Trip not found", isLoading = false) }
-                }
-            } catch (e: Exception) {
-                println("ERROR loading trip: ${e.message}")
-                e.printStackTrace()
-                _uiState.update { it.copy(error = "Failed to load trip: ${e.message}", isLoading = false) }
-            }
-        }
+        refreshTrip()
     }
     
-    // Refresh trip data from repository
     fun refreshTrip() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                println("=== TripViewModel.refreshTrip ===")
-                println("Loading trip with ID: $tripId")
                 val trip = tripRepository.getTripById(tripId)
-                if (trip != null) {
-                    println("Loaded trip: ${trip.title}")
-                    println("Trip has ${trip.events.size} events")
-                    _uiState.update { it.copy(trip = trip) }
-                } else {
-                    println("ERROR: Trip not found with ID: $tripId")
-                    _uiState.update { it.copy(error = "Trip not found") }
-                }
+                _uiState.update { it.copy(trip = trip, isLoading = false) }
             } catch (e: Exception) {
-                println("ERROR refreshing trip: ${e.message}")
-                e.printStackTrace()
-                _uiState.update { it.copy(error = "Failed to refresh trip: ${e.message}") }
-            } finally {
-                _uiState.update { it.copy(isLoading = false) }
+                _uiState.update { it.copy(error = "Failed to load trip: ${e.message}", isLoading = false) }
             }
         }
     }
