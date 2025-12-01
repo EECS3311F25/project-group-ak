@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.data.repository.TripRepository
 import org.example.project.model.dataClasses.Trip
@@ -15,15 +16,18 @@ import org.example.project.data.api.HttpClientFactory
 import org.example.project.data.api.TripApiService
 import org.example.project.data.api.TripConverter
 
+data class TripUiState(
+    val trip: Trip? = null,
+    val isLoading: Boolean = false,
+    val error: String? = null
+)
 
 class TripViewModel(
     private val tripId: String,
     private val tripRepository: TripRepository
 ) : ViewModel() {
-    private val _trip = MutableStateFlow<Trip?>(null)
-    val trip: StateFlow<Trip?> = _trip.asStateFlow()
-    val isLoading: StateFlow<Boolean> = tripRepository.isLoading
-    val error: StateFlow<String?> = tripRepository.error
+    private val _uiState = MutableStateFlow(TripUiState(isLoading = true))
+    val uiState: StateFlow<TripUiState> = _uiState.asStateFlow()
 
     // AI-Summary Variable
     private val _aiSummary = MutableStateFlow<String?>(null)
@@ -73,7 +77,6 @@ class TripViewModel(
     }
 
     init {
-        // Load the trip with all its events
         viewModelScope.launch {
                 _trip.value = tripRepository.getTripById(tripId)
         }
@@ -82,37 +85,86 @@ class TripViewModel(
     // ------- Trip operations -------
     fun addEvent(event: Event) {
         viewModelScope.launch {
-            tripRepository.addEvent(tripId, event)
-            // Refresh the specific trip to get updated events
-            _trip.value = tripRepository.getTripById(tripId)
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                tripRepository.addEvent(tripId, event)
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    _uiState.update { it.copy(trip = trip) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to add event: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {
-            tripRepository.deleteEvent(tripId, eventId)
-            // Refresh the specific trip to get updated events
-            _trip.value = tripRepository.getTripById(tripId)
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                tripRepository.deleteEvent(tripId, eventId)
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    _uiState.update { it.copy(trip = trip) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to delete event: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 
     fun updateEvent(eventId: String, updated: Event) {
         viewModelScope.launch {
-            tripRepository.updateEvent(tripId, eventId, updated)
-            // Refresh the specific trip to get updated events
-            _trip.value = tripRepository.getTripById(tripId)
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                tripRepository.updateEvent(tripId, eventId, updated)
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    _uiState.update { it.copy(trip = trip) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to update event: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 
     fun addMember(userId: String) {
         viewModelScope.launch {
-            tripRepository.addMember(tripId, userId)
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                tripRepository.addMember(tripId, userId)
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    _uiState.update { it.copy(trip = trip) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to add member: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 
     fun removeMember(userId: String) {
         viewModelScope.launch {
-            tripRepository.removeMember(tripId, userId)
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                tripRepository.removeMember(tripId, userId)
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    _uiState.update { it.copy(trip = trip) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to remove member: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 
@@ -120,13 +172,35 @@ class TripViewModel(
 
     fun updateTripTitle(title: String) {
         viewModelScope.launch {
-            tripRepository.updateTripTitle(tripId, title)
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                tripRepository.updateTripTitle(tripId, title)
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    _uiState.update { it.copy(trip = trip) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to update title: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 
     fun updateTripDescription(description: String) {
         viewModelScope.launch {
-            tripRepository.updateTripDescription(tripId, description)
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                tripRepository.updateTripDescription(tripId, description)
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    _uiState.update { it.copy(trip = trip) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to update description: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 }

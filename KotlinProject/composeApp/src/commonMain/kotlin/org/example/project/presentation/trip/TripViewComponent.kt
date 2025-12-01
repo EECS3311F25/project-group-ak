@@ -10,6 +10,7 @@ sealed interface TripViewEvent {
     data object ClickEditTrip : TripViewEvent
     data class ClickCalendar(val trip: Trip) : TripViewEvent
     data class ClickEditEvent(val eventId: String) : TripViewEvent
+    data object ClickMap : TripViewEvent
 }
 
 class TripViewComponent(
@@ -19,7 +20,8 @@ class TripViewComponent(
     private val onNavigateToAddMember: () -> Unit,
     private val onNavigateToEditEvent: (String) -> Unit,
     private val onNavigateToEditTrip: () -> Unit,
-    private val onNavigateToCalendar: () -> Unit
+    private val onNavigateToCalendar: () -> Unit,
+    private val onNavigateToMap: () -> Unit
 ) : ComponentContext by componentContext {
 
     fun onEvent(event: TripViewEvent) {
@@ -29,6 +31,7 @@ class TripViewComponent(
             is TripViewEvent.ClickEditTrip -> onNavigateToEditTrip()
             is TripViewEvent.ClickEditEvent -> onNavigateToEditEvent(event.eventId)
             is TripViewEvent.ClickCalendar -> onNavigateToCalendar()
+            is TripViewEvent.ClickMap -> onNavigateToMap()
         }
     }
 
