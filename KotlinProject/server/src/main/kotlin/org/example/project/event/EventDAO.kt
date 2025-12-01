@@ -72,20 +72,31 @@ fun EventDAO.toResponseDto(): EventResponse {
     val location = LocationDAO.find { LocationTable.eventId eq this.id }.firstOrNull()
     
     return EventResponse(
-        id.value,
-        eventTitle,
-        eventDescription,
-        eventLocation,
-        eventDuration,
-        tripId.id.value,
-        location?.toResponseDto()
+        id = id.value,
+        eventTitle = eventTitle,
+        eventDescription = eventDescription,
+        eventLocation = eventLocation,
+        locationLatitude = location?.latitude,
+        locationLongitude = location?.longitude,
+        locationAddress = location?.address,
+        locationTitle = location?.title,
+        eventDuration = eventDuration,
+        tripId = tripId.id.value,
+        location = location?.toResponseDto()
     )
 }
 
-fun daoToEventModel(dao: EventDAO) = Event(
-    eventTitle = dao.eventTitle,
-    eventDescription = dao.eventDescription,
-    eventLocation = dao.eventLocation,
-    dao.eventDuration,
-    dao.tripId.id.value
-)
+fun daoToEventModel(dao: EventDAO): Event {
+    val location = LocationDAO.find { LocationTable.eventId eq dao.id }.firstOrNull()
+    return Event(
+        eventTitle = dao.eventTitle,
+        eventDescription = dao.eventDescription,
+        eventLocation = dao.eventLocation,
+        locationLatitude = location?.latitude,
+        locationLongitude = location?.longitude,
+        locationAddress = location?.address,
+        locationTitle = location?.title,
+        eventDuration = dao.eventDuration,
+        tripId = dao.tripId.id.value
+    )
+}

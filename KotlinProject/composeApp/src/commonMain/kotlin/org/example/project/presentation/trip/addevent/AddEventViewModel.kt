@@ -8,9 +8,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import org.example.project.data.repository.LocationRepository
 import org.example.project.data.repository.TripRepository
 import org.example.project.model.dataClasses.Duration
 import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Location
+import org.example.project.model.dataClasses.LocationSuggestion
+import org.example.project.utils.generateSessionId
 
 /**
  * Groups user-entered date/time strings for the event duration.
@@ -47,8 +51,16 @@ data class AddEventUiState(
     val description: String = "",
     /** Optional image URL for the event header. */
     val imageUrl: String = "",
-    /** Event location entered by the user. */
-    val location: String = "",
+    /** Event location search input. */
+    val locationQuery: String = "",
+    /** Location suggestions from search. */
+    val locationSuggestions: List<LocationSuggestion> = emptyList(),
+    /** True while fetching suggestions or resolving a location. */
+    val isSuggestionsLoading: Boolean = false,
+    /** Error or info related to suggestions fetch. */
+    val suggestionsMessage: String? = null,
+    /** Chosen location from suggestions or manual entry. */
+    val selectedLocation: Location? = null,
     /** User-entered duration fields (date/time strings). */
     val durationFields: DurationFields = DurationFields(),
     /** Parsed duration, set on successful validation/submission. */
@@ -74,9 +86,16 @@ data class AddEventUiState(
 class AddEventViewModel(
     private val tripId: String,
     private val tripRepository: TripRepository,
+    private val locationRepository: LocationRepository,
     private val eventId: String? = null,
     private val initialDate: LocalDate? = null
 ) : ViewModel() {
+
+    private companion object {
+        const val MIN_QUERY_LENGTH = 2
+    }
+
+    private val locationSessionId = generateSessionId()
 
     /** Holds the mutable state flow of the UI. */
     private val _state = MutableStateFlow(AddEventUiState())
@@ -97,24 +116,25 @@ class AddEventViewModel(
         viewModelScope.launch {
             val trip = tripRepository.getTripById(tripId)
             if (trip != null) {
-                val editingEvent = eventId?.let { id -> trip.events.find { it.title == id } }
-                val otherEvents = trip.events.filterNot { it.title == eventId }
+                val editingEvent = eventId?.let { id -> trip.events.find { it.id == id } }
+                val otherEvents = trip.events.filterNot { it.id == eventId }
                 _state.value = _state.value.copy(
                     tripDuration = trip.duration,
                     existingEvents = otherEvents,
                     isEditMode = eventId != null
                 )
                 editingEvent?.let { event ->
-                    _state.value = _state.value.copy(
-                        title = event.title,
-                        description = event.description,
-                        location = event.location?.address ?: event.location?.title ?: "",
-                        imageUrl = event.imageUrl.orEmpty(),
-                        durationFields = DurationFields(
-                            startDate = event.duration.startDate.toString(),
-                            endDate = event.duration.endDate.toString(),
-                            startTime = event.duration.startTime.toTimeString(),
-                            endTime = event.duration.endTime.toTimeString()
+                _state.value = _state.value.copy(
+                    title = event.title,
+                    description = event.description,
+                    locationQuery = event.location?.address ?: event.location?.title ?: "",
+                    selectedLocation = event.location,
+                    imageUrl = event.imageUrl.orEmpty(),
+                    durationFields = DurationFields(
+                        startDate = event.duration.startDate.toString(),
+                        endDate = event.duration.endDate.toString(),
+                        startTime = event.duration.startTime.toTimeString(),
+                        endTime = event.duration.endTime.toTimeString()
                         )
                     )
                 }
@@ -131,8 +151,77 @@ class AddEventViewModel(
     /** Updates the event image url field. */
     fun updateImageUrl(value: String) { _state.value = _state.value.copy(imageUrl = value) }
 
-    /** Updates the event location field. */
-    fun updateLocation(value: String) { _state.value = _state.value.copy(location = value) }
+    /** Updates the event location query and triggers suggestions. */
+    fun updateLocationQuery(value: String) {
+        val trimmed = value.trim()
+        println("AddEventViewModel: updateLocationQuery '$trimmed'")
+        _state.value = _state.value.copy(
+            locationQuery = trimmed,
+            selectedLocation = null, // typing invalidates previous selection
+            isSuggestionsLoading = trimmed.length >= MIN_QUERY_LENGTH,
+            suggestionsMessage = null
+        )
+        if (trimmed.length < MIN_QUERY_LENGTH) {
+            println("AddEventViewModel: query below min length ($MIN_QUERY_LENGTH)")
+            _state.value = _state.value.copy(
+                locationSuggestions = emptyList(),
+                isSuggestionsLoading = false,
+                suggestionsMessage = null
+            )
+            return
+        }
+        viewModelScope.launch {
+            runCatching {
+                locationRepository.suggestLocations(trimmed, locationSessionId)
+            }.onSuccess { suggestions ->
+                println("AddEventViewModel: fetched ${suggestions.size} suggestions for '$trimmed'")
+                _state.value = _state.value.copy(
+                    locationSuggestions = suggestions,
+                    isSuggestionsLoading = false,
+                    suggestionsMessage = if (suggestions.isEmpty()) "No locations found" else null
+                )
+            }.onFailure {
+                println("AddEventViewModel: failed fetching suggestions: ${it.message}")
+                _state.value = _state.value.copy(
+                    errorMessage = it.message,
+                    isSuggestionsLoading = false,
+                    suggestionsMessage = it.message?.let { msg -> "Failed to fetch suggestions: $msg" }
+                )
+            }
+        }
+    }
+
+    /** Handles selection of a location suggestion. */
+    fun onLocationSuggestionSelected(suggestion: LocationSuggestion) {
+        println("AddEventViewModel: suggestion clicked id=${suggestion.id} title='${suggestion.title}'")
+        // Optimistically reflect selection in the text field while we fetch coordinates
+        _state.value = _state.value.copy(
+            locationQuery = suggestion.title,
+            locationSuggestions = emptyList(),
+            isSuggestionsLoading = true
+        )
+        viewModelScope.launch {
+            runCatching {
+                locationRepository.getLocation(suggestion.id, locationSessionId)
+            }.onSuccess { location ->
+                println("AddEventViewModel: retrieved location lat=${location.latitude} lon=${location.longitude} addr=${location.address}")
+                _state.value = _state.value.copy(
+                    locationQuery = suggestion.title,
+                    selectedLocation = location,
+                    errorMessage = null,
+                    suggestionsMessage = null,
+                    isSuggestionsLoading = false
+                )
+            }.onFailure {
+                println("AddEventViewModel: retrieve failed: ${it.message}")
+                _state.value = _state.value.copy(
+                    errorMessage = it.message,
+                    isSuggestionsLoading = false,
+                    suggestionsMessage = it.message?.let { msg -> "Failed to fetch suggestions: $msg" }
+                )
+            }
+        }
+    }
 
     /** Updates the event start date field. */
     fun updateStartDate(value: LocalDate) {
@@ -245,17 +334,18 @@ class AddEventViewModel(
 
         val normalizedImage = current.imageUrl.trim().ifBlank { null }
 
+        val resolvedLocation = current.selectedLocation ?: run {
+            _state.value = current.copy(
+                errorMessage = "Please select a location from suggestions"
+            )
+            return
+        }
+
         val event = Event(
             title = current.title.trim(),
             duration = duration,
             description = current.description.trim(),
-            location = if (current.location.trim().isNotEmpty()) {
-                org.example.project.model.dataClasses.Location(
-                    latitude = 0.0,  // TODO: Implement geocoding or coordinate input
-                    longitude = 0.0,
-                    address = current.location.trim()
-                )
-            } else null,
+            location = resolvedLocation,
             imageUrl = normalizedImage
         )
 
@@ -286,7 +376,11 @@ class AddEventViewModel(
                         _state.value = current.copy(
                             title = "",
                             description = "",
-                            location = "",
+                            locationQuery = "",
+                            locationSuggestions = emptyList(),
+                            suggestionsMessage = null,
+                            isSuggestionsLoading = false,
+                            selectedLocation = null,
                             imageUrl = "",
                             durationFields = DurationFields(),
                             duration = duration,
@@ -315,6 +409,18 @@ class AddEventViewModel(
         if (_state.value.didCreateEvent) {
             _state.value = _state.value.copy(didCreateEvent = false)
         }
+    }
+
+    /** Lightweight check for enabling the submit button. */
+    fun canSubmit(): Boolean {
+        val current = _state.value
+        return !current.isLoading &&
+            current.selectedLocation != null &&
+            current.title.isNotBlank() &&
+            current.durationFields.startDate.isNotBlank() &&
+            current.durationFields.endDate.isNotBlank() &&
+            current.durationFields.startTime.isNotBlank() &&
+            current.durationFields.endTime.isNotBlank()
     }
 
     /**
@@ -360,7 +466,7 @@ class AddEventViewModel(
         val current = _state.value
         return when (field) {
             "title" -> current.title.isNotBlank()
-            "location" -> current.location.isNotBlank()
+            "location" -> current.selectedLocation != null
             "duration" -> {
                 val start = parseDateOrNull(current.durationFields.startDate) ?: return false
                 val end = parseDateOrNull(current.durationFields.endDate) ?: return false
@@ -380,7 +486,7 @@ class AddEventViewModel(
         val current = _state.value
         return when (field) {
             "title" -> if (_state.value.title.isBlank()) "Title is required" else null
-            "location" -> if (_state.value.location.isBlank()) "Location is required" else null
+            "location" -> if (_state.value.selectedLocation == null) "Please select a location from suggestions" else null
             "duration" -> {
                 val start = parseDateOrNull(current.durationFields.startDate)
                 val end = parseDateOrNull(current.durationFields.endDate)

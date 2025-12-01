@@ -35,6 +35,7 @@ class RemoteLocationDataSource(
 ) {
 
     suspend fun suggest(query: String, sessionId: String): LocationSuggestResponse {
+        println("RemoteLocationDataSource: GET $SERVER_BASE_URL/suggest q='$query' sessionId=$sessionId")
         return client.get("$SERVER_BASE_URL/suggest") {
             parameter("query", query)
             parameter("sessionId", sessionId)
@@ -42,6 +43,7 @@ class RemoteLocationDataSource(
     }
 
     suspend fun retrieve(mapboxId: String, sessionId: String): SimpleLocation {
+        println("RemoteLocationDataSource: GET $SERVER_BASE_URL/retrieve mapboxId=$mapboxId sessionId=$sessionId")
         return client.get("$SERVER_BASE_URL/retrieve") {
             parameter("mapboxId", mapboxId)
             parameter("sessionId", sessionId)

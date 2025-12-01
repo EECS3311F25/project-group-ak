@@ -76,6 +76,14 @@ private data class EventResponse(
     val eventDescription: String?,
     @SerialName("event_location")
     val eventLocation: String?,
+    @SerialName("location_latitude")
+    val locationLatitude: Double? = null,
+    @SerialName("location_longitude")
+    val locationLongitude: Double? = null,
+    @SerialName("location_address")
+    val locationAddress: String? = null,
+    @SerialName("location_title")
+    val locationTitle: String? = null,
     @SerialName("event_duration")
     val eventDuration: Duration,
     @SerialName("trip_id")
@@ -103,6 +111,14 @@ private data class EventCreateRequest(
     val eventDescription: String?,
     @SerialName("event_location")
     val eventLocation: String?,
+    @SerialName("location_latitude")
+    val locationLatitude: Double? = null,
+    @SerialName("location_longitude")
+    val locationLongitude: Double? = null,
+    @SerialName("location_address")
+    val locationAddress: String? = null,
+    @SerialName("location_title")
+    val locationTitle: String? = null,
     @SerialName("event_duration")
     val eventDuration: Duration,
     @SerialName("trip_id")
@@ -136,25 +152,32 @@ class RemoteTripDataSource(
 
     // Helper function to convert server EventResponse to client Event model
     private fun EventResponse.toEvent(): Event {
+        val resolvedLocation = when {
+            location != null -> Location(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                address = location.address,
+                title = location.title
+            )
+            locationLatitude != null && locationLongitude != null -> Location(
+                latitude = locationLatitude,
+                longitude = locationLongitude,
+                address = locationAddress ?: eventLocation,
+                title = locationTitle ?: eventTitle
+            )
+            eventLocation != null -> Location(
+                latitude = 0.0,
+                longitude = 0.0,
+                address = eventLocation
+            )
+            else -> null
+        }
+
         return Event(
             id = id.toString(),
             title = eventTitle ?: "",
             description = eventDescription ?: "",
-            location = if (location != null) {
-                Location(
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    address = location.address,
-                    title = location.title
-                )
-            } else if (eventLocation != null) {
-                // Fallback to just address if no GPS coordinates
-                Location(
-                    latitude = 0.0,
-                    longitude = 0.0,
-                    address = eventLocation
-                )
-            } else null,
+            location = resolvedLocation,
             duration = eventDuration,
             imageUrl = null
         )
@@ -241,7 +264,11 @@ class RemoteTripDataSource(
         val request = EventCreateRequest(
             eventTitle = event.title,
             eventDescription = event.description,
-            eventLocation = event.location?.address ?: "",
+            eventLocation = event.location?.address ?: event.location?.title ?: "",
+            locationLatitude = event.location?.latitude,
+            locationLongitude = event.location?.longitude,
+            locationAddress = event.location?.address,
+            locationTitle = event.location?.title,
             eventDuration = event.duration,
             tripId = tripId.toInt()
         )
@@ -260,7 +287,11 @@ class RemoteTripDataSource(
         val request = EventCreateRequest(
             eventTitle = updated.title,
             eventDescription = updated.description,
-            eventLocation = updated.location?.address ?: "",
+            eventLocation = updated.location?.address ?: updated.location?.title ?: "",
+            locationLatitude = updated.location?.latitude,
+            locationLongitude = updated.location?.longitude,
+            locationAddress = updated.location?.address,
+            locationTitle = updated.location?.title,
             eventDuration = updated.duration,
             tripId = tripId.toInt()
         )

@@ -10,11 +10,13 @@ class LocationRepository(
     private val remote: RemoteLocationDataSource
 ) {
     suspend fun suggestLocations(query: String, sessionId: String): List<LocationSuggestion> {
+        println("LocationRepository: suggestLocations query='$query' sessionId=$sessionId")
         val dto = remote.suggest(query, sessionId)
         return dto.suggestions.map { it.toDomain() } // DTO → domain
     }
 
     suspend fun getLocation(mapBoxId: String, sessionId: String): Location {
+        println("LocationRepository: getLocation id=$mapBoxId sessionId=$sessionId")
         val dto = remote.retrieve(mapBoxId, sessionId)
         return dto.toDomain()
     }

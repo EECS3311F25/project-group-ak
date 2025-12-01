@@ -4,6 +4,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import java.nio.file.Files
+import java.nio.file.Paths
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -12,7 +14,10 @@ class MapBoxService(
 ) {
     // Lazily read token so creating MapBoxService does not fail during app/test startup
     private val token: String by lazy {
-        System.getenv("MAPBOX_TOKEN") ?: error("MAPBOX_TOKEN is not set")
+        System.getenv("MAPBOX_ACCESS_TOKEN")
+            ?: System.getProperty("MAPBOX_ACCESS_TOKEN")
+            ?: readTokenFromDotEnv()
+            ?: error("MAPBOX_ACCESS_TOKEN is not set")
     }
 
     private val baseUrl = "https://api.mapbox.com/search/searchbox/v1"
@@ -26,6 +31,7 @@ class MapBoxService(
             parameter("limit", 5)
             parameter("session_token", sessionId)
             parameter("types", "place")
+            parameter("language", "english")
         }.body()
     }
 
@@ -54,6 +60,28 @@ class MapBoxService(
             address = address
         )
     }
+
+    private fun readTokenFromDotEnv(): String? {
+        val candidates = listOf(
+            Paths.get(".env"),
+            Paths.get("..", ".env"),
+            Paths.get("..", "..", ".env")
+        )
+        for (path in candidates) {
+            if (Files.exists(path)) {
+                println("MapBoxService: trying token from ${path.toAbsolutePath()}")
+                Files.readAllLines(path)
+                    .map { it.trim() }
+                    .firstOrNull { it.startsWith("MAPBOX_ACCESS_TOKEN=") }
+                    ?.substringAfter("=")
+                    ?.trim('"', ' ')
+                    ?.takeIf { it.isNotBlank() }
+                    ?.let { return it }
+            }
+        }
+        println("MapBoxService: MAPBOX_ACCESS_TOKEN not found in ${candidates.joinToString()}")
+        return null
+    }
 }
 
 @Serializable
@@ -63,6 +91,7 @@ data class LocationSuggestResponse(
 
 @Serializable
 data class LocationSuggestion(
+    @SerialName("name")
     val name: String,
     val mapbox_id: String
 )
