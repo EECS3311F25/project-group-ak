@@ -42,7 +42,7 @@ class TripViewModel(
     // FrontEnd - Triggers this function
     fun generateAISummary() {
         viewModelScope.launch {
-            val currentTrip = _trip.value ?: return@launch
+            val currentTrip = _uiState.value.trip ?: return@launch
             
             _isGeneratingSummary.value = true
             _summaryError.value = null
@@ -77,8 +77,18 @@ class TripViewModel(
     }
 
     init {
+        refreshTrip()
+    }
+    
+    fun refreshTrip() {
         viewModelScope.launch {
-                _trip.value = tripRepository.getTripById(tripId)
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val trip = tripRepository.getTripById(tripId)
+                _uiState.update { it.copy(trip = trip, isLoading = false) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Failed to load trip: ${e.message}", isLoading = false) }
+            }
         }
     }
 
