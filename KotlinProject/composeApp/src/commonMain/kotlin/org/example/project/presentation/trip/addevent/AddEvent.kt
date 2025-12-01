@@ -150,13 +150,6 @@ fun AddEvent(
                 )
             }
         }
-        // Debug status to verify suggestion flow is triggering
-        Text(
-            text = "Debug: query='${state.locationQuery}' (${state.locationQuery.length} chars), loading=${state.isSuggestionsLoading}, suggestions=${state.locationSuggestions.size}, selected=${state.selectedLocation != null}",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 4.dp, start = 4.dp)
-        )
         viewModel.getFieldError("location")?.let { error ->
             Text(
                 text = error,

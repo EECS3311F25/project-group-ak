@@ -23,7 +23,7 @@ expect fun MapWindow(
     zoom: Double = 12.0,
     markers: List<MapMarker> = emptyList(),
     routeEndpoints: Pair<MapMarker, MapMarker>? = null,
-    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)? = null,
+    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double?) -> Unit)? = null,
     onNavigateToNavigation: ((startMarker: MapMarker, endMarker: MapMarker) -> Unit)? = null,
     modifier: Modifier = Modifier
 )

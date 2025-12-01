@@ -127,7 +127,7 @@ actual fun RenderBottomSheetOverlay(
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "🚗 ${drivingDuration.toInt()} min",
+                        text = "🚗 ${formatMinutes(drivingDuration)}",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -137,17 +137,19 @@ actual fun RenderBottomSheetOverlay(
                         color = Color.Gray
                     )
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "🚶 ${walkingDuration.toInt()} min",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = "Walking",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
+                walkingDuration?.let {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "🚶 ${formatMinutes(it)}",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "Walking",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                    }
                 }
             }
         }
@@ -177,5 +179,16 @@ private fun RouteInfoItem(
             style = MaterialTheme.typography.bodySmall,
             color = Color.Gray
         )
+    }
+}
+
+private fun formatMinutes(minutes: Double): String {
+    val totalMinutes = minutes.roundToInt()
+    val hours = totalMinutes / 60
+    val mins = totalMinutes % 60
+    return if (hours > 0) {
+        "${hours} hr ${mins.toString().padStart(2, '0')} min"
+    } else {
+        "${mins} min"
     }
 }

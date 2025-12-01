@@ -11,6 +11,11 @@ import org.example.project.data.repository.TripRepository
 import org.example.project.model.dataClasses.Trip
 import org.example.project.model.dataClasses.Event
 
+// imports for AI Summary Work
+import org.example.project.data.api.HttpClientFactory
+import org.example.project.data.api.TripApiService
+import org.example.project.data.api.TripConverter
+
 data class TripUiState(
     val trip: Trip? = null,
     val isLoading: Boolean = false,
@@ -23,6 +28,52 @@ class TripViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(TripUiState(isLoading = true))
     val uiState: StateFlow<TripUiState> = _uiState.asStateFlow()
+
+    // AI-Summary Variable
+    private val _aiSummary = MutableStateFlow<String?>(null)
+    val aiSummary : StateFlow<String?> = _aiSummary.asStateFlow()
+
+    private val _isGeneratingSummary  = MutableStateFlow(false)
+    val isGeneratingSummary: StateFlow<Boolean> = _isGeneratingSummary.asStateFlow()
+
+    private val _summaryError = MutableStateFlow<String?>(null)
+    val summaryError: StateFlow<String?> = _summaryError.asStateFlow()
+
+
+    fun generateAISummary() {
+        viewModelScope.launch {
+            val currentTrip = _uiState.value.trip ?: return@launch
+            
+            _isGeneratingSummary.value = true
+            _summaryError.value = null
+            _aiSummary.value = null // Clear old summary when regenerating
+            
+            println("Generating AI summary for trip ${currentTrip.id} with ${currentTrip.events.size} events")
+            
+            val apiService = TripApiService(HttpClientFactory.create())
+            // Trip exists in backend, let backend look it up by ID (tripData = null)
+            val result = apiService.generateTripSummary(currentTrip.id, tripData = null)
+            
+            result.fold(
+                onSuccess = { response ->
+                    println("AI summary generated successfully")
+                    _aiSummary.value = response.summary
+                },
+                onFailure = { error ->
+                    println("AI summary generation failed: ${error.message}")
+                    error.printStackTrace()
+                    _summaryError.value = error.message ?: "Failed to generate summary"
+                }
+            )
+            
+            _isGeneratingSummary.value = false
+        }
+    }
+
+    fun clearAISummary() {
+        _aiSummary.value = null
+        _summaryError.value = null
+    }
 
     init {
         viewModelScope.launch {

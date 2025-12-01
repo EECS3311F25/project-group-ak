@@ -3,6 +3,7 @@ package org.example.project.presentation.calendar.navigation
 import androidx.compose.runtime.*
 import kotlinx.browser.document
 import org.w3c.dom.HTMLDivElement
+import kotlin.math.roundToInt
 
 /**
  * Creates a DOM-based bottom sheet that appears above the fixed-position map
@@ -15,7 +16,7 @@ actual fun RenderBottomSheetOverlay(
     endAddress: String,
     distance: Double,
     drivingDuration: Double,
-    walkingDuration: Double,
+    walkingDuration: Double?,
     isExpanded: Boolean,
     onExpandToggle: () -> Unit,
     onCleanup: () -> Unit
@@ -53,7 +54,7 @@ private fun createOrUpdateBottomSheet(
     endAddress: String,
     distance: Double,
     drivingDuration: Double,
-    walkingDuration: Double,
+    walkingDuration: Double?,
     isExpanded: Boolean,
     onExpandToggle: () -> Unit
 ) {
@@ -98,8 +99,8 @@ private fun createOrUpdateBottomSheet(
     
     // Format distance and durations
     val distanceStr = "${(distance * 10).toInt() / 10.0}"
-    val drivingDurationStr = "${drivingDuration.toInt()}"
-    val walkingDurationStr = "${walkingDuration.toInt()}"
+    val drivingDurationStr = formatMinutes(drivingDuration)
+    val walkingDurationStr = walkingDuration?.let { formatMinutes(it) }
     
     // Create HTML content
     val expandIcon = if (isExpanded) "&#9660;" else "&#9650;"  // Down arrow : Up arrow
@@ -118,7 +119,9 @@ private fun createOrUpdateBottomSheet(
             <!-- Compact view (only visible when collapsed) -->
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div style="font-size: 16px; font-weight: 500; color: #000;">Route Info</div>
-                <div style="font-size: 14px; color: #666;">$distanceStr km • $drivingDurationStr min • $walkingDurationStr min</div>
+                <div style="font-size: 14px; color: #666;">
+                    $distanceStr km • $drivingDurationStr${if (walkingDurationStr != null) " • $walkingDurationStr" else ""}
+                </div>
             </div>
             """ else ""}
             
@@ -141,15 +144,17 @@ private fun createOrUpdateBottomSheet(
             <!-- Duration Section -->
             <div style="display: flex; flex-direction: row; justify-content: center; gap: 40px; width: 100%; padding: 16px; background-color: #f5f5f5; border-radius: 8px;">
                 <!-- Walking -->
+                ${walkingDurationStr?.let { """
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
                     <span class="material-icons" style="font-size: 40px; color: #666;">directions_walk</span>
-                    <div style="font-size: 18px; font-weight: 500; color: #000;">$walkingDurationStr min</div>
+                    <div style="font-size: 18px; font-weight: 500; color: #000;">$walkingDurationStr</div>
                 </div>
+                """ } ?: ""}
                 
                 <!-- Driving -->
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
                     <span class="material-icons" style="font-size: 40px; color: #666;">directions_car</span>
-                    <div style="font-size: 18px; font-weight: 500; color: #000;">$drivingDurationStr min</div>
+                    <div style="font-size: 18px; font-weight: 500; color: #000;">$drivingDurationStr</div>
                 </div>
             </div>
             
@@ -190,6 +195,17 @@ private fun createOrUpdateBottomSheet(
     toggleButton?.asDynamic().onclick = {
         onExpandToggle()
         null
+    }
+}
+
+private fun formatMinutes(minutes: Double): String {
+    val totalMinutes = minutes.roundToInt()
+    val hours = totalMinutes / 60
+    val mins = totalMinutes % 60
+    return if (hours > 0) {
+        hours.toString() + " hr " + mins.toString().padStart(2, '0') + " min"
+    } else {
+        mins.toString() + " min"
     }
 }
 

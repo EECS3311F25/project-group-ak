@@ -26,7 +26,7 @@ actual fun MapWindow(
     zoom: Double,
     markers: List<MapMarker>,
     routeEndpoints: Pair<MapMarker, MapMarker>?,
-    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)?,
+    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double?) -> Unit)?,
     onNavigateToNavigation: ((startMarker: MapMarker, endMarker: MapMarker) -> Unit)?,
     modifier: Modifier
 ) {
@@ -566,8 +566,18 @@ private fun initializeMapboxMap(
             if (routeEndpoints != null) {
                 val start = routeEndpoints.first
                 val end = routeEndpoints.second
-                fetchAndDisplayRoutes(mapId, start, end, accessToken, onRouteCalculated)
+                @Suppress("UNCHECKED_CAST")
+                fetchAndDisplayRoutes(
+                    mapId,
+                    start,
+                    end,
+                    accessToken,
+                    onRouteCalculated as ((Double, Double, Double?) -> Unit)?
+                )
             }
+
+            // Fit viewport to show all markers/route endpoints
+            adjustViewport(mapId, markers, routeEndpoints)
         }
     }, 100)
 }
@@ -580,7 +590,7 @@ private fun fetchAndDisplayRoutes(
     start: MapMarker,
     end: MapMarker,
     accessToken: String,
-    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)?
+    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double?) -> Unit)?
 ) {
     val startCoords = "${start.longitude},${start.latitude}"
     val endCoords = "${end.longitude},${end.latitude}"
@@ -678,7 +688,7 @@ private fun fetchAndDisplayRoutes(
                 }
             }
             
-            // Process walking route
+            // Process walking route (optional)
             if (walkingData.routes && walkingData.routes.length > 0) {
                 var walkingRoute = walkingData.routes[0];
                 var walkingDuration = walkingRoute.duration;
@@ -688,14 +698,21 @@ private fun fetchAndDisplayRoutes(
                 window.routeResults.walking = {
                     duration: walkingDuration
                 };
+            } else if (window.routeResults.driving) {
+                // Fallback: reuse driving duration if walking route not available
+                window.routeResults.walking = {
+                    duration: window.routeResults.driving.duration
+                };
+                console.warn('MapView: Walking route unavailable, using driving duration as fallback');
             }
             
-            // Return both driving and walking route info to callback
-            if (onRouteCalculated && window.routeResults.driving && window.routeResults.walking) {
+            // Return route info to callback as soon as driving route exists
+            if (onRouteCalculated && window.routeResults.driving) {
+                var walkingDurationMinutes = window.routeResults.walking ? window.routeResults.walking.duration / 60 : null;
                 onRouteCalculated(
                     window.routeResults.driving.distance / 1000, 
                     window.routeResults.driving.duration / 60,
-                    window.routeResults.walking.duration / 60
+                    walkingDurationMinutes
                 );
             }
         })
@@ -713,7 +730,7 @@ private fun fetchAndDisplayRoute(
     start: MapMarker,
     end: MapMarker,
     accessToken: String,
-    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double) -> Unit)?
+    onRouteCalculated: ((distance: Double, drivingDuration: Double, walkingDuration: Double?) -> Unit)?
 ) {
     fetchAndDisplayRoutes(mapId, start, end, accessToken, onRouteCalculated)
 }
@@ -930,7 +947,40 @@ private fun updateMapView(
         }
         
         console.log("MapView: Map updated with ${markers.size} markers")
+
+        // Adjust viewport to show all markers/route endpoints
+        adjustViewport(mapId, markers, routeEndpoints)
     }
+}
+
+private fun adjustViewport(
+    mapId: String,
+    markers: List<MapMarker>,
+    routeEndpoints: Pair<MapMarker, MapMarker>?
+) {
+    val points = buildList {
+        addAll(markers)
+        routeEndpoints?.let { (start, end) ->
+            add(start)
+            add(end)
+        }
+    }
+    if (points.isEmpty()) return
+
+    val minLat = points.minOf { it.latitude }
+    val maxLat = points.maxOf { it.latitude }
+    val minLng = points.minOf { it.longitude }
+    val maxLng = points.maxOf { it.longitude }
+
+    val map = window.asDynamic()["mapInstance_${mapId}"] ?: return
+    val bounds = arrayOf(
+        arrayOf(minLng, minLat),
+        arrayOf(maxLng, maxLat)
+    )
+    val options = js("{}")
+    options.padding = 80
+    options.maxZoom = 13
+    map.fitBounds(bounds, options)
 }
 
 /**

@@ -4,6 +4,7 @@ import org.example.project.model.dataClasses.Event
 import org.example.project.model.dataClasses.Trip
 
 interface TripDataSource {
+    suspend fun fetchTrips(): List<Trip> = getAllTrips() // Default implementation for backward compatibility
     suspend fun getAllTrips(): List<Trip>
     suspend fun getTripById(id: String): Trip?
     suspend fun insertTrip(trip: Trip): Trip
