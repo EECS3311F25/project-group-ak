@@ -39,6 +39,8 @@ import org.example.project.presentation.trip.addevent.AddEventViewModel
 import org.example.project.presentation.trip.edittrip.EditTripViewModel
 import org.example.project.presentation.ApiTestView
 import org.example.project.presentation.calendar.navigation.NavigationView
+import org.example.project.presentation.map.MapView
+import org.example.project.presentation.map.MapViewModel
 
 @Composable
 /*
@@ -206,6 +208,21 @@ fun App(root: RootComponent) {
                         component = instance.component,
                         startLocation = instance.startLocation,
                         endLocation = instance.endLocation
+                    )
+                }
+                
+                is RootComponent.Child.MapView -> {
+                    val mapViewModel: MapViewModel = viewModel(
+                        key = "MapView-${instance.tripId}"
+                    ) {
+                        MapViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository
+                        )
+                    }
+                    MapView(
+                        component = instance.component,
+                        viewModel = mapViewModel
                     )
                 }
                 // =============================================================================================
