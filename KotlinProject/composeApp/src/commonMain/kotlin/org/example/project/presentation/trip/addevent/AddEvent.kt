@@ -43,6 +43,7 @@ import org.example.project.presentation.trip.addevent.AddEventComponent
 import org.example.project.presentation.trip.addevent.AddEventEvent
 import org.example.project.presentation.uishared.DatePickerSection
 import org.example.project.presentation.trip.addevent.AddEventViewModel
+import org.example.project.presentation.uishared.LocationTextField
 
 @Composable
 fun AddEvent(
@@ -113,23 +114,50 @@ fun AddEvent(
             colors = addEventTextFieldColors()
         )
 
-        OutlinedTextField(
-            value = state.location,
-            onValueChange = viewModel::updateLocation,
-            label = { Text("Location *") },
-            placeholder = { Text("Enter destination") },
-            isError = !viewModel.isFieldValid("location") && state.location.isNotEmpty(),
-            supportingText = {
-                viewModel.getFieldError("location")?.let { error ->
-                    Text(
-                        text = error,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = addEventTextFieldColors()
+        LocationTextField(
+            label = "Location *",
+            value = state.locationQuery,
+            onValueChange = { viewModel.updateLocationQuery(it) },
+            suggestions = state.locationSuggestions,
+            onSuggestionClick = viewModel::onLocationSuggestionSelected
         )
+        if (state.isSuggestionsLoading) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp, start = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp
+                )
+                Text(
+                    text = "Searching locations...",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        if (!state.isSuggestionsLoading) {
+            state.suggestionsMessage?.let { message ->
+                val isError = message.startsWith("Failed", ignoreCase = true)
+                Text(
+                    text = message,
+                    color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp, start = 4.dp)
+                )
+            }
+        }
+        viewModel.getFieldError("location")?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp, start = 4.dp)
+            )
+        }
 
         OutlinedTextField(
             value = state.imageUrl,
@@ -266,7 +294,7 @@ fun AddEvent(
 
         Button(
             onClick = { viewModel.submit() },
-            enabled = !state.isLoading,
+            enabled = viewModel.canSubmit(),
             modifier = Modifier.fillMaxWidth()
         ) {
             if (state.isLoading) {

@@ -23,8 +23,13 @@ object EventService {
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
         }
         // Description is optional, no validation needed
-        if (eventDto.eventLocation.isNullOrBlank()) {
+        if (eventDto.eventLocation.isNullOrBlank() && eventDto.locationAddress.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Event location cannot be empty"))
+        }
+        val hasLat = eventDto.locationLatitude != null
+        val hasLon = eventDto.locationLongitude != null
+        if (hasLat != hasLon) {
+            return Result.failure(IllegalArgumentException("Both latitude and longitude are required when providing coordinates"))
         }
         //  TODO: implement verification for Duration's fields
 
@@ -40,15 +45,16 @@ object EventService {
             return Result.failure(IllegalArgumentException("Event title cannot be empty"))
         }
 
-        if (event.eventLocation.isBlank()) {
-            return Result.failure(IllegalArgumentException("Event location cannot be empty"))
-        }
-
         if (event.eventDescription.isBlank()) {
             return Result.failure(IllegalArgumentException("Event description cannot be empty"))
         }
-        if (event.eventLocation.isBlank()) {
+        if (event.eventLocation.isBlank() && event.locationAddress.isNullOrBlank()) {
             return Result.failure(IllegalArgumentException("Event location cannot be empty"))
+        }
+        val hasLat = event.locationLatitude != null
+        val hasLon = event.locationLongitude != null
+        if (hasLat != hasLon) {
+            return Result.failure(IllegalArgumentException("Both latitude and longitude are required when providing coordinates"))
         }
         //  TODO: implement verification for Duration's fields
 

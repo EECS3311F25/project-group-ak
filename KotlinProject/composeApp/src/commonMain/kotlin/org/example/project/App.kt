@@ -14,6 +14,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import org.example.project.data.remote.RemoteLocationDataSource
 import org.example.project.presentation.RootComponent
 import org.example.project.presentation.trip.TripView
 import org.example.project.presentation.home.HomeView
@@ -31,6 +32,7 @@ import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
 import org.example.project.data.remote.RemoteTripDataSource
 import org.example.project.data.remote.RemoteUserDataSource
+import org.example.project.data.repository.LocationRepository
 import org.example.project.presentation.trip.TripViewModel
 import org.example.project.presentation.trip.addmember.AddMemberViewModel
 import org.example.project.presentation.trip.addevent.AddEventViewModel
@@ -63,6 +65,7 @@ fun App(root: RootComponent) {
     val userDataSource = remember { RemoteUserDataSource() }
     val tripRepository = remember { TripRepository(RemoteTripDataSource(userDataSource)) }
     val userRepository = remember { UserRepository(userDataSource) }
+    val locationRepository = remember { LocationRepository(RemoteLocationDataSource()) }
     
     MaterialTheme(
         colorScheme = LightColorScheme
@@ -110,7 +113,7 @@ fun App(root: RootComponent) {
                 // 🔥 Pass shared repositories to TripCreationView
                 is RootComponent.Child.TripCreationView -> {
                     val tripCreationViewModel: TripCreationViewModel = viewModel { 
-                        TripCreationViewModel(tripRepository, userRepository) 
+                        TripCreationViewModel(tripRepository, userRepository)
                     }
                     TripCreationView(
                         component = instance.component,
@@ -161,6 +164,7 @@ fun App(root: RootComponent) {
                         AddEventViewModel(
                             tripId = instance.tripId,
                             tripRepository = tripRepository,
+                            locationRepository = locationRepository,
                             eventId = instance.eventId,
                             initialDate = instance.initialDate
                         )

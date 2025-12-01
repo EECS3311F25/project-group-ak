@@ -22,7 +22,7 @@ fun main() {
         port = SERVER_PORT,
         host = "0.0.0.0",
         module = Application::module
-    ).start(wait=true)
+    ).start(wait = true)
 }
 
 // fun fun_name.module() - this is extension function on Ktor Application class
@@ -40,13 +40,14 @@ fun Application.module() {
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
     }
-    
     //  Serializable to JSON - see Serialization.kt
     configureSerialization()
 
     //  DB configuration and migration - see DatabaseConnect.kt and Migration.kt
     configureDatabases()
 
+    //  Register all HTTP routes - see Routing.kt (includes database routes)
+    configureRouting()
     // Initialize AI configuration and service
     val aiConfig = AIConfig()
     val aiSummaryService = AISummaryService(aiConfig)
@@ -59,9 +60,6 @@ fun Application.module() {
         aiSummaryService.close()
     }
 
-    //  Register all HTTP routes - see Routing.kt (includes database routes)
-    configureRouting()
-    
     // Register AI summary routes (your feature)
     configureAISummaryRoutes(aiSummaryService, tripRepository)
-            }
+}

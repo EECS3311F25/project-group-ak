@@ -1,5 +1,7 @@
 package org.example.project.event
 
+import org.example.project.location.LocationDAO
+import org.example.project.location.LocationTable
 import org.example.project.trip.TripDAO
 import org.example.project.user.suspendTransaction
 import org.jetbrains.exposed.v1.core.eq
@@ -27,13 +29,23 @@ class PostgresEventRepository: EventRepository {
     override suspend fun addEvent(tripId: Int?, eventDto: EventCreateRequest): Result<EventResponse> = suspendTransaction {
         EventService.validateEventForCreate(eventDto)
             .mapCatching {
+                val locationAddress = eventDto.locationAddress ?: eventDto.eventLocation ?: ""
+                val locationTitle = eventDto.locationTitle ?: eventDto.eventTitle
+
                 val newEvent = EventDAO.new {
                     eventTitle = eventDto.eventTitle!!
                     eventDescription = eventDto.eventDescription ?: "" // Allow empty description
-                    eventLocation = eventDto.eventLocation!!
+                    eventLocation = locationAddress
                     eventDuration = eventDto.eventDuration
                     this.tripId = TripDAO[tripId!!]
                 }
+                upsertLocation(
+                    eventDao = newEvent,
+                    latitude = eventDto.locationLatitude,
+                    longitude = eventDto.locationLongitude,
+                    address = locationAddress,
+                    title = locationTitle
+                )
                 newEvent.toResponseDto()
             }
     }
@@ -45,9 +57,18 @@ class PostgresEventRepository: EventRepository {
                     .findSingleByAndUpdate(EventTable.id eq eventId!!) {
                         it.eventTitle = event.eventTitle
                         it.eventDescription = event.eventDescription
-                        it.eventLocation = event.eventLocation
+                        it.eventLocation = event.locationAddress ?: event.eventLocation
                         it.eventDuration = event.eventDuration
                     }
+                if (eventToUpdate != null) {
+                    upsertLocation(
+                        eventDao = eventToUpdate,
+                        latitude = event.locationLatitude,
+                        longitude = event.locationLongitude,
+                        address = event.locationAddress ?: event.eventLocation,
+                        title = event.locationTitle ?: event.eventTitle
+                    )
+                }
                 eventToUpdate != null
             }
     }
@@ -58,6 +79,32 @@ class PostgresEventRepository: EventRepository {
             Result.failure<Boolean>(NoSuchElementException("Event not found)"))
         } else {
             Result.success(true)
+        }
+    }
+
+    private fun upsertLocation(
+        eventDao: EventDAO,
+        latitude: Double?,
+        longitude: Double?,
+        address: String?,
+        title: String?
+    ) {
+        if (latitude == null || longitude == null) return // no coordinates provided, skip
+
+        val existing = LocationDAO.find { LocationTable.eventId eq eventDao.id }.firstOrNull()
+        if (existing != null) {
+            existing.latitude = latitude
+            existing.longitude = longitude
+            existing.address = address
+            existing.title = title
+        } else {
+            LocationDAO.new {
+                this.latitude = latitude
+                this.longitude = longitude
+                this.address = address
+                this.title = title
+                this.eventId = eventDao
+            }
         }
     }
 }

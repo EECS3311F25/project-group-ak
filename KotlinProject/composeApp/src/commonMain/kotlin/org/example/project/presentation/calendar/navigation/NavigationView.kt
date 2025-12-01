@@ -16,7 +16,7 @@ expect fun RenderBottomSheetOverlay(
     endAddress: String,
     distance: Double,
     drivingDuration: Double,
-    walkingDuration: Double,
+    walkingDuration: Double?,
     isExpanded: Boolean,
     onExpandToggle: () -> Unit,
     onCleanup: () -> Unit
@@ -49,15 +49,21 @@ fun NavigationView(
     val latDiff = abs(startLocation.latitude - endLocation.latitude)
     val lngDiff = abs(startLocation.longitude - endLocation.longitude)
     val maxDiff = max(latDiff, lngDiff)
-    
-    // Rough zoom calculation (you can adjust these values)
-    val zoom = when {
-        maxDiff > 0.5 -> 8.0
-        maxDiff > 0.1 -> 10.0
-        maxDiff > 0.05 -> 11.0
-        maxDiff > 0.01 -> 13.0
-        else -> 14.0
+
+    // Rough zoom calculation (smaller zoom for larger spread)
+    var zoom = when {
+        maxDiff > 30 -> 2.5
+        maxDiff > 5.0 -> 7.5
+        maxDiff > 1.0 -> 9.5
+        maxDiff > 0.2 -> 11.0
+        else -> 13.0
     }
+
+    // If the true distance is long, force zoom out further
+    val distanceKm = haversineDistanceKm(startLocation.latitude, startLocation.longitude, endLocation.latitude, endLocation.longitude)
+    if (distanceKm > 500) zoom = min(7.0, zoom)
+    if (distanceKm > 1500) zoom = min(5.0, zoom)
+    if (distanceKm > 3500) zoom = min(3.5, zoom)
     
     Box(modifier = modifier.fillMaxSize()) {
         // Map - full screen
@@ -70,7 +76,7 @@ fun NavigationView(
             onRouteCalculated = { distance, drivingDuration, walkingDuration ->
                 routeDistance = distance
                 routeDrivingDuration = drivingDuration
-                routeWalkingDuration = walkingDuration
+                routeWalkingDuration = walkingDuration?.takeIf { it <= 120.0 }
             },
             modifier = Modifier.fillMaxSize()
         )
@@ -82,7 +88,7 @@ fun NavigationView(
         )
         
         // Collapsible bottom sheet - overlay layer (rendered after map, so appears on top)
-        if (routeDistance != null && routeDrivingDuration != null && routeWalkingDuration != null) {
+        if (routeDistance != null && routeDrivingDuration != null) {
             RenderBottomSheetOverlay(
                 startTitle = startLocation.title,
                 startAddress = startLocation.address,
@@ -90,7 +96,7 @@ fun NavigationView(
                 endAddress = endLocation.address,
                 distance = routeDistance!!,
                 drivingDuration = routeDrivingDuration!!,
-                walkingDuration = routeWalkingDuration!!,
+                walkingDuration = routeWalkingDuration,
                 isExpanded = isBottomSheetExpanded,
                 onExpandToggle = { isBottomSheetExpanded = !isBottomSheetExpanded },
                 onCleanup = { }
@@ -98,3 +104,14 @@ fun NavigationView(
         }
     }
 }
+
+private fun haversineDistanceKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val R = 6371.0 // Earth radius km
+    val dLat = degToRad(lat2 - lat1)
+    val dLon = degToRad(lon2 - lon1)
+    val a = sin(dLat / 2).pow(2.0) + cos(degToRad(lat1)) * cos(degToRad(lat2)) * sin(dLon / 2).pow(2.0)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return R * c
+}
+
+private fun degToRad(value: Double): Double = value * PI / 180.0

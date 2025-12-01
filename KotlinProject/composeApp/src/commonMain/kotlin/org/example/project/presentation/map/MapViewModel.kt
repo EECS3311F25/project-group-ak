@@ -73,12 +73,14 @@ class MapViewModel(
         } else {
             _uiState.value.centerLatitude to _uiState.value.centerLongitude
         }
+        val zoom = if (markers.isNotEmpty()) estimateZoom(markers) else _uiState.value.zoom
         
         _uiState.value = _uiState.value.copy(
             selectedDayIndex = dayIndex,
             markers = markers,
             centerLatitude = centerLat,
-            centerLongitude = centerLng
+            centerLongitude = centerLng,
+            zoom = zoom
         )
     }
     
@@ -117,11 +119,13 @@ class MapViewModel(
                         } else {
                             43.6532 to -79.3832 // Default: Toronto
                         }
+                        val zoom = if (markers.isNotEmpty()) estimateZoom(markers) else 12.0
                         
                         _uiState.value = _uiState.value.copy(
                             centerLatitude = centerLat,
                             centerLongitude = centerLng,
                             markers = markers,
+                            zoom = zoom,
                             selectedDayIndex = 0
                         )
                     }
@@ -150,6 +154,32 @@ class MapViewModel(
         val avgLng = markers.map { it.longitude }.average()
         
         return avgLat to avgLng
+    }
+
+    /**
+     * Estimate a reasonable zoom level based on marker spread to avoid zooming in on empty areas.
+     */
+    private fun estimateZoom(markers: List<MapMarker>): Double {
+        if (markers.size <= 1) return 12.0
+
+        val minLat = markers.minOf { it.latitude }
+        val maxLat = markers.maxOf { it.latitude }
+        val minLng = markers.minOf { it.longitude }
+        val maxLng = markers.maxOf { it.longitude }
+
+        val latDiff = maxLat - minLat
+        val lngDiff = maxLng - minLng
+        val maxDiff = maxOf(latDiff, lngDiff)
+
+        return when {
+            maxDiff > 30 -> 2.5
+            maxDiff > 20 -> 3.5
+            maxDiff > 10 -> 5.0
+            maxDiff > 5  -> 7.0
+            maxDiff > 1  -> 9.0
+            maxDiff > 0.2 -> 11.0
+            else -> 12.0
+        }
     }
     
     /**

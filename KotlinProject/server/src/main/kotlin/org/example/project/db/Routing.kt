@@ -1,6 +1,8 @@
 package org.example.project.db
 
+import com.example.routes.locationRoutes
 import io.ktor.server.application.*
+import io.ktor.server.routing.routing
 import org.example.project.event.PostgresEventRepository
 import org.example.project.event.configureEventSerialization
 import org.example.project.trip.PostgresTripRepository
@@ -30,4 +32,8 @@ fun Application.configureRouting() {
 
     // Event CRUD routes
     configureEventSerialization(eventRepository)
+
+    routing {
+        locationRoutes()
+    }
 }

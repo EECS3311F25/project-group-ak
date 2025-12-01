@@ -14,10 +14,16 @@ data class EventCreateRequest(
     @SerialName("event_description")
     val eventDescription: String?,
 
-    //  TODO: implement Location data type
-    //  TODO: implement Location type's logic + interaction w/ app's map view
     @SerialName("event_location")
     val eventLocation: String?,
+    @SerialName("location_latitude")
+    val locationLatitude: Double? = null,
+    @SerialName("location_longitude")
+    val locationLongitude: Double? = null,
+    @SerialName("location_address")
+    val locationAddress: String? = null,
+    @SerialName("location_title")
+    val locationTitle: String? = null,
     @SerialName("event_duration")
     val eventDuration: Duration,
 
@@ -43,10 +49,16 @@ data class EventResponse(
     @SerialName("event_description")
     val eventDescription: String?,
 
-    //  TODO: implement Location data type
-    //  TODO: implement Location type's logic + interaction w/ app's map view
     @SerialName("event_location")
     val eventLocation: String?,
+    @SerialName("location_latitude")
+    val locationLatitude: Double? = null,
+    @SerialName("location_longitude")
+    val locationLongitude: Double? = null,
+    @SerialName("location_address")
+    val locationAddress: String? = null,
+    @SerialName("location_title")
+    val locationTitle: String? = null,
     @SerialName("event_duration")
     val eventDuration: Duration,
 
