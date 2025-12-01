@@ -31,7 +31,10 @@ import kotlin.Int
     -   IntIdTable corresponds to a table with an auto column for entry id (i.e surrogate key)
  */
 
-//  TODO: improve logic of field nullability
+/**
+ * TripTable definition with DAO support.
+ * Added imageUrl column according to Toni's update.
+ */
 
 object TripTable : IntIdTable("trips") {
     val tripTitle = varchar("trip_title", 100)
@@ -39,13 +42,12 @@ object TripTable : IntIdTable("trips") {
     val tripLocation = varchar("trip_location", 255)
     val tripDuration = varchar("trip_duration", 200)
 
+    // NEW COLUMN added in V3 migration
+    val imageUrl = varchar("image_url", 500).nullable()
+
     val userId = reference("user_id", UserTable, onDelete = ReferenceOption.CASCADE)
 }
 
-
-/**
-    Entity object maps Trip type's fields to columns in the database's Trip table
- */
 class TripDAO(tripId: EntityID<Int>) : IntEntity(tripId) {
     companion object : IntEntityClass<TripDAO>(TripTable)
 
@@ -53,9 +55,13 @@ class TripDAO(tripId: EntityID<Int>) : IntEntity(tripId) {
     var tripDescription: String by TripTable.tripDescription
     var tripLocation: String by TripTable.tripLocation
     var stringTripDuration by TripTable.tripDuration
+
     var tripDuration: Duration
-        get() = Json.decodeFromString<Duration>(stringTripDuration)
+        get() = Json.decodeFromString(stringTripDuration)
         set(value) { stringTripDuration = Json.encodeToString(value) }
+
+    // NEW FIELD mapped to DB column
+    var imageUrl: String? by TripTable.imageUrl
 
     var userId by UserDAO referencedOn TripTable.userId
 }
@@ -65,15 +71,14 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
         suspendTransaction(statement = block)
     }
 
-//  TODO: implement Location data type
-//  TODO: implement Location type's logic + interaction w/ app's map view
 fun TripDAO.toResponseDto() = TripResponse(
     id.value,
     tripTitle,
     tripDescription,
     tripLocation,
     tripDuration,
-    userId.id.value
+    userId.id.value,
+    imageUrl          // include new field
 )
 
 fun daoToTripModel(dao: TripDAO) = Trip(
@@ -81,5 +86,6 @@ fun daoToTripModel(dao: TripDAO) = Trip(
     dao.tripDescription,
     dao.tripLocation,
     dao.tripDuration,
-    dao.userId.id.value
+    dao.userId.id.value,
+    dao.imageUrl      // include new field
 )

@@ -6,6 +6,10 @@ import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import java.util.NoSuchElementException
 
+/**
+ * Trip repository for PostgreSQL using Exposed DAO.
+ * Updated to support imageUrl field.
+ */
 
 class PostgresTripRepository: TripRepository {
 
@@ -15,7 +19,6 @@ class PostgresTripRepository: TripRepository {
             .map { it.toResponseDto() }
     }
 
-    //  TODO: depending on frontend interaction, decide whether getTripById should require associated User ID
     override suspend fun getTrip(tripId: Int?): TripResponse? = suspendTransaction {
         tripId ?: return@suspendTransaction null
         TripDAO
@@ -28,20 +31,18 @@ class PostgresTripRepository: TripRepository {
     override suspend fun addTrip(userId: Int?, tripDto: TripCreateRequest): Result<TripResponse> = suspendTransaction {
         TripService.validateTripForCreate(tripDto)
             .mapCatching {
-                try {
-                    val user = UserDAO.findById(userId!!) ?: throw IllegalArgumentException("User not found")
-                    val newTrip = TripDAO.new {
-                        tripTitle = tripDto.tripTitle!!
-                        tripDescription = tripDto.tripDescription!!
-                        tripLocation = tripDto.tripLocation!!
-                        tripDuration = tripDto.tripDuration
-                        this.userId = user
-                    }
-                    newTrip.toResponseDto()
-                } catch (e: Exception) {
-                    println("Exception during TripDAO.new: ${e.message}")
-                    throw e
+                val user = UserDAO.findById(userId!!) ?: throw IllegalArgumentException("User not found")
+                val newTrip = TripDAO.new {
+                    tripTitle = tripDto.tripTitle!!
+                    tripDescription = tripDto.tripDescription!!
+                    tripLocation = tripDto.tripLocation!!
+                    tripDuration = tripDto.tripDuration
+                    this.userId = user
+
+                    // NEW FIELD
+                    imageUrl = tripDto.imageUrl
                 }
+                newTrip.toResponseDto()
             }
     }
 
@@ -54,6 +55,9 @@ class PostgresTripRepository: TripRepository {
                         it.tripDescription = trip.tripDescription!!
                         it.tripLocation = trip.tripLocation!!
                         it.tripDuration = trip.tripDuration
+
+                        // NEW FIELD
+                        it.imageUrl = trip.imageUrl
                     }
                 tripToUpdate != null
             }
