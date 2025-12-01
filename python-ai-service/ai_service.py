@@ -7,14 +7,16 @@ import logging
 # load environment variables
 load_dotenv()
 
+# Initialize Anthropic Client
+api_key = os.getenv("ANTHROPIC_API_KEY")
+
 # Configure Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__) # __name__ tells flask where to find template/static file -> app hangles HTTP request
 
-# Initialize Anthropic Client
-api_key = os.getenv("ANTHROPIC_API_KEY")
+
 
 if not api_key:
     logger.error("ANTHROPIC_API_KEY not found in environment variable")
@@ -29,14 +31,44 @@ def format_prompt(trip_data):
     Format a prompt for AI summary generation from trip data.
     
     Args:
-        trip_data: Dictionary containing trip information
-        
+        trip_data: Dictionary containing trip information from database
+        Expected structure:
+        - trip_title (not 'name')
+        - trip_duration: {startDate, startTime, endDate, endTime} (not 'duration' with 'start'/'end')
+        - events: [{event_title, event_description, event_location, event_duration: {...}}]
+    
     Returns:
         Formatted prompt string
     """
-    participants = ", ".join(trip_data.get('users', []))
-    duration = trip_data.get('duration', {})
-    date_range = f"{duration.get('start', '')} to {duration.get('end', '')}"
+    # Handle trip title (database uses 'trip_title', not 'name')
+    trip_title = trip_data.get('trip_title') or trip_data.get('name', '')
+    
+    # Handle duration - database sends Duration object with startDate/startTime/endDate/endTime
+    trip_duration = trip_data.get('trip_duration') or trip_data.get('duration', {})
+    if isinstance(trip_duration, dict):
+        # Database format: {startDate, startTime, endDate, endTime}
+        start_date = trip_duration.get('startDate', '')
+        start_time = trip_duration.get('startTime', '')
+        end_date = trip_duration.get('endDate', '')
+        end_time = trip_duration.get('endTime', '')
+        
+        # Format date range
+        if start_date and end_date:
+            date_range = f"{start_date} to {end_date}"
+        else:
+            # Fallback to old format if present
+            date_range = f"{trip_duration.get('start', '')} to {trip_duration.get('end', '')}"
+    else:
+        date_range = ""
+    
+    # Handle participants (database doesn't have 'users' field, use empty)
+    participants = trip_data.get('users', [])
+    if not participants:
+        participants = []
+    participants_text = ", ".join(participants) if participants else "N/A"
+    
+    # Handle owner (database has 'user_id', not 'owner')
+    owner = trip_data.get('owner') or f"User {trip_data.get('user_id', '')}" or "N/A"
     
     events = trip_data.get('events', [])
     event_count = len(events)
@@ -45,24 +77,71 @@ def format_prompt(trip_data):
         events_text = "No specific events planned yet"
         event_count_text = ""
     else:
-        events_list = []
-        for index, event in enumerate(events, start=1):
-            event_duration = event.get('duration', {})
-            time_range = f"{event_duration.get('start', '')} - {event_duration.get('end', '')}"
+        # Group events by actual day (using startDate)
+        events_by_day = {}
+        for event in events:
+            # Database uses 'event_title', not 'title'
+            event_title = event.get('event_title') or event.get('title', '')
             
-            location = event.get('location')
-            location_text = ""
-            if location:
-                lat = location.get('latitude', '')
-                lon = location.get('longitude', '')
-                location_text = f" at ({lat}, {lon})"
+            # Handle event duration - database sends Duration object
+            event_duration = event.get('event_duration') or event.get('duration', {})
+            if isinstance(event_duration, dict):
+                # Database format: {startDate, startTime, endDate, endTime}
+                start_date = event_duration.get('startDate', '')
+                start_time = event_duration.get('startTime', '')
+                end_date = event_duration.get('endDate', '')
+                end_time = event_duration.get('endTime', '')
+                
+                # Format time range
+                if start_time and end_time:
+                    time_range = f"{start_time} - {end_time}"
+                elif start_date and end_date:
+                    time_range = f"{start_date} - {end_date}"
+                else:
+                    # Fallback to old format
+                    time_range = f"{event_duration.get('start', '')} - {event_duration.get('end', '')}"
+            else:
+                time_range = ""
+                start_date = ""
             
-            description = event.get('description', '')
+            # Handle location - database uses 'event_location' (String), not 'location' (object)
+            location = event.get('event_location') or event.get('location', '')
+            location_text = f" at {location}" if location else ""
+            
+            # Handle description - database uses 'event_description'
+            description = event.get('event_description') or event.get('description', '')
             description_text = f" - {description}" if description else ""
             
-            events_list.append(
-                f"- Day {index}: {event.get('title', '')} ({time_range}){location_text}{description_text}"
-            )
+            # Group by day (use start_date as key, or "Unknown" if no date)
+            day_key = start_date if start_date else "Unknown"
+            if day_key not in events_by_day:
+                events_by_day[day_key] = []
+            
+            events_by_day[day_key].append({
+                'title': event_title,
+                'time': time_range,
+                'location': location_text,
+                'description': description_text
+            })
+        
+        # Format events grouped by day
+        events_list = []
+        sorted_days = sorted([d for d in events_by_day.keys() if d != "Unknown"]) + (["Unknown"] if "Unknown" in events_by_day else [])
+        
+        for day_num, day_date in enumerate(sorted_days, start=1):
+            day_events = events_by_day[day_date]
+            # Show day number only once if multiple events on same day
+            if len(day_events) > 1:
+                events_list.append(f"Day {day_num} ({day_date if day_date != 'Unknown' else ''}):")
+                for event in day_events:
+                    events_list.append(f"  - {event['title']} ({event['time']}){event['location']}{event['description']}")
+            else:
+                # Single event on this day
+                event = day_events[0]
+                events_list.append(
+                    f"- Day {day_num}: {event['title']} ({event['time']}){event['location']}{event['description']}"
+                )
+        
         events_text = "\n".join(events_list)
         event_count_text = f"YOU MUST INCLUDE ALL {event_count} EVENTS - NO EXCEPTIONS"
     
@@ -82,12 +161,15 @@ CRITICAL REQUIREMENTS FOR TRAVEL APP SUMMARY:
 - Ensure the summary ends naturally after describing the last event - do not add a conclusion paragraph
 - IMPORTANT: Travel/transportation events (like "Drive to X", "Train to Y") are valid events and MUST be included
 - IMPORTANT: All activities matter - meals, markets, walks, tours, everything listed must be mentioned
+- CRITICAL: Group events by ACTUAL DAYS - if multiple events are listed for "Day 1", they all happen on the same day. Do NOT treat each event as a separate day. For example, if Day 1 has 3 events, mention all 3 events as happening on Day 1, not as Day 1, Day 2, Day 3.
+
+
 
 Trip Details:
-Title: {trip_data.get('name', '')}
+Title: {trip_title}
 Dates: {date_range}
-Owner: {trip_data.get('owner', '')}
-Participants: {participants}
+Owner: {owner}
+Participants: {participants_text}
 
 Events and Activities ({event_count_text}):
 {events_text}
@@ -144,10 +226,14 @@ def generate_summary():
         if not trip_data:
             return jsonify({"error": "Trip data is required"}), 400
         
-        logger.info(f"Formatting prompt for trip: {trip_data.get('id', 'unknown')}")
+        trip_id = trip_data.get('trip_title') or trip_data.get('name') or trip_data.get('id', 'unknown')
+        logger.info(f"Formatting prompt for trip: {trip_id}")
         
         # Format prompt from trip data
         prompt = format_prompt(trip_data)
+        
+        # Log the formatted prompt for debugging (first 500 chars)
+        logger.debug(f"Formatted prompt preview: {prompt[:500]}...")
         
         logger.info(f"Generating summary with model: {model}, max_tokens: {max_tokens}")
         

@@ -35,7 +35,7 @@ class TripViewModel(
     private val _summaryError = MutableStateFlow<String?>(null)
     val summaryError: StateFlow<String?> = _summaryError.asStateFlow()
 
-
+    // FrontEnd - Triggers this function
     fun generateAISummary() {
         viewModelScope.launch {
             val currentTrip = _trip.value ?: return@launch
@@ -47,7 +47,8 @@ class TripViewModel(
             println("Generating AI summary for trip ${currentTrip.id} with ${currentTrip.events.size} events")
             
             val apiService = TripApiService(HttpClientFactory.create())
-            // Trip exists in backend, let backend look it up by ID (tripData = null)
+
+            // 2nd step : Trip exists in backend, let backend look it up by ID (tripData = null)
             val result = apiService.generateTripSummary(currentTrip.id, tripData = null)
             
             result.fold(
@@ -74,7 +75,7 @@ class TripViewModel(
     init {
         // Load the trip with all its events
         viewModelScope.launch {
-            _trip.value = tripRepository.getTripById(tripId)
+                _trip.value = tripRepository.getTripById(tripId)
         }
     }
 

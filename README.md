@@ -29,6 +29,19 @@ KMP allows Navi to work on multiple platforms, the currently working one with Ma
     ```
 
 ### Run Python Server
+
+    - How to get the the API and where to insert it
+      1. The API key can generated from any LLM's website, it can be paid or free depending on the LLM's policy
+          Example : Anthropic, OpenAI, Ollama, Google
+      2. Any LLM API key can be used, it should be in working state
+      3. Insert your API in .env file of python-ai-service directory, give it a name and store it
+          - Example : Google_API_KEY  = sk-fjnsjf-fsbfbsjn-erijreijrn-fsnfj38349-jfsi24
+      4. To run : it should be loaded inside ai_service.py file
+          - load_dotenv() : loads the .env file and using os.getenv(API_Name) will load it
+            - api_key = os.getenv("ANTHROPIC_API_KEY")
+          
+  Next Steps :
+
     1. Activate Python Environment
     2. Run the file
     

@@ -68,7 +68,9 @@ fun Application.configureAISummaryRoutes(
 
                     call.respond(HttpStatusCode.OK, response)
                     logger.info("Successfully generated summary for trip: $tripId")
-                } catch (e: AIServiceException) {
+                }
+                
+                catch (e: AIServiceException) {
                     logger.error("AI service error for trip $tripId: ${e.message}", e)
                     call.respond(
                         HttpStatusCode.ServiceUnavailable,
