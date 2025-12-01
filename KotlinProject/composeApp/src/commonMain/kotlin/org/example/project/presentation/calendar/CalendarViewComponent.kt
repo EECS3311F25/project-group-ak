@@ -15,7 +15,8 @@ class CalendarViewComponent(
     private val onNavigateToTripView: () -> Unit,
     private val onEditEvent: (String) -> Unit = {},
     private val onAddEvent: (LocalDate) -> Unit = {},
-    private val onNavigateToNavigation: (Location, Location, String, String) -> Unit = { _, _, _, _ -> }
+    private val onNavigateToNavigation: (Location, Location, String, String) -> Unit = { _, _, _, _ -> },
+    private val onNavigateToMap: () -> Unit = {}
 ) : ComponentContext by componentContext {
 
     fun onBack() {
@@ -34,6 +35,7 @@ class CalendarViewComponent(
                 event.startTitle,
                 event.endTitle
             )
+            is CalendarViewEvent.NavigateToMap -> onNavigateToMap()
         }
     }
 }
@@ -49,4 +51,5 @@ sealed class CalendarViewEvent {
         val startTitle: String,
         val endTitle: String
     ) : CalendarViewEvent()
+    object NavigateToMap : CalendarViewEvent()
 }

@@ -246,7 +246,7 @@ fun CalendarView(
                     onItemSelected = { index: Int ->
                         when (index) {
                             0 -> component.onEvent(CalendarViewEvent.NavigateToTrip)
-                            // 2 -> Map view (to be implemented later)
+                            2 -> component.onEvent(CalendarViewEvent.NavigateToMap)
                         }
                     },
                     onBack = { component.onBack() }

@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
@@ -51,16 +52,22 @@ fun TripView(
     viewModel: TripViewModel,
 ) {
 
-    val trip by viewModel.trip.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    
+    // Refresh trip data when TripView is shown or trip changes
+    LaunchedEffect(uiState.trip?.id) {
+        viewModel.refreshTrip()
+    }
+    
     // height used to inset the list so content is not hidden behind the nav bar
     val navBarHeight = 64.dp
 
-    if (trip == null) {
+    if (uiState.isLoading || uiState.trip == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     } else {
-        val tripData = trip!!
+        val tripData = uiState.trip!!
         Box(modifier = Modifier.fillMaxSize()) {
             // main scrollable content with bottom padding so it doesn't scroll under the nav bar
             LazyColumn(
@@ -101,7 +108,7 @@ fun TripView(
                             viewModel.deleteEvent(event.id)
                         },
                         onEditEvent = { event ->
-                            component.onEvent(TripViewEvent.ClickEditEvent(event.title))
+                            component.onEvent(TripViewEvent.ClickEditEvent(event.id))
                         }
                     )
                 }
@@ -143,7 +150,7 @@ fun TripView(
                         onItemSelected = { index ->
                             when (index) {
                                 1 -> component.onEvent(TripViewEvent.ClickCalendar(tripData)) // Calendar
-                                // 2 -> Map view (to be implemented later)
+                                2 -> component.onEvent(TripViewEvent.ClickMap) // Map
                             }
                         },
                         onBack = { component.onBack() }
