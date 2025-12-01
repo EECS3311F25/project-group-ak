@@ -30,7 +30,6 @@ class MapBoxService(
             parameter("access_token", token)
             parameter("limit", 5)
             parameter("session_token", sessionId)
-            parameter("types", "place")
             parameter("language", "english")
         }.body()
     }
