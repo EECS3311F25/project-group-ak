@@ -6,14 +6,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.example.project.data.remote.RemoteTripDataSource
+import org.example.project.data.source.TripDataSource
 import org.example.project.model.dataClasses.Duration
 import org.example.project.model.dataClasses.Trip
 import org.example.project.model.dataClasses.Event
 
 // USES ONLY REMOTE DATA SOURCE. NO LOCAL DB => NO LOCAL SOURCE
 class TripRepository(
-    private val remoteDataSource: RemoteTripDataSource
+    private val remoteDataSource: org.example.project.data.source.TripDataSource
 ) {
     // StateFlow for reactive updates
     private val _trips = MutableStateFlow<List<Trip>>(emptyList())
@@ -49,6 +49,17 @@ class TripRepository(
             println("Failed to fetch trip by id: ${e.message}")
             null
         }
+    }
+    
+    /**
+     * Check if a trip is in localCreatedTrips (temporary cache for new trips)
+     * Returns the trip if found, null otherwise
+     * NOTE: With database integration, this is no longer needed as trips are stored in DB
+     */
+    fun getLocalCreatedTrip(id: String): Trip? {
+        // With database, trips are stored in DB, so this always returns null
+        // Kept for backward compatibility with AI summary feature
+        return null
     }
     
     suspend fun createTrip(trip: Trip): Result<Trip> {

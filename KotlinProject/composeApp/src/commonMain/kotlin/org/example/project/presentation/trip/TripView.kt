@@ -32,6 +32,11 @@ import org.example.project.presentation.trip.uicomponents.Header
 import org.example.project.presentation.uishared.NavBar
 import org.example.project.presentation.trip.TripViewModel
 
+
+
+
+
+
 /**
  * Renders the Trip screen.
  *
@@ -81,7 +86,20 @@ fun TripView(
                     )
                 }
                 item { ListMembersSection(tripData.users) }
-                item { TripSummarySection(tripData.description) }
+                item {
+                    val aiSummary by viewModel.aiSummary.collectAsState()
+                    val isGenerating by viewModel.isGeneratingSummary.collectAsState()
+                    val summaryError by viewModel.summaryError.collectAsState()
+                    
+                    TripSummarySection(
+                        tripSummary = tripData.description,
+                        aiSummary = aiSummary,
+                        isGenerating = isGenerating,
+                        error = summaryError,
+                        onGenerateClick = { viewModel.generateAISummary() },
+                        onRetryClick = { viewModel.generateAISummary() }
+                    )
+                }
                 item {
                     EventsSection(
                         duration = tripData.duration,

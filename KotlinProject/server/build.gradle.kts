@@ -28,12 +28,20 @@ application {
 }
 
 dependencies {
+
     implementation(projects.shared)
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.contentnegotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+    // Ktor Client for AI service calls
+   
+   
+
+    
+  
+
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.sessions)
     
