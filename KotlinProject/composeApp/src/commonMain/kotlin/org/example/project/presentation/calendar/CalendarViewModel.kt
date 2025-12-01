@@ -57,7 +57,10 @@ class CalendarViewModel(
             try {
                 val trip = tripRepository.getTripById(tripId)
                 if (trip != null) {
-                    _uiState.update { it.copy(currentTrip = trip, events = trip.events, isLoading = false) }
+                    val tripDays = trip.duration.getAllDates()
+                    val defaultDate = tripDays.getOrNull(0)
+                    _uiState.update { it.copy(currentTrip = trip, selectedDate = defaultDate, isLoading = false) }
+                    defaultDate?.let { loadEventsForDate(it) }
                 } else {
                     _uiState.update { it.copy(error = "Trip not found", isLoading = false) }
                 }
