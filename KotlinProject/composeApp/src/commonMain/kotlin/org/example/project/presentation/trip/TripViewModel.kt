@@ -42,7 +42,7 @@ class TripViewModel(
 
     fun generateAISummary() {
         viewModelScope.launch {
-            val currentTrip = _trip.value ?: return@launch
+            val currentTrip = uiState.value.trip ?: return@launch
             
             _isGeneratingSummary.value = true
             _summaryError.value = null
