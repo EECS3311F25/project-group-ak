@@ -42,7 +42,7 @@ class TripViewModel(
     // FrontEnd - Triggers this function
     fun generateAISummary() {
         viewModelScope.launch {
-            val currentTrip = _uiState.value.trip ?: return@launch
+            val currentTrip = uiState.value.trip ?: return@launch
             
             _isGeneratingSummary.value = true
             _summaryError.value = null
