@@ -1,6 +1,5 @@
 *.iml
 .kotlin
-.gradle
 **/build/
 xcuserdata
 !src/**/build/
@@ -78,3 +77,8 @@ Thumbs.db
 *.log
 tmp/
 temp/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local

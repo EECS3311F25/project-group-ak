@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: navi_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: navi_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - navi_data:/var/lib/postgresql/data
+
+volumes:
+  navi_data:

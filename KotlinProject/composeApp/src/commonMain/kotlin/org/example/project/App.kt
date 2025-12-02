@@ -9,32 +9,38 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.stack.Children
-import org.example.project.viewmodel.home.HomeViewModel
+import org.example.project.presentation.home.HomeViewModel
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import org.example.project.controller.RootComponent
-import org.example.project.view.TripView.TripView
-import org.example.project.view.HomeView.HomeView
-import org.example.project.view.HomeView.TripCreationView
-import org.example.project.view.TripView.TripViewSubPages.AddEvent
-import org.example.project.view.TripView.TripViewSubPages.AddMember
-import org.example.project.view.TripView.TripViewSubPages.EditTrip
-import org.example.project.view.AuthView.LoginView
-import org.example.project.view.AuthView.SignupView
-import org.example.project.view.CalendarView.CalendarView
-import org.example.project.viewmodel.TripCreationViewModel
-import org.example.project.viewmodel.CalendarViewModel
+import org.example.project.data.remote.RemoteLocationDataSource
+import org.example.project.presentation.RootComponent
+import org.example.project.presentation.trip.TripView
+import org.example.project.presentation.home.HomeView
+import org.example.project.presentation.home.tripcreation.TripCreationView
+import org.example.project.presentation.trip.addevent.AddEvent
+import org.example.project.presentation.trip.addmember.AddMember
+import org.example.project.presentation.trip.edittrip.EditTrip
+import org.example.project.presentation.auth.login.LoginView
+import org.example.project.presentation.auth.signup.SignupView
+import org.example.project.presentation.calendar.CalendarView
+import org.example.project.presentation.home.tripcreation.TripCreationViewModel
+import org.example.project.presentation.calendar.CalendarViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.example.project.data.repository.TripRepository
 import org.example.project.data.repository.UserRepository
-import org.example.project.data.source.LocalTripDataSource
-import org.example.project.data.source.LocalUserDataSource
-import org.example.project.viewmodel.trip.TripViewModel
-import org.example.project.viewmodel.trip.AddMemberViewModel
-import org.example.project.viewmodel.trip.AddEventViewModel
-import org.example.project.viewmodel.trip.EditTripViewModel
+import org.example.project.data.remote.RemoteTripDataSource
+import org.example.project.data.remote.RemoteUserDataSource
+import org.example.project.data.repository.LocationRepository
+import org.example.project.presentation.trip.TripViewModel
+import org.example.project.presentation.trip.addmember.AddMemberViewModel
+import org.example.project.presentation.trip.addevent.AddEventViewModel
+import org.example.project.presentation.trip.edittrip.EditTripViewModel
+import org.example.project.presentation.ApiTestView
+import org.example.project.presentation.calendar.navigation.NavigationView
+import org.example.project.presentation.map.MapView
+import org.example.project.presentation.map.MapViewModel
 
 @Composable
 /*
@@ -56,8 +62,10 @@ import org.example.project.viewmodel.trip.EditTripViewModel
  */ 
 fun App(root: RootComponent) {
     // 🔥 Create shared repository instances at App level
-    val tripRepository = remember { TripRepository(LocalTripDataSource()) }
-    val userRepository = remember { UserRepository(LocalUserDataSource()) }
+    val userDataSource = remember { RemoteUserDataSource() }
+    val tripRepository = remember { TripRepository(RemoteTripDataSource(userDataSource)) }
+    val userRepository = remember { UserRepository(userDataSource) }
+    val locationRepository = remember { LocationRepository(RemoteLocationDataSource()) }
     
     MaterialTheme(
         colorScheme = LightColorScheme
@@ -105,7 +113,7 @@ fun App(root: RootComponent) {
                 // 🔥 Pass shared repositories to TripCreationView
                 is RootComponent.Child.TripCreationView -> {
                     val tripCreationViewModel: TripCreationViewModel = viewModel { 
-                        TripCreationViewModel(tripRepository, userRepository) 
+                        TripCreationViewModel(tripRepository, userRepository)
                     }
                     TripCreationView(
                         component = instance.component,
@@ -156,6 +164,7 @@ fun App(root: RootComponent) {
                         AddEventViewModel(
                             tripId = instance.tripId,
                             tripRepository = tripRepository,
+                            locationRepository = locationRepository,
                             eventId = instance.eventId,
                             initialDate = instance.initialDate
                         )
@@ -194,6 +203,29 @@ fun App(root: RootComponent) {
                         viewModel = editTripViewModel
                     )
                 }
+                
+                is RootComponent.Child.NavigationView -> {
+                    NavigationView(
+                        component = instance.component,
+                        startLocation = instance.startLocation,
+                        endLocation = instance.endLocation
+                    )
+                }
+                
+                is RootComponent.Child.MapView -> {
+                    val mapViewModel: MapViewModel = viewModel(
+                        key = "MapView-${instance.tripId}"
+                    ) {
+                        MapViewModel(
+                            tripId = instance.tripId,
+                            tripRepository = tripRepository
+                        )
+                    }
+                    MapView(
+                        component = instance.component,
+                        viewModel = mapViewModel
+                    )
+                }
                 // =============================================================================================
                 // === TRIP SCREENS ============================================================================
                 // =============================================================================================
@@ -213,9 +245,11 @@ fun App() {
     // DEV USE Temporary: ================================================
     // start the app on HomeView for development.
     LaunchedEffect(root) {
-        root.navigateToHome()
+       root.navigateToHome()
     }
-    //====================================================================
+    //======= =============================================================
     
     App(root)
+
+    //ApiTestView()
 }

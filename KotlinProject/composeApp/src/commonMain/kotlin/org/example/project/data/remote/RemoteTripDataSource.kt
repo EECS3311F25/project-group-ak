@@ -1,35 +1,335 @@
-// package org.example.project.data.remote
+package org.example.project.data.remote
 
-// import io.ktor.client.*
-// import io.ktor.client.call.*
-// import io.ktor.client.request.*
-// import io.ktor.http.*
-// import org.example.project.data.source.TripDataSource
-// import org.example.project.model.Trip
 
-// class RemoteTripDataSource(
-//     private val client: HttpClient,
-//     private val baseUrl: String
-// ) : TripDataSource {
-//     // TODO: use actual endpoints from the server
-//     override suspend fun getAllTrips(): List<Trip> =
-//         client.get("$baseUrl/trips").body()
+import io.ktor.client.request.*
+import io.ktor.client.call.*
+import io.ktor.http.*
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import org.example.project.data.source.TripDataSource
+import org.example.project.model.dataClasses.Event
+import org.example.project.model.dataClasses.Trip
+import org.example.project.model.dataClasses.Duration
+import org.example.project.model.dataClasses.Location
 
-//     override suspend fun getTrip(id: String): Trip? =
-//         client.get("$baseUrl/trips/$id").body()
+// Response DTOs matching server-side models
+@Serializable
+private data class TripResponse(
+    val id: Int,
+    @SerialName("trip_title")
+    val tripTitle: String?,
+    @SerialName("trip_description")
+    val tripDescription: String?,
+    @SerialName("trip_location")
+    val tripLocation: String?,
+    @SerialName("trip_duration")
+    val tripDuration: Duration,
+    @SerialName("user_id")
+    val userId: Int?
+)
 
-//     override suspend fun createTrip(trip: Trip): Trip =
-//         client.post("$baseUrl/trips") {
-//             contentType(ContentType.Application.Json)
-//             setBody(trip)
-//         }.body()
+@Serializable
+private data class TripRetrieveResponse(
+    val message: String,
+    val data: TripResponse
+)
 
-//     override suspend fun updateTrip(trip: Trip): Trip =
-//         client.put("$baseUrl/trips/${trip.id}") {
-//             contentType(ContentType.Application.Json)
-//             setBody(trip)
-//         }.body()
+@Serializable
+private data class TripListResponse(
+    val message: String,
+    val trips: List<TripResponse>
+)
 
-//     override suspend fun deleteTrip(id: String) =
-//         client.delete("$baseUrl/trips/$id")
-// }
+@Serializable
+private data class TripCreateRequest(
+    @SerialName("trip_title")
+    val tripTitle: String?,
+    @SerialName("trip_description")
+    val tripDescription: String?,
+    @SerialName("trip_location")
+    val tripLocation: String?,
+    @SerialName("trip_duration")
+    val tripDuration: Duration,
+    @SerialName("user_id")
+    val userId: Int
+)
+
+// Event DTOs matching server-side models
+@Serializable
+private data class LocationResponse(
+    val id: Int,
+    val latitude: Double,
+    val longitude: Double,
+    val address: String?,
+    val title: String?,
+    @SerialName("event_id")
+    val eventId: Int
+)
+
+@Serializable
+private data class EventResponse(
+    val id: Int,
+    @SerialName("event_title")
+    val eventTitle: String?,
+    @SerialName("event_description")
+    val eventDescription: String?,
+    @SerialName("event_location")
+    val eventLocation: String?,
+    @SerialName("location_latitude")
+    val locationLatitude: Double? = null,
+    @SerialName("location_longitude")
+    val locationLongitude: Double? = null,
+    @SerialName("location_address")
+    val locationAddress: String? = null,
+    @SerialName("location_title")
+    val locationTitle: String? = null,
+    @SerialName("event_duration")
+    val eventDuration: Duration,
+    @SerialName("trip_id")
+    val tripId: Int?,
+    val location: LocationResponse?
+)
+
+@Serializable
+private data class EventRetrieveResponse(
+    val message: String,
+    val data: EventResponse
+)
+
+@Serializable
+private data class EventListResponse(
+    val message: String,
+    val events: List<EventResponse>
+)
+
+@Serializable
+private data class EventCreateRequest(
+    @SerialName("event_title")
+    val eventTitle: String?,
+    @SerialName("event_description")
+    val eventDescription: String?,
+    @SerialName("event_location")
+    val eventLocation: String?,
+    @SerialName("location_latitude")
+    val locationLatitude: Double? = null,
+    @SerialName("location_longitude")
+    val locationLongitude: Double? = null,
+    @SerialName("location_address")
+    val locationAddress: String? = null,
+    @SerialName("location_title")
+    val locationTitle: String? = null,
+    @SerialName("event_duration")
+    val eventDuration: Duration,
+    @SerialName("trip_id")
+    val tripId: Int
+)
+
+class RemoteTripDataSource(
+    private val userDataSource: RemoteUserDataSource
+) : TripDataSource {
+    private val apiBaseUrl = "http://localhost:8080"
+    
+    private fun getCurrentUserId(): Int = userDataSource.currentUserId
+
+    // USES MOCK ENDPOINTS
+    override suspend fun fetchTrips(): List<Trip> {
+        return HttpClientProvider.client.get("$apiBaseUrl/mocktrips").body()
+    }
+    
+    // Helper function to convert server TripResponse to client Trip model
+    private fun TripResponse.toTrip(): Trip {
+        val now = kotlinx.datetime.Clock.System.now()
+        val currentDate = now.toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault()).date
+        
+        return Trip(
+            id = id.toString(),
+            title = tripTitle ?: "",
+            description = tripDescription ?: "",
+            location = tripLocation ?: "",
+            duration = tripDuration,
+            users = emptyList(), // TODO: Fetch associated users
+            events = emptyList(), // TODO: Fetch associated events
+            imageHeaderUrl = null,
+            createdDate = currentDate
+        )
+    }
+
+    // Helper function to convert server EventResponse to client Event model
+    private fun EventResponse.toEvent(): Event {
+        val resolvedLocation = when {
+            location != null -> Location(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                address = location.address,
+                title = location.title
+            )
+            locationLatitude != null && locationLongitude != null -> Location(
+                latitude = locationLatitude,
+                longitude = locationLongitude,
+                address = locationAddress ?: eventLocation,
+                title = locationTitle ?: eventTitle
+            )
+            eventLocation != null -> Location(
+                latitude = 0.0,
+                longitude = 0.0,
+                address = eventLocation
+            )
+            else -> null
+        }
+
+        return Event(
+            id = id.toString(),
+            title = eventTitle ?: "",
+            description = eventDescription ?: "",
+            location = resolvedLocation,
+            duration = eventDuration,
+            imageUrl = null
+        )
+    }
+
+    // USES MOCK ENDPOINTS (deprecated - kept for backward compatibility)
+    // suspend fun fetchTrips(): List<Trip> {
+    //     return HttpClientProvider.client.get("$apiBaseUrl/mocktrips").body()
+    // }
+
+    suspend fun helloWorld(): String {
+        return HttpClientProvider.client.get(apiBaseUrl).body()
+    }
+
+    // TripDataSource interface implementations using real endpoints
+    override suspend fun getAllTrips(): List<Trip> {
+        val response: TripListResponse = HttpClientProvider.client
+            .get("$apiBaseUrl/user/${getCurrentUserId()}/trip")
+            .body()
+        return response.trips.map { it.toTrip() }
+    }
+
+    override suspend fun getTripById(id: String): Trip? {
+        val tripResult = runCatching {
+            HttpClientProvider.client
+                .get("$apiBaseUrl/user/${getCurrentUserId()}/trip/$id")
+                .body<TripRetrieveResponse>()
+        }
+        
+        if (tripResult.isFailure) {
+            println("Failed to fetch trip $id: ${tripResult.exceptionOrNull()?.message}")
+            tripResult.exceptionOrNull()?.printStackTrace()
+            return null
+        }
+        
+        val tripResponse = tripResult.getOrThrow()
+        
+        val eventsResult = runCatching {
+            HttpClientProvider.client
+                .get("$apiBaseUrl/user/${getCurrentUserId()}/trip/$id/event")
+                .body<EventListResponse>()
+        }
+        
+        val events = eventsResult.fold(
+            onSuccess = { response: EventListResponse -> 
+                println("Loaded ${response.events.size} events for trip $id")
+                response.events.map { eventResponse -> eventResponse.toEvent() }
+            },
+            onFailure = { error: Throwable ->
+                println("Failed to fetch events for trip $id: ${error.message}")
+                error.printStackTrace()
+                emptyList()
+            }
+        )
+        
+        return tripResponse.data.toTrip().copy(events = events)
+    }
+
+    override suspend fun insertTrip(trip: Trip): Trip {
+        val request = TripCreateRequest(
+            tripTitle = trip.title,
+            tripDescription = trip.description,
+            tripLocation = trip.location,
+            tripDuration = trip.duration,
+            userId = getCurrentUserId()
+        )
+        
+        println("RemoteTripDataSource: URL: $apiBaseUrl/user/${getCurrentUserId()}/trip")
+        
+        val response: TripRetrieveResponse = HttpClientProvider.client.post("$apiBaseUrl/user/${getCurrentUserId()}/trip") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.body()
+        
+        println("RemoteTripDataSource: Trip created successfully: ${response.data}")
+        return response.data.toTrip()
+    }
+
+    override suspend fun updateTrip(trip: Trip): Trip {
+        val request = TripCreateRequest(
+            tripTitle = trip.title,
+            tripDescription = trip.description,
+            tripLocation = trip.location,
+            tripDuration = trip.duration,
+            userId = getCurrentUserId()
+        )
+        
+        HttpClientProvider.client.put("$apiBaseUrl/user/${getCurrentUserId()}/trip/${trip.id}") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        return trip
+    }
+
+    override suspend fun deleteTrip(tripId: String) {
+        HttpClientProvider.client.delete("$apiBaseUrl/user/${getCurrentUserId()}/trip/$tripId")
+    }
+
+    override suspend fun addEventToTrip(tripId: String, event: Event) {
+        val request = EventCreateRequest(
+            eventTitle = event.title,
+            eventDescription = event.description,
+            eventLocation = event.location?.address ?: event.location?.title ?: "",
+            locationLatitude = event.location?.latitude,
+            locationLongitude = event.location?.longitude,
+            locationAddress = event.location?.address,
+            locationTitle = event.location?.title,
+            eventDuration = event.duration,
+            tripId = tripId.toInt()
+        )
+        
+        HttpClientProvider.client.post("$apiBaseUrl/user/${getCurrentUserId()}/trip/$tripId/event") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+    }
+
+    override suspend fun deleteEventFromTrip(tripId: String, eventId: String) {
+        HttpClientProvider.client.delete("$apiBaseUrl/user/${getCurrentUserId()}/trip/$tripId/event/$eventId")
+    }
+
+    override suspend fun updateEventInTrip(tripId: String, eventId: String, updated: Event) {
+        val request = EventCreateRequest(
+            eventTitle = updated.title,
+            eventDescription = updated.description,
+            eventLocation = updated.location?.address ?: updated.location?.title ?: "",
+            locationLatitude = updated.location?.latitude,
+            locationLongitude = updated.location?.longitude,
+            locationAddress = updated.location?.address,
+            locationTitle = updated.location?.title,
+            eventDuration = updated.duration,
+            tripId = tripId.toInt()
+        )
+        
+        HttpClientProvider.client.put("$apiBaseUrl/user/${getCurrentUserId()}/trip/$tripId/event/$eventId") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+    }
+
+    override suspend fun addMemberToTrip(tripId: String, userId: String) {
+        // TODO: Implement when member endpoints are available
+        throw NotImplementedError("Member endpoints not yet implemented on server")
+    }
+
+    override suspend fun removeMemberFromTrip(tripId: String, userId: String) {
+        // TODO: Implement when member endpoints are available
+        throw NotImplementedError("Member endpoints not yet implemented on server")
+    }
+}
