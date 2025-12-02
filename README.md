@@ -7,28 +7,32 @@ Users can create detailed itineraries, manage events, vote on plans, and receive
 
 KMP allows Navi to work on multiple platforms, the currently working one with Map feature is the JS Target.
 
-### Requirements
+Here are the steps to run the complete app:
 
-- MapBox API key in .env
-- Claude API key in .env
-- Docker
-- Java 21
+### 0.Requirements
 
-### Run PostgreSQL in Docker 
+- MapBox API key in KotlinProject/.env (see KotlinProject/ENV_SETUP.md)
+- Any LLM API key in python-ai-service/.env (details below)
+- Have Docker installed.
+- Have Python and venv installed.
+- Java 21.
+- Ability to run 4 apps at once.
+
+### 1. Run PostgreSQL in Docker 
   - On macOS/Linux
-    under KotlinProject/
     ```shell
+    # under KotlinProject/
     docker compose up -d
     ```
 
-### Run Ktor Backend
+### 2. Run Ktor Backend
   - On macOS/Linux
-    under KotlinProject/
     ```shell
+    # under KotlinProject/
     ./gradlew :server:run
     ```
 
-### Run Python Server
+### 3. Run Python Server
 
     - How to get the the API and where to insert it
       1. The API key can generated from any LLM's website, it can be paid or free depending on the LLM's policy
@@ -41,28 +45,28 @@ KMP allows Navi to work on multiple platforms, the currently working one with Ma
             - api_key = os.getenv("ANTHROPIC_API_KEY")
           
   Next Steps :
-
-    1. Activate Python Environment
-    2. Run the file
     
   - On macOS/Linux
-    under python-ai-service/
     ```shell
+    # under python-ai-service/
+    # Create Python enviroment inside python-ai-service directory
+    python3 -m venv venv
+    
+    # Install everything from requirements 
+    pip install -r requirements.txt
+    
+    # Activate Python Environment
     source .venv/bin/activate
+    
+    #Run the app
     python3 ai_service.py
     ```
     
-    
-    
-
-### Build and Run JS Target
+### 4. Build and Run JS Target
   - on macOS/Linux
     ```shell
+    # under KotlinProject/
     ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
     ```
 
 # Contribution
